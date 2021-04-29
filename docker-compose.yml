@@ -1,0 +1,19 @@
+version: '3'
+services:
+  postgres:
+    image: "postgres:alpine"
+    container_name: tkm-postgress
+    volumes:
+      - './postgresinit:/docker-entrypoint-initdb.d/'
+    ports:
+      - "5000:5432"
+    environment:
+      POSTGRES_PASSWORD: par_retriever
+      POSTGRES_DB: par_retriever
+      POSTGRES_USER: par_retriever
+    networks:
+      - tkmnet
+
+networks:
+  tkmnet:
+    name: tkm_network

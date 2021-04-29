@@ -1,0 +1,27 @@
+openapi: 3.0.1
+info:
+  title: tkm-ms-par-retriever
+  description: "RESTful APIs provided for consent management"
+  version: '1.0.0'
+servers:
+  - url: http://localhost:2000/tkm-ms-par-retriever
+  - url: http://tkm-sit/tkm-ms-par-retriever
+  - url: http://tkm-uat/tkm-ms-par-retriever
+  - url: http://tkm-prod/tkm-ms-par-retriever
+tags:
+  - name: authenticated
+    description: exposed via APIM
+  - name: restricted
+    description: only for internal use
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
