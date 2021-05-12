@@ -7,10 +7,8 @@ import com.mastercard.developer.utils.*;
 import it.gov.pagopa.tkm.ms.parretriever.client.mastercard.api.*;
 import it.gov.pagopa.tkm.ms.parretriever.client.mastercard.api.model.*;
 import it.gov.pagopa.tkm.ms.parretriever.client.mastercard.api.util.*;
-import okhttp3.OkHttpClient.Builder;
 import okhttp3.logging.*;
 
-import java.security.*;
 import java.time.*;
 import java.time.temporal.*;
 
@@ -24,11 +22,11 @@ public class MastercardParClient {
 
     public static void callApi(String accountNumber, String requestId) throws Exception {
         ApiClient client = buildApiClient();
-        GetPaymentAccountReferenceApi api = new GetPaymentAccountReferenceApi(client);
-        GetPaymentAccountReferenceRequest req = buildRequest(accountNumber, requestId);
-        GetPaymentAccountReferenceResponse res = api.getPaymentAccountReferencePost(req);
-        //String decPar = FieldLevelEncryption.decryptPayload(new Gson().toJson(res), config);
-        System.out.println(new Gson().toJson(res));
+        ParApi api = new ParApi(client);
+        ParRequest parRequest = buildRequest(accountNumber, requestId);
+        ParResponse parResponse = api.getParPost(parRequest);
+        //String decPar = FieldLevelEncryption.decryptPayload(new Gson().toJson(parResponse), config);
+        System.out.println(new Gson().toJson(parResponse));
     }
 
     private static FieldLevelEncryptionConfig buildEncryptionConfig() throws Exception {
@@ -48,28 +46,19 @@ public class MastercardParClient {
     }
 
     private static ApiClient buildApiClient() throws Exception {
-        ApiClient client = new ApiClient();
-        client.setBasePath(PAR_ENDPOINT);
-        PrivateKey signingKey = AuthenticationUtils.loadSigningKey(PKCS12_PATH, KEY_ALIAS, KEYSTORE_PASSWORD);
-        FieldLevelEncryptionConfig config = buildEncryptionConfig();
-        Builder httpClientBuilder = client.getHttpClient().newBuilder();
-        httpClientBuilder.addInterceptor(new OkHttpFieldLevelEncryptionInterceptor(config));
-        httpClientBuilder.addInterceptor(new OkHttpOAuth1Interceptor(CONSUMER_KEY, signingKey));
-        httpClientBuilder.addNetworkInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY));
-        client.setHttpClient(httpClientBuilder.build());
-        return client;
+        return new ApiClient(
+                new OkHttpFieldLevelEncryptionInterceptor(buildEncryptionConfig()),
+                new OkHttpOAuth1Interceptor(CONSUMER_KEY, AuthenticationUtils.loadSigningKey(PKCS12_PATH, KEY_ALIAS, KEYSTORE_PASSWORD)),
+                //TODO: Remove logging-interceptor from dependencies when done with development
+                new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
+        );
     }
 
-    private static GetPaymentAccountReferenceRequest buildRequest(String accountNumber, String requestId) {
-        GetPaymentAccountReferenceRequest req = new GetPaymentAccountReferenceRequest();
-        GetPaymentAccountReferenceRequestEncryptedPayload encPayload = new GetPaymentAccountReferenceRequestEncryptedPayload();
-        GetPaymentAccountReferenceRequestEncryptedPayloadEncryptedData encData = new GetPaymentAccountReferenceRequestEncryptedPayloadEncryptedData();
-        encData.setDataValidUntilTimestamp(ZonedDateTime.now().plus(1, ChronoUnit.DAYS).toString());
-        encData.setAccountNumber(accountNumber);
-        encPayload.setEncryptedData(encData);
-        req.setEncryptedPayload(encPayload);
-        req.setRequestId(requestId);
-        return req;
+    private static ParRequest buildRequest(String accountNumber, String requestId) {
+        String timestamp = ZonedDateTime.now().plus(1, ChronoUnit.DAYS).toString();
+        ParRequestEncryptedData encryptedData = new ParRequestEncryptedData(accountNumber, timestamp);
+        ParRequestEncryptedPayload encryptedPayload = new ParRequestEncryptedPayload(encryptedData);
+        return new ParRequest(requestId, encryptedPayload);
     }
 
 }
