@@ -6,12 +6,14 @@
 
     <artifactId>par-retriever</artifactId>
     <version>1.0-SNAPSHOT</version>
+
+    <parent>
+        <groupId>it.gov.pagopa.tkm.ms</groupId>
+        <artifactId>starter-parent</artifactId>
+        <version>1.12</version>
+    </parent>
+
     <dependencies>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-autoconfigure</artifactId>
-            <version>2.2.5.RELEASE</version>
-        </dependency>
         <dependency>
             <groupId>io.swagger</groupId>
             <artifactId>swagger-annotations</artifactId>
@@ -27,13 +29,102 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
     </dependencies>
-    <parent>
-        <groupId>it.gov.pagopa.tkm.ms</groupId>
-        <artifactId>starter-parent</artifactId>
-        <version>1.0-SNAPSHOT</version>
-    </parent>
 
-    <properties>
-        <java.version>1.8</java.version>
-    </properties>
+    <build>
+        <finalName>tkm-ms-${project.artifactId}-${project.version}</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.7</version>
+                <configuration>
+                    <excludes>
+                        <exclude>it/gov/pagopa/tkm/ms/consentmanager/config/**/*.class</exclude>
+                        <exclude>it/gov/pagopa/tkm/ms/consentmanager/repository/**/*.class</exclude>
+                        <exclude>it/gov/pagopa/tkm/ms/consentmanager/model/**/*.class</exclude>
+                        <exclude>it/gov/pagopa/tkm/ms/consentmanager/constant/**/*.class</exclude>
+                        <exclude>it/gov/pagopa/tkm/ms/consentmanager/exception/**/*.class</exclude>
+                        <exclude>it/pagopa/ParRetrieverApplication</exclude>
+                    </excludes>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>report</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>jacoco-check</id>
+                        <phase>test</phase>
+                        <configuration>
+                            <goals>
+                                <goal>check</goal>
+                            </goals>
+                            <rules>
+                                <rule>
+                                    <element>BUNDLE</element>
+                                    <limits>
+                                        <limit>
+                                            <counter>LINE</counter>
+                                            <value>COVEREDRATIO</value>
+                                            <minimum>0.90</minimum>
+                                        </limit>
+                                    </limits>
+                                </rule>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>report</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+        </plugins>
+    </reporting>
+
+    <repositories>
+        <repository>
+            <id>sia-dds</id>
+            <url>https://pkgs.dev.azure.com/sia-dds/_packaging/sia-dds/maven/v1</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+
+    <distributionManagement>
+        <repository>
+            <id>sia-dds</id>
+            <url>https://pkgs.dev.azure.com/sia-dds/_packaging/sia-dds/maven/v1</url>
+        </repository>
+    </distributionManagement>
+
+    <scm>
+        <developerConnection>scm:git:https://github.com/pagopa/tkm-ms-par-retriever.git</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
+
 </project>
