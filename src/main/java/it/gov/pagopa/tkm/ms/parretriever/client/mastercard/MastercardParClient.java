@@ -1,6 +1,5 @@
 package it.gov.pagopa.tkm.ms.parretriever.client.mastercard;
 
-import com.google.gson.*;
 import com.mastercard.developer.encryption.*;
 import com.mastercard.developer.interceptors.*;
 import com.mastercard.developer.utils.*;
@@ -9,8 +8,8 @@ import it.gov.pagopa.tkm.ms.parretriever.client.mastercard.api.model.*;
 import it.gov.pagopa.tkm.ms.parretriever.client.mastercard.api.util.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.core.io.*;
+import org.springframework.stereotype.*;
 import org.springframework.util.*;
-import org.springframework.web.bind.annotation.*;
 
 import java.io.*;
 import java.nio.charset.*;
@@ -18,12 +17,11 @@ import java.security.cert.*;
 import java.security.cert.Certificate;
 import java.time.*;
 import java.time.temporal.*;
+import java.util.*;
 
 import static it.gov.pagopa.tkm.ms.parretriever.client.mastercard.constant.Constants.SIGNING_KEY_ALIAS;
 
-//TODO: REMOVE CONTROLLER ANNOTATIONS
-@RestController
-@RequestMapping("/test")
+@Service
 public class MastercardParClient {
 
     @Autowired
@@ -44,14 +42,11 @@ public class MastercardParClient {
     @Value("${keyvault.mastercardApiKey}")
     private String consumerKey;
 
-    @GetMapping
-    public String callApi(@RequestParam("acc") String accountNumber, @RequestParam("id") String requestId) throws Exception {
+    public ParResponse getPar(String accountNumber) throws Exception {
         ApiClient client = buildApiClient();
         ParApi api = new ParApi(client);
-        ParRequest parRequest = buildRequest(accountNumber, requestId);
-        ParResponse parResponse = api.getParPost(parRequest);
-        //String decPar = FieldLevelEncryption.decryptPayload(new Gson().toJson(parResponse), config);
-        return new Gson().toJson(parResponse);
+        ParRequest parRequest = buildRequest(accountNumber, UUID.randomUUID().toString());
+        return api.getParPost(parRequest);
     }
 
     private FieldLevelEncryptionConfig buildEncryptionConfig() throws Exception {

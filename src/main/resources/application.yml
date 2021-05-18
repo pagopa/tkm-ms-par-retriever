@@ -10,6 +10,8 @@ server:
 logging:
   level:
     root: ${LOGGING_LEVEL:INFO}
+  pattern:
+    level: "${LOGGING_PATTERN:%p [${spring.application.name}][%X{traceId}]}"
 
 core:
   parRetrieverService:
@@ -38,3 +40,6 @@ blobstorage:
   mastercard:
     publicEncryptionKey: azure-blob://${BLOB_STORAGE_NAME}/Public-Key-Encrypt.crt
     signingKeyCert: azure-blob://${BLOB_STORAGE_NAME}/Get_PAR-sandbox.p12
+
+tkm-ms-urls:
+  consent-manager: http://localhost:7777/tkm-ms-consent-manager
