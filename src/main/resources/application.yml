@@ -43,3 +43,4 @@ blobstorage:
 
 tkm-ms-urls:
   consent-manager: http://localhost:7777/tkm-ms-consent-manager
+  card-manager: http://localhost:2001/tkm-ms-card-manager
