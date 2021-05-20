@@ -6,6 +6,7 @@ import com.mastercard.developer.utils.*;
 import it.gov.pagopa.tkm.ms.parretriever.client.mastercard.api.*;
 import it.gov.pagopa.tkm.ms.parretriever.client.mastercard.api.model.*;
 import it.gov.pagopa.tkm.ms.parretriever.client.mastercard.api.util.*;
+import it.gov.pagopa.tkm.ms.parretriever.client.mastercard.util.EncryptionUtils;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.core.io.*;
 import org.springframework.stereotype.*;
@@ -28,7 +29,7 @@ public class MastercardParClient {
     private ResourceLoader resourceLoader;
 
     @Value("${keyvault.mastercardResponsePrivateKey}")
-    private String privateEncryptionKey;
+    private String privateDecryptionKey;
 
     @Value("${blobstorage.mastercard.publicEncryptionKey}")
     private Resource publicEncryptionKey;
@@ -54,7 +55,7 @@ public class MastercardParClient {
                 .withEncryptionPath("$.encryptedPayload.encryptedData", "$.encryptedPayload")
                 .withDecryptionPath("$.encryptedPayload", "$.encryptedPayload.encryptedData")
                 .withEncryptionCertificate(loadEncryptionCertificate(resourceAsString(publicEncryptionKey).getBytes()))
-                .withDecryptionKey(EncryptionUtils.loadDecryptionKey(privateEncryptionKeyAsFile()))
+                .withDecryptionKey(EncryptionUtils.loadDecryptionKey(privateDecryptionKey))
                 .withOaepPaddingDigestAlgorithm("SHA-512")
                 .withEncryptedValueFieldName("encryptedData")
                 .withEncryptedKeyFieldName("encryptedKey")
@@ -86,15 +87,6 @@ public class MastercardParClient {
 
     private String resourceAsString(Resource resource) throws IOException {
         return StreamUtils.copyToString(resource.getInputStream(), Charset.defaultCharset());
-    }
-
-    //TODO: FIND ANOTHER WAY
-    private String privateEncryptionKeyAsFile() throws IOException {
-        File file = new File("private_key.pem");
-        try (FileOutputStream fos = new FileOutputStream(file)) {
-            fos.write(privateEncryptionKey.getBytes());
-        }
-        return file.getAbsolutePath();
     }
 
 }
