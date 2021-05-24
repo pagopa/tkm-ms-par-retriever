@@ -1,10 +1,8 @@
 package it.gov.pagopa.tkm.ms.parretriever.client.mastercard.api;
 
-import it.gov.pagopa.tkm.ms.parretriever.client.mastercard.api.util.ApiCallback;
 import it.gov.pagopa.tkm.ms.parretriever.client.mastercard.api.util.ApiClient;
 import it.gov.pagopa.tkm.ms.parretriever.client.mastercard.api.util.ApiException;
 import it.gov.pagopa.tkm.ms.parretriever.client.mastercard.api.util.ApiResponse;
-import it.gov.pagopa.tkm.ms.parretriever.client.mastercard.api.util.Pair;
 
 import com.google.gson.reflect.TypeToken;
 
@@ -14,21 +12,19 @@ import lombok.*;
 import okhttp3.*;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @AllArgsConstructor
-public class GetPaymentAccountReferenceApi {
+public class ParApi {
 
-    private ApiClient localVarApiClient;
+    private final ApiClient localVarApiClient;
 
-    public Call getParPostCall(ParRequest parRequest, final ApiCallback _callback) throws ApiException {
+    public Call getParPostCall(ParRequest parRequest) throws ApiException {
         String localVarPath = "/getPaymentAccountReference";
 
-        List<Pair> localVarQueryParams = new ArrayList<>();
-        List<Pair> localVarCollectionQueryParams = new ArrayList<>();
+        Map<String, String> localVarQueryParams = new HashMap<>();
+        Map<String, String> localVarCollectionQueryParams = new HashMap<>();
         Map<String, String> localVarHeaderParams = new HashMap<>();
 
         final String[] localVarAccepts = {
@@ -45,12 +41,11 @@ public class GetPaymentAccountReferenceApi {
         final String localVarContentType = localVarApiClient.selectHeaderContentType(localVarContentTypes);
         localVarHeaderParams.put("Content-Type", localVarContentType);
 
-        return localVarApiClient.buildCall(localVarPath, "POST", localVarQueryParams, localVarCollectionQueryParams, parRequest, localVarHeaderParams, _callback);
+        return localVarApiClient.buildCall(localVarPath, "POST", localVarQueryParams, localVarCollectionQueryParams, parRequest, localVarHeaderParams);
     }
 
-    @SuppressWarnings("rawtypes")
-    private Call getParPostValidateBeforeCall(ParRequest parRequest, final ApiCallback _callback) throws ApiException {
-        return getParPostCall(parRequest, _callback);
+    private Call getParPostValidateBeforeCall(ParRequest parRequest) throws ApiException {
+        return getParPostCall(parRequest);
     }
 
     public ParResponse getParPost(ParRequest parRequest) throws ApiException {
@@ -59,7 +54,7 @@ public class GetPaymentAccountReferenceApi {
     }
 
     public ApiResponse<ParResponse> getParPostWithHttpInfo(ParRequest parRequest) throws ApiException {
-        Call localVarCall = getParPostValidateBeforeCall(parRequest, null);
+        Call localVarCall = getParPostValidateBeforeCall(parRequest);
         Type localVarReturnType = new TypeToken<ParResponse>(){}.getType();
         return localVarApiClient.execute(localVarCall, localVarReturnType);
     }

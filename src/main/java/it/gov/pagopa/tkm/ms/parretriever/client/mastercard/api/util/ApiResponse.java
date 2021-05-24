@@ -10,7 +10,9 @@ import java.util.Map;
 public class ApiResponse<T> {
 
     final private int statusCode;
+
     final private Map<String, List<String>> headers;
+
     final private T data;
 
 }

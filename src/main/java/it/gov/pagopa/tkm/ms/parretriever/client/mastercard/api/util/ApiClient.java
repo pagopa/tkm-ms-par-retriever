@@ -2,7 +2,6 @@ package it.gov.pagopa.tkm.ms.parretriever.client.mastercard.api.util;
 
 import lombok.*;
 import okhttp3.*;
-import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
@@ -22,7 +21,6 @@ public class ApiClient {
     public ApiClient(Interceptor... interceptors) {
         json = new JSON();
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
-        builder.addNetworkInterceptor(getProgressInterceptor());
         for (Interceptor interceptor: interceptors) {
             builder.addInterceptor(interceptor);
         }
@@ -174,13 +172,13 @@ public class ApiClient {
         }
     }
 
-    public Call buildCall(String path, String method, List<Pair> queryParams, List<Pair> collectionQueryParams, Object body, Map<String, String> headerParams, ApiCallback callback) throws ApiException {
-        Request request = buildRequest(path, method, queryParams, collectionQueryParams, body, headerParams, callback);
+    public Call buildCall(String path, String method, Map<String, String> queryParams, Map<String, String> collectionQueryParams, Object body, Map<String, String> headerParams) throws ApiException {
+        Request request = buildRequest(path, method, queryParams, collectionQueryParams, body, headerParams);
 
         return httpClient.newCall(request);
     }
 
-    public Request buildRequest(String path, String method, List<Pair> queryParams, List<Pair> collectionQueryParams, Object body, Map<String, String> headerParams, ApiCallback callback) throws ApiException {
+    public Request buildRequest(String path, String method, Map<String, String> queryParams, Map<String, String> collectionQueryParams, Object body, Map<String, String> headerParams) throws ApiException {
         final String url = buildUrl(path, queryParams, collectionQueryParams);
         final Request.Builder reqBuilder = new Request.Builder().url(url);
 
@@ -189,33 +187,18 @@ public class ApiClient {
         if (contentType == null) {
             contentType = "application/json";
         }
-
         RequestBody reqBody = serialize(body, contentType);
-
-        // Associate callback with request (if not null) so interceptor can
-        // access it when creating ProgressResponseBody
-        reqBuilder.tag(callback);
-
-        Request request;
-
-        if (callback != null && reqBody != null) {
-            ProgressRequestBody progressRequestBody = new ProgressRequestBody(reqBody, callback);
-            request = reqBuilder.method(method, progressRequestBody).build();
-        } else {
-            request = reqBuilder.method(method, reqBody).build();
-        }
-
-        return request;
+        return reqBuilder.method(method, reqBody).build();
     }
 
-    public String buildUrl(String path, List<Pair> queryParams, List<Pair> collectionQueryParams) {
+    public String buildUrl(String path, Map<String, String> queryParams, Map<String, String> collectionQueryParams) {
         final StringBuilder url = new StringBuilder();
         url.append(PAR_ENDPOINT).append(path);
 
         if (queryParams != null && !queryParams.isEmpty()) {
             // support (constant) query string in `path`, e.g. "/posts?draft=1"
             String prefix = path.contains("?") ? "&" : "?";
-            for (Pair param : queryParams) {
+            for (Map.Entry<String, String> param : queryParams.entrySet()) {
                 if (param.getValue() != null) {
                     if (prefix != null) {
                         url.append(prefix);
@@ -224,14 +207,14 @@ public class ApiClient {
                         url.append("&");
                     }
                     String value = parameterToString(param.getValue());
-                    url.append(escapeString(param.getName())).append("=").append(escapeString(value));
+                    url.append(escapeString(param.getKey())).append("=").append(escapeString(value));
                 }
             }
         }
 
         if (collectionQueryParams != null && !collectionQueryParams.isEmpty()) {
             String prefix = url.toString().contains("?") ? "&" : "?";
-            for (Pair param : collectionQueryParams) {
+            for (Map.Entry<String, String> param : collectionQueryParams.entrySet()) {
                 if (param.getValue() != null) {
                     if (prefix != null) {
                         url.append(prefix);
@@ -240,27 +223,12 @@ public class ApiClient {
                         url.append("&");
                     }
                     String value = parameterToString(param.getValue());
-                    // collection query parameter value already escaped as part of parameterToPairs
-                    url.append(escapeString(param.getName())).append("=").append(value);
+                    url.append(escapeString(param.getKey())).append("=").append(value);
                 }
             }
         }
 
         return url.toString();
-    }
-
-    private Interceptor getProgressInterceptor() {
-        return chain -> {
-            final Request request = chain.request();
-            final Response originalResponse = chain.proceed(request);
-            if (request.tag() instanceof ApiCallback) {
-                final ApiCallback callback = (ApiCallback) request.tag();
-                return originalResponse.newBuilder()
-                    .body(new ProgressResponseBody(originalResponse.body(), callback))
-                    .build();
-            }
-            return originalResponse;
-        };
     }
 
 }
