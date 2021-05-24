@@ -45,8 +45,8 @@ public class BatchConfig {
 
     @Bean
     @StepScope
-    public ItemReader</*TODO Card*/Object> reader() {
-        return new CardReader();
+    public ItemReader</*TODO Card*/Object> reader(@Value("{#{stepExecutionContext['cardList']}") List</*TODO Card*/Object> cards) {
+        return new CardReader(cards);
     }
 
     @Bean
@@ -86,7 +86,7 @@ public class BatchConfig {
     public Step parFinderStep() {
         return steps.get("parFinderStep")
                 .</*TODO Card*/Object, String>chunk(Integer.MAX_VALUE)
-                .reader(reader())
+                .reader(reader(null))
                 .processor(processor())
                 .writer(writer())
                 .allowStartIfComplete(true)
