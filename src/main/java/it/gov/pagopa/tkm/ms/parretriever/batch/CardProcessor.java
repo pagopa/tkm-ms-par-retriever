@@ -1,27 +1,24 @@
-package it.gov.pagopa.tkm.ms.parretriever.service.impl;
+package it.gov.pagopa.tkm.ms.parretriever.batch;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import it.gov.pagopa.tkm.ms.parretriever.service.ParRetrieverService;
 import it.gov.pagopa.tkm.ms.parretriever.visa.VisaApiClient;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.batch.core.configuration.annotation.StepScope;
+import org.springframework.batch.item.ItemProcessor;
+import org.springframework.stereotype.Component;
 
-//@Configuration
-//@EnableScheduling
-public class ParRetrieverServiceImpl implements ParRetrieverService {
+@Component
+@StepScope
+public class CardProcessor implements ItemProcessor</*TODO Card*/Object, String> {
 
     private static final String MLE_CLIENT_PRIVATE_KEY_PATH = "";
     private static final String MLE_SERVER_PUBLIC_CERTIFICATE_PATH = "";
     private static final String KEY_ID = "";
 
     @Override
-    @Scheduled(cron = "${core.parRetrieverService.getPar.scheduler}")
-    public void getPar() throws Exception {
-        invokeVisaApi();
-    }
-
-    private void invokeVisaApi() throws Exception {
+    public String process(/*TODO Card*/Object item) throws Exception {
+        //Controllo autorizzazione
+        //Controllo PAR assente
+        //Switch su circuito, e in caso di VISA:
         String reqPayload = "{\n" +
                 "\"clientId\": \"0123456789012345678901234567999\",\n" +
                 "\"correlatnId\": \"0123456789012345678901234567000\",\n" +
@@ -33,6 +30,7 @@ public class ParRetrieverServiceImpl implements ParRetrieverService {
         System.out.println("Encrypted Response: \n" + encryptedResponse.getEncData());
         String decryptedResponse = VisaApiClient.getDecryptedPayload(MLE_CLIENT_PRIVATE_KEY_PATH, encryptedResponse);
         System.out.println("Decrypted Response: \n" + decryptedResponse);
+        return decryptedResponse;
     }
 
 }

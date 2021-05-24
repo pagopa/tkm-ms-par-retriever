@@ -9,6 +9,9 @@ spring:
     include:
       # TO enable italian documentations
       - swaggerIT
+  batch:
+    job:
+      enabled: false
 
 info:
   build:
