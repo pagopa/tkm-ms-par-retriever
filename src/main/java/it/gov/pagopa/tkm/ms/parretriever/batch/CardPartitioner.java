@@ -1,47 +1,58 @@
 package it.gov.pagopa.tkm.ms.parretriever.batch;
 
+import it.gov.pagopa.tkm.ms.parretriever.client.cards.*;
+import it.gov.pagopa.tkm.ms.parretriever.client.cards.model.response.*;
+import lombok.extern.log4j.*;
+import org.jetbrains.annotations.*;
 import org.springframework.batch.core.partition.support.Partitioner;
 import org.springframework.batch.item.ExecutionContext;
+import org.springframework.beans.factory.annotation.*;
+import org.springframework.stereotype.*;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Component
+@Log4j2
 public class CardPartitioner implements Partitioner {
 
+    @Autowired
+    private ParlessCardsClient parlessCardsClient;
+
+    @NotNull
     @Override
-    public Map<String, ExecutionContext> partition(int gridSize) {
+    public Map<String, ExecutionContext> partition(@Value("${batch-execution.max-number-of-threads}") int maxNumberOfThreads) {
         Map<String, ExecutionContext> result = new HashMap<>();
 
-        //Chiamo S2 per le carte
-        List</*TODO Card*/Object> cards = new ArrayList<>();
+        List<ParlessCard> cards = parlessCardsClient.getParlessCards(maxNumberOfThreads);
+        int cardsSize = cards.size();
 
-        int range = /*numero carte diviso gridSize*/10;
+        if (cardsSize < maxNumberOfThreads) {
+            maxNumberOfThreads = cardsSize;
+        }
+
+        int range = cardsSize / maxNumberOfThreads;
         int fromId = 1;
         int toId = range;
 
-        for (int i = 1; i <= gridSize; i++) {
+        for (int i = 1; i <= maxNumberOfThreads; i++) {
             ExecutionContext value = new ExecutionContext();
-
-            System.out.println("\nStarting : Thread" + i);
-            System.out.println("from : " + fromId);
-            System.out.println("to : " + toId);
+            log.debug("\nStarting : Thread" + i + " from : " + fromId + " to : " + toId);
 
             value.putInt("from", fromId);
             value.putInt("to", toId);
-
-            // give each thread a name, thread 1,2,3
             value.putString("name", "Thread" + i);
-
-            value.put("cardList", cards.subList(fromId, Math.min(toId, cards.size())));
+            value.put("cardList", cards.subList(fromId, Math.min(toId, cardsSize)));
 
             result.put("partition" + i, value);
 
             fromId = toId + 1;
             toId += range;
+            if (i == maxNumberOfThreads && cardsSize % maxNumberOfThreads > 0) {
+                toId += 1;
+            }
         }
-
         return result;
     }
 

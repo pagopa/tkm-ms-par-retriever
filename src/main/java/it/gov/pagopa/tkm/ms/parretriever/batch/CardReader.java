@@ -1,29 +1,26 @@
 package it.gov.pagopa.tkm.ms.parretriever.batch;
 
-import org.springframework.batch.core.annotation.BeforeRead;
+import it.gov.pagopa.tkm.ms.parretriever.client.cards.model.response.*;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayDeque;
 import java.util.List;
-import java.util.Random;
-import java.util.concurrent.atomic.AtomicInteger;
 
 @Component
 @StepScope
-public class CardReader implements ItemReader</*TODO Card*/Object> {
+public class CardReader implements ItemReader<ParlessCard> {
 
-    private final ArrayDeque</*TODO Card*/Object> coda = new ArrayDeque<>();
+    private final ArrayDeque<ParlessCard> queue = new ArrayDeque<>();
 
-    public CardReader(List<Object> lista) {
-        coda.addAll(lista);
+    public CardReader(List<ParlessCard> list) {
+        queue.addAll(list);
     }
 
     @Override
-    public /*TODO Card*/Object read() {
-        //Mappo le carte assegnate nel nostro DTO
-        return coda.pop();
+    public ParlessCard read() {
+        return queue.pop();
     }
 
 }

@@ -12,7 +12,7 @@ import static it.gov.pagopa.tkm.ms.parretriever.constant.ApiParams.*;
 public interface ParlessCardsClient {
 
     @GetMapping("/parless-cards")
-    List<ParlessCardResponse> getParlessCards(
+    List<ParlessCard> getParlessCards(
             @RequestParam(value = MAX_NUMBER_OF_CARDS) Integer maxNumberOfCards
     );
 

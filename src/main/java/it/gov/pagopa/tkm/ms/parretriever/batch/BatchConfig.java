@@ -1,5 +1,6 @@
 package it.gov.pagopa.tkm.ms.parretriever.batch;
 
+import it.gov.pagopa.tkm.ms.parretriever.client.cards.model.response.*;
 import org.springframework.batch.core.*;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
@@ -38,26 +39,26 @@ public class BatchConfig {
     @Autowired
     private JobExplorer jobExplorer;
 
-    @Scheduled(cron = /*TODO da file application*/"0 * * * * *")
+    @Scheduled(cron = "${core.parRetrieverService.getPar.scheduler}")
     public void run() throws Exception {
         jobLauncher.run(parFinderJob(), new JobParametersBuilder().toJobParameters());
     }
 
     @Bean
     @StepScope
-    public ItemReader</*TODO Card*/Object> reader(@Value("{#{stepExecutionContext['cardList']}") List</*TODO Card*/Object> cards) {
+    public ItemReader<ParlessCard> reader(@Value("{#{stepExecutionContext['cardList']}") List<ParlessCard> cards) {
         return new CardReader(cards);
     }
 
     @Bean
     @StepScope
-    public ItemProcessor</*TODO Card*/Object, String> processor() {
+    public ItemProcessor<ParlessCard, ParlessCard> processor() {
         return new CardProcessor();
     }
 
     @Bean
     @StepScope
-    public ItemWriter<String> writer() {
+    public ItemWriter<ParlessCard> writer() {
         return new CardWriter();
     }
 
@@ -85,7 +86,7 @@ public class BatchConfig {
     @Bean
     public Step parFinderStep() {
         return steps.get("parFinderStep")
-                .</*TODO Card*/Object, String>chunk(Integer.MAX_VALUE)
+                .<ParlessCard, ParlessCard>chunk(Integer.MAX_VALUE)
                 .reader(reader(null))
                 .processor(processor())
                 .writer(writer())

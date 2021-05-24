@@ -1,36 +1,49 @@
 package it.gov.pagopa.tkm.ms.parretriever.batch;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import it.gov.pagopa.tkm.ms.parretriever.visa.VisaApiClient;
+import it.gov.pagopa.tkm.ms.parretriever.client.cards.*;
+import it.gov.pagopa.tkm.ms.parretriever.client.cards.model.response.*;
+import it.gov.pagopa.tkm.ms.parretriever.client.consent.*;
+import it.gov.pagopa.tkm.ms.parretriever.client.consent.model.response.*;
+import org.jetbrains.annotations.*;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.item.ItemProcessor;
+import org.springframework.beans.factory.annotation.*;
 import org.springframework.stereotype.Component;
+
+import static it.gov.pagopa.tkm.ms.parretriever.client.consent.model.response.ConsentRequestEnum.Allow;
 
 @Component
 @StepScope
-public class CardProcessor implements ItemProcessor</*TODO Card*/Object, String> {
+public class CardProcessor implements ItemProcessor<ParlessCard, ParlessCard> {
 
-    private static final String MLE_CLIENT_PRIVATE_KEY_PATH = "";
-    private static final String MLE_SERVER_PUBLIC_CERTIFICATE_PATH = "";
-    private static final String KEY_ID = "";
+    @Autowired
+    private ParlessCardsClient parlessCardsClient;
+
+    @Autowired
+    private ConsentClient consentClient;
 
     @Override
-    public String process(/*TODO Card*/Object item) throws Exception {
-        //Controllo autorizzazione
-        //Controllo PAR assente
-        //Switch su circuito, e in caso di VISA:
-        String reqPayload = "{\n" +
-                "\"clientId\": \"0123456789012345678901234567999\",\n" +
-                "\"correlatnId\": \"0123456789012345678901234567000\",\n" +
-                "\"primaryAccount\": \"1234567898000000\",\n" +
-                "}";
-        String encryptedPayload = VisaApiClient.getEncryptedPayload(MLE_SERVER_PUBLIC_CERTIFICATE_PATH, reqPayload, KEY_ID);
-        String encryptedResponseStr = VisaApiClient.invokeAPI("/par/v1/inquiry", "POST", encryptedPayload, KEY_ID);
-        VisaApiClient.EncryptedResponse encryptedResponse = new ObjectMapper().readValue(encryptedResponseStr, VisaApiClient.EncryptedResponse.class);
-        System.out.println("Encrypted Response: \n" + encryptedResponse.getEncData());
-        String decryptedResponse = VisaApiClient.getDecryptedPayload(MLE_CLIENT_PRIVATE_KEY_PATH, encryptedResponse);
-        System.out.println("Decrypted Response: \n" + decryptedResponse);
-        return decryptedResponse;
+    public ParlessCard process(@NotNull ParlessCard parlessCard) throws Exception {
+        return getConsentForCard(parlessCard) ? parlessCard : null;
+    }
+
+    private GetConsentResponse getConsent(ParlessCard parlessCard) {
+        return consentClient.getConsent(parlessCard.getTaxCode(), parlessCard.getHpan(), null);
+    }
+
+    private boolean getConsentForCard(ParlessCard parlessCard) {
+        String hpan = parlessCard.getHpan();
+        GetConsentResponse consent = getConsent(parlessCard);
+        switch (consent.getConsent()) {
+            case Allow:
+                return true;
+            case Partial:
+                return consent.getDetails().stream().anyMatch(c ->
+                        c.getConsent().equals(Allow) && c.getHpan() != null && c.getHpan().equals(hpan));
+            case Deny:
+            default:
+                return false;
+        }
     }
 
 }

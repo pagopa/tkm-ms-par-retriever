@@ -6,8 +6,8 @@ import it.gov.pagopa.tkm.ms.parretriever.client.mastercard.api.util.ApiResponse;
 
 import com.google.gson.reflect.TypeToken;
 
-import it.gov.pagopa.tkm.ms.parretriever.client.mastercard.api.model.ParRequest;
-import it.gov.pagopa.tkm.ms.parretriever.client.mastercard.api.model.ParResponse;
+import it.gov.pagopa.tkm.ms.parretriever.client.mastercard.api.model.MastercardParRequest;
+import it.gov.pagopa.tkm.ms.parretriever.client.mastercard.api.model.MastercardParResponse;
 import lombok.*;
 import okhttp3.*;
 
@@ -20,7 +20,7 @@ public class ParApi {
 
     private final ApiClient localVarApiClient;
 
-    public Call getParPostCall(ParRequest parRequest) throws ApiException {
+    public Call getParPostCall(MastercardParRequest mastercardParRequest) throws ApiException {
         String localVarPath = "/getPaymentAccountReference";
 
         Map<String, String> localVarQueryParams = new HashMap<>();
@@ -41,21 +41,21 @@ public class ParApi {
         final String localVarContentType = localVarApiClient.selectHeaderContentType(localVarContentTypes);
         localVarHeaderParams.put("Content-Type", localVarContentType);
 
-        return localVarApiClient.buildCall(localVarPath, "POST", localVarQueryParams, localVarCollectionQueryParams, parRequest, localVarHeaderParams);
+        return localVarApiClient.buildCall(localVarPath, "POST", localVarQueryParams, localVarCollectionQueryParams, mastercardParRequest, localVarHeaderParams);
     }
 
-    private Call getParPostValidateBeforeCall(ParRequest parRequest) throws ApiException {
-        return getParPostCall(parRequest);
+    private Call getParPostValidateBeforeCall(MastercardParRequest mastercardParRequest) throws ApiException {
+        return getParPostCall(mastercardParRequest);
     }
 
-    public ParResponse getParPost(ParRequest parRequest) throws ApiException {
-        ApiResponse<ParResponse> localVarResp = getParPostWithHttpInfo(parRequest);
+    public MastercardParResponse getParPost(MastercardParRequest mastercardParRequest) throws ApiException {
+        ApiResponse<MastercardParResponse> localVarResp = getParPostWithHttpInfo(mastercardParRequest);
         return localVarResp.getData();
     }
 
-    public ApiResponse<ParResponse> getParPostWithHttpInfo(ParRequest parRequest) throws ApiException {
-        Call localVarCall = getParPostValidateBeforeCall(parRequest);
-        Type localVarReturnType = new TypeToken<ParResponse>(){}.getType();
+    public ApiResponse<MastercardParResponse> getParPostWithHttpInfo(MastercardParRequest mastercardParRequest) throws ApiException {
+        Call localVarCall = getParPostValidateBeforeCall(mastercardParRequest);
+        Type localVarReturnType = new TypeToken<MastercardParResponse>(){}.getType();
         return localVarApiClient.execute(localVarCall, localVarReturnType);
     }
 

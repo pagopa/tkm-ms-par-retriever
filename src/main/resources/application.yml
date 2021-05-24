@@ -5,13 +5,6 @@ spring:
     job:
       enabled: false
   kafka:
-    consumer:
-      bootstrap-servers: ${KAFKA_SERVERS}
-      group-id: ${KAFKA_GROUP_ID}
-      client-id: ${KAFKA_GROUP_ID}${INSTANCE_NUMBER:0}
-      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      enable-auto-commit: true
     producer:
       bootstrap-servers: ${KAFKA_SERVERS}
       group-id: ${KAFKA_GROUP_ID}
@@ -64,4 +57,6 @@ tkm-ms-urls:
   consent-manager: http://localhost:7777/tkm-ms-consent-manager
   card-manager: http://localhost:2001/tkm-ms-card-manager
 
-max-number-of-cards: ${MAX_NUMBER_OF_CARDS}
+batch-execution:
+  max-number-of-threads: ${MAX_NUMBER_OF_THREADS}
+  max-number-of-cards: ${MAX_NUMBER_OF_CARDS}
