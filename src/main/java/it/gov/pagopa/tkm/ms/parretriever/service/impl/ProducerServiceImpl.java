@@ -26,13 +26,14 @@ public final class ProducerServiceImpl implements ProducerService {
 
     @Override
     public void sendMessage(String message) throws PGPException {
-      String encryptedMessage = new String(pgpUtils.encrypt(message.getBytes(), true));
+        String encryptedMessage = new String(pgpUtils.encrypt(message.getBytes(), true));
         ListenableFuture<SendResult<String, String>> future = kafkaTemplate.send(TKM_READ_TOKEN_PAR_PAN_TOPIC, encryptedMessage);
         future.addCallback(new ListenableFutureCallback<SendResult<String, String>>() {
             @Override
             public void onSuccess(SendResult<String, String> result) {
                 log.info("Sent message=[" + message + "] with offset=[" + result.getRecordMetadata().offset() + "]");
             }
+
             @Override
             public void onFailure(@NotNull Throwable ex) {
                 log.info("Unable to send message=[" + message + "] due to : " + ex.getMessage());

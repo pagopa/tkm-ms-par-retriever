@@ -13,7 +13,6 @@ import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
 
-
 /**
  * Provides the implementation of the Amex specific HMAC algorithm.
  */
@@ -43,7 +42,7 @@ public class HmacAuthProvider extends BaseAuthProvider {
             resourcePath = url.getPath();
             host = url.getHost().trim().toLowerCase();
             port = (url.getPort() == -1) ? url.getDefaultPort() : url.getPort();
-            payload = (reqPayload == null)? "" : reqPayload;
+            payload = (reqPayload == null) ? "" : reqPayload;
             macAuth = generateMacHeader(getConfigurationValue(ConfigurationKeys.CLIENT_KEY),
                     getConfigurationValue(ConfigurationKeys.CLIENT_SECRET), resourcePath, host, port, httpMethod, payload);
             headers.put(AuthHeaderNames.AUTHORIZATION, macAuth);

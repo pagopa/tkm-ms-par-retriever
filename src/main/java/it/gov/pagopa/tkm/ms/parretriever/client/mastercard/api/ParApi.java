@@ -28,7 +28,7 @@ public class ParApi {
         Map<String, String> localVarHeaderParams = new HashMap<>();
 
         final String[] localVarAccepts = {
-            "application/json"
+                "application/json"
         };
         final String localVarAccept = localVarApiClient.selectHeaderAccept(localVarAccepts);
         if (localVarAccept != null) {
@@ -36,7 +36,7 @@ public class ParApi {
         }
 
         final String[] localVarContentTypes = {
-            "application/json"
+                "application/json"
         };
         final String localVarContentType = localVarApiClient.selectHeaderContentType(localVarContentTypes);
         localVarHeaderParams.put("Content-Type", localVarContentType);
@@ -55,7 +55,8 @@ public class ParApi {
 
     public ApiResponse<MastercardParResponse> getParPostWithHttpInfo(MastercardParRequest mastercardParRequest) throws ApiException {
         Call localVarCall = getParPostValidateBeforeCall(mastercardParRequest);
-        Type localVarReturnType = new TypeToken<MastercardParResponse>(){}.getType();
+        Type localVarReturnType = new TypeToken<MastercardParResponse>() {
+        }.getType();
         return localVarApiClient.execute(localVarCall, localVarReturnType);
     }
 

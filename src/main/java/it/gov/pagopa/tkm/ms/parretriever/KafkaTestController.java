@@ -26,7 +26,7 @@ public final class KafkaTestController {
                 "1234567890123456789",
                 "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
                 "uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu",
-               null,
+                null,
                 Collections.singletonList(new Token("vvvvvvvvvvvvvvvv", "hhhhhhhhhhhhh"))
         );
         producerService.sendMessage(readQueue.toString());

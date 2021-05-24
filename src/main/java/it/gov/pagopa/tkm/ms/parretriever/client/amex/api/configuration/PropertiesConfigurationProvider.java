@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-public class PropertiesConfigurationProvider implements  ConfigurationProvider{
+public class PropertiesConfigurationProvider implements ConfigurationProvider {
 
     private Properties properties;
 
@@ -18,18 +18,19 @@ public class PropertiesConfigurationProvider implements  ConfigurationProvider{
         return this.properties;
     }
 
-    public void setProperties(Properties p){
+    public void setProperties(Properties p) {
         this.properties = p;
     }
 
 
     @Override
     public String getValue(String key) {
-        return (String)this.properties.get(key);
+        return (String) this.properties.get(key);
     }
 
     /**
      * Loads property details from the specified file path.
+     *
      * @throws IOException
      */
     public void loadProperties(String propertyFilePath) throws IOException {
@@ -39,6 +40,7 @@ public class PropertiesConfigurationProvider implements  ConfigurationProvider{
 
     /**
      * Loads property details from the specified input stream.
+     *
      * @throws IOException
      */
     public void loadProperties(InputStream inputStream) throws IOException {

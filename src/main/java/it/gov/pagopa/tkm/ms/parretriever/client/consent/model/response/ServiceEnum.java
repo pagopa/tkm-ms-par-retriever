@@ -5,5 +5,5 @@ public enum ServiceEnum {
     BPD,
     PAGOPA,
     FA
-    
+
 }

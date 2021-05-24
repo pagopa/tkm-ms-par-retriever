@@ -23,7 +23,7 @@ public class PgpUtils {
     private PgpUtils() {
     }
 
-   @Value("${keyvault.readQueuePrvPgpKey}")
+    @Value("${keyvault.readQueuePrvPgpKey}")
     private String privateKey;
 
     @Value("${keyvault.readQueuePubPgpKey}")

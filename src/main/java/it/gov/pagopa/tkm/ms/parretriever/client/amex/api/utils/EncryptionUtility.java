@@ -101,7 +101,7 @@ public class EncryptionUtility {
                 KeyFactory keyFactory = KeyFactory.getInstance("RSA");
                 return keyFactory.generatePrivate(new PKCS8EncodedKeySpec(Base64.decode(keyStr)));
             }
-        } catch(Exception e) {
+        } catch (Exception e) {
             throw new CryptoException("Exception creating key: " + e.getMessage(), e);
         }
     }
