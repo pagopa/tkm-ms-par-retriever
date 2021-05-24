@@ -1,10 +1,10 @@
 package it.gov.pagopa.tkm.ms.parretriever.service;
 
-import org.springframework.stereotype.Service;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import org.bouncycastle.openpgp.PGPException;
 
-@Service
 public interface ParRetrieverService {
 
-    void getPar() throws Exception;
+    void getPar() throws PGPException, JsonProcessingException;
 
 }

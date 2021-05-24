@@ -6,6 +6,7 @@ import com.mastercard.developer.utils.*;
 import it.gov.pagopa.tkm.ms.parretriever.client.mastercard.api.*;
 import it.gov.pagopa.tkm.ms.parretriever.client.mastercard.api.model.*;
 import it.gov.pagopa.tkm.ms.parretriever.client.mastercard.api.util.*;
+import it.gov.pagopa.tkm.ms.parretriever.client.mastercard.util.EncryptionUtils;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.core.io.*;
 import org.springframework.stereotype.*;

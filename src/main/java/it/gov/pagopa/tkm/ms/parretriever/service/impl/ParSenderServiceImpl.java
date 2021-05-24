@@ -13,38 +13,39 @@ import it.gov.pagopa.tkm.ms.parretriever.model.topic.ReadQueue;
 import it.gov.pagopa.tkm.ms.parretriever.model.topic.Token;
 import it.gov.pagopa.tkm.ms.parretriever.service.ParSenderService;
 import org.bouncycastle.openpgp.PGPException;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.*;
 
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static it.gov.pagopa.tkm.ms.parretriever.constant.Constants.MAX_NUMBER_OF_CARDS;
-
 public class ParSenderServiceImpl implements ParSenderService {
 
     @Autowired
-    ParlessCardsClient parlessCardsClient;
+    private ParlessCardsClient parlessCardsClient;
 
     @Autowired
-    ConsentClient consentClient;
+    private ConsentClient consentClient;
 
     @Autowired
-    MastercardParClient mastercardParClient;
+    private MastercardParClient mastercardParClient;
 
     @Autowired
-    ProducerService producerService;
+    private ProducerService producerService;
 
     @Autowired
-    ObjectMapper objectMapper;
+    private ObjectMapper objectMapper;
+
+    @Value("${max-number-of-cards}")
+    private Integer maxNumberOfCards;
+
     //RETRIEVE CARDS LIST FROM S2
     private List<ParlessCardResponse> getParlessCards() {
-            return parlessCardsClient.getParlessCards(MAX_NUMBER_OF_CARDS);
+            return parlessCardsClient.getParlessCards(maxNumberOfCards);
     }
 
     private GetConsentResponse getConsent(ParlessCardResponse parlessCardResponse) {
         return consentClient.getConsent(parlessCardResponse.getTaxCode(), parlessCardResponse.getHpan(), null);
-
     }
 
     private String getParValueFromCircuit(CircuitEnum circuit, String pan){
@@ -73,13 +74,13 @@ public class ParSenderServiceImpl implements ParSenderService {
             GetConsentResponse consent = getConsent(parlessCardResponse);
 
             switch(consent.getConsent()){
-                case DENY: continue parlessCards;
-                case ALLOW:
+                case Deny: continue parlessCards;
+                case Allow:
                     par= getParValueFromCircuit(circuit,pan);
                     break;
-                case PARTIAL:
-                    Boolean userAllows = consent.getDetails().stream()
-                            .anyMatch(c->c.getConsent().equals(ConsentRequestEnum.ALLOW));
+                case Partial:
+                    boolean userAllows = consent.getDetails().stream()
+                            .anyMatch(c->c.getConsent().equals(ConsentRequestEnum.Allow));
                     if (!userAllows){
                         continue parlessCards;
                     }
@@ -96,8 +97,6 @@ public class ParSenderServiceImpl implements ParSenderService {
                     getTokenListFromStringSet(parlessCardResponse.getTokens()));
 
             producerService.sendMessageV2(objectMapper.writeValueAsString(readQueue));
-
-
         }
 
     }
