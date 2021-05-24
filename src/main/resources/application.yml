@@ -1,38 +1,47 @@
-server:
-  port: 8080
-
 spring:
   application:
-    name: "@project.parent.artifactId@"
-    version: "@project.version@"
-  profiles:
-    include:
-      # TO enable italian documentations
-      - swaggerIT
-  batch:
-    job:
-      enabled: false
+    name: Tkm Par Retriever ${INSTANCE_NUMBER:0}
 
-info:
-  build:
-    artifact: "@project.parent.artifactId@"
-    name: "@project.parent.artifactId@"
-    description: "@project.description@"
-    version: "@project.version@"
-
-error-manager:
-  enabled: true
-
-meda:
-  core:
-    sessioncontext:
-      enabled: false
+server:
+  port: ${SERVER_PORT:8080}
+  servlet:
+    context-path: /tkm-ms-par-retriever
 
 logging:
   level:
-    it.gov.pagopa.tkm.ms.parretriever: DEBUG
+    root: ${LOGGING_LEVEL:INFO}
+  pattern:
+    level: "${LOGGING_PATTERN:%p [${spring.application.name}][%X{traceId}]}"
 
 core:
   parRetrieverService:
     getPar:
       scheduler: ${PAR_RETRIEVER_GET_PAR_SCHEDULER:0 * * * * *}
+
+azure:
+  keyvault:
+    enabled: true
+    client-id: ${AZURE_KEYVAULT_CLIENT_ID}
+    client-key: ${AZURE_KEYVAULT_CLIENT_KEY}
+    tenant-id: ${AZURE_KEYVAULT_TENANT_ID}
+    uri: ${AZURE_KEYVAULT_URI}
+  storage:
+    default-endpoints-protocol: https
+    account-name: ${AZURE_STORAGE_ACCOUNT_NAME}
+    account-key: ${AZURE_STORAGE_ACCOUNT_KEY}
+    blob-endpoint: ${AZURE_STORAGE_ENDPOINT}
+
+keyvault:
+  mastercardResponsePrivateKey: ${${profile:prod}-mastercardResponsePrivateKey}
+  mastercardApiKey: ${${profile:prod}-mastercardApiKey}
+  mastercardKeyStorePwd: ${${profile:prod}-mastercardKeyStorePwd}
+
+blobstorage:
+  mastercard:
+    publicEncryptionKey: azure-blob://${BLOB_STORAGE_NAME}/Public-Key-Encrypt.crt
+    signingKeyCert: azure-blob://${BLOB_STORAGE_NAME}/Get_PAR-sandbox.p12
+
+tkm-ms-urls:
+  consent-manager: http://localhost:7777/tkm-ms-consent-manager
+  card-manager: http://localhost:2001/tkm-ms-card-manager
+  card-manager: http://localhost:2001/tkm-ms-card-manager

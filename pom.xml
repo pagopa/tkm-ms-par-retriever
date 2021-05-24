@@ -7,20 +7,79 @@
     <artifactId>par-retriever</artifactId>
     <version>1.0-SNAPSHOT</version>
 
+    <parent>
+        <groupId>it.gov.pagopa.tkm.ms</groupId>
+        <artifactId>starter-parent</artifactId>
+        <version>1.12</version>
+    </parent>
+
+    <properties>
+        <okhttp-version>4.9.1</okhttp-version>
+        <spring.azure-version>3.2.0</spring.azure-version>
+    </properties>
+
     <dependencies>
-        <dependency>
-            <groupId>io.swagger</groupId>
-            <artifactId>swagger-annotations</artifactId>
-            <version>1.6.2</version>
-        </dependency>
-        <dependency>
-            <groupId>org.yaml</groupId>
-            <artifactId>snakeyaml</artifactId>
-            <version>1.28</version>
-        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-openfeign</artifactId>
+            <version>3.0.2</version>
+        </dependency>
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>okhttp</artifactId>
+            <version>${okhttp-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.8.6</version>
+        </dependency>
+        <dependency>
+            <groupId>com.mastercard.developer</groupId>
+            <artifactId>oauth1-signer</artifactId>
+            <version>1.5.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.mastercard.developer</groupId>
+            <artifactId>client-encryption</artifactId>
+            <version>1.4.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.azure.spring</groupId>
+            <artifactId>azure-spring-boot-starter-keyvault-secrets</artifactId>
+            <version>${spring.azure-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.azure.spring</groupId>
+            <artifactId>azure-spring-boot-starter-storage</artifactId>
+            <version>${spring.azure-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.projectreactor</groupId>
+            <artifactId>reactor-core</artifactId>
+            <version>3.4.6</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-openfeign-core</artifactId>
+            <version>3.0.2</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcpg-jdk15on</artifactId>
+            <version>1.54</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.kafka</groupId>
+            <artifactId>spring-kafka</artifactId>
+            <version>2.7.0</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.nimbusds</groupId>
@@ -37,24 +96,7 @@
             <artifactId>spring-batch-core</artifactId>
             <version>4.3.2</version>
         </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-oxm</artifactId>
-            <version>5.2.4.RELEASE</version>
-        </dependency>
-
     </dependencies>
-
-    <parent>
-        <groupId>it.gov.pagopa.tkm.ms</groupId>
-        <artifactId>starter-parent</artifactId>
-        <version>1.12</version>
-    </parent>
-
-    <properties>
-        <java.version>1.8</java.version>
-        <tomcat.version>8.5.43</tomcat.version>
-    </properties>
 
     <build>
         <finalName>tkm-ms-${project.artifactId}-${project.version}</finalName>
@@ -65,10 +107,12 @@
                 <version>0.8.7</version>
                 <configuration>
                     <excludes>
-                        <exclude>it/gov/pagopa/tkm/ms/parretriever/config/**/*.class</exclude>
-                        <exclude>it/gov/pagopa/tkm/ms/parretriever/constant/**/*.class</exclude>
-                        <exclude>it/gov/pagopa/tkm/ms/parretriever/exception/**/*.class</exclude>
-                        <exclude>it/gov/pagopa/tkm/ms/parretriever/ParRetrieverApplication</exclude>
+                        <exclude>it/gov/pagopa/tkm/ms/consentmanager/config/**/*.class</exclude>
+                        <exclude>it/gov/pagopa/tkm/ms/consentmanager/repository/**/*.class</exclude>
+                        <exclude>it/gov/pagopa/tkm/ms/consentmanager/model/**/*.class</exclude>
+                        <exclude>it/gov/pagopa/tkm/ms/consentmanager/constant/**/*.class</exclude>
+                        <exclude>it/gov/pagopa/tkm/ms/consentmanager/exception/**/*.class</exclude>
+                        <exclude>it/pagopa/ParRetrieverApplication</exclude>
                     </excludes>
                 </configuration>
                 <executions>
