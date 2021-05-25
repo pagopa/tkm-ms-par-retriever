@@ -47,11 +47,22 @@ keyvault:
   mastercardResponsePrivateKey: ${${profile:prod}-mastercardResponsePrivateKey}
   mastercardApiKey: ${${profile:prod}-mastercardApiKey}
   mastercardKeyStorePwd: ${${profile:prod}-mastercardKeyStorePwd}
+  amexClientId: ${${profile:prod}-amexClientId}
+  amexClientSecret: ${${profile:prod}-amexClientSecret}
+  visaClientId: ${${profile:prod}-visaClientId}
+  visaKeyId: ${${profile:prod}-visaKeyId}
+  visaKeyStorePassword: ${${profile:prod}-visaKeyStorePassword}
+  visaPassword: ${${profile:prod}-visaPassword}
+  visaPrivateKey: ${${profile:prod}-visaPrivateKey}
+  visaServerCertificate: ${${profile:prod}-visaServerCertificate}
+  visaUserId: ${${profile:prod}-visaUserId}
 
 blobstorage:
   mastercard:
     publicEncryptionKey: azure-blob://${BLOB_STORAGE_NAME}/Public-Key-Encrypt.crt
     signingKeyCert: azure-blob://${BLOB_STORAGE_NAME}/Get_PAR-sandbox.p12
+  visa:
+    publicCert: azure-blob://${BLOB_STORAGE_NAME}/myProject_keyAndCertBundle.p12
 
 tkm-ms-urls:
   consent-manager: http://localhost:7777/tkm-ms-consent-manager

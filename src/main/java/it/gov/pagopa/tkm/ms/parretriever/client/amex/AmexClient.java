@@ -20,14 +20,18 @@ public class AmexClient {
     @Autowired
     private ObjectMapper mapper;
 
-    private static final String CLIENT_ID = "";
-    private static final String CLIENT_SECRET = "";
-    private static final String RETRIEVE_PAR_URL = "https://api.qa.americanexpress.com/payments/digital/v2/product_account_reference";
+    @Value("${keyvault.amexClientId}")
+    private String clientId;
+
+    @Value("${keyvault.amexClientSecret}")
+    private String clientSecret;
+
+    private final static String RETRIEVE_PAR_URL = "https://api.qa.americanexpress.com/payments/digital/v2/product_account_reference";
 
     public String getPar(String pan) throws IOException {
         Properties properties = new Properties();
-        properties.put("CLIENT_KEY", CLIENT_ID);
-        properties.put("CLIENT_SECRET", CLIENT_SECRET);
+        properties.put("CLIENT_KEY", clientId);
+        properties.put("CLIENT_SECRET", clientSecret);
         properties.put("RETRIEVE_PAR_URL", RETRIEVE_PAR_URL);
         PropertiesConfigurationProvider configurationProvider = new PropertiesConfigurationProvider();
         configurationProvider.setProperties(properties);
@@ -37,8 +41,10 @@ public class AmexClient {
                 .build();
 
         String url = configurationProvider.getValue("RETRIEVE_PAR_URL");
-
         HttpUrl httpUrl = HttpUrl.parse(url);
+        if (httpUrl == null) {
+            throw new IOException("HttpUrl not parsable");
+        }
         HttpUrl.Builder httpUrlBuilder = httpUrl.newBuilder();
         String amexParRequest = mapper.writeValueAsString(new AmexParRequest(pan));
         Map<String, String> headers = authProvider.generateAuthHeaders(amexParRequest, url, "POST");
@@ -52,8 +58,9 @@ public class AmexClient {
         Request request = builder.build();
         OkHttpClient httpClient = new OkHttpClient.Builder().build();
         Response response = httpClient.newCall(request).execute();
-        if (response.body() != null) {
-            AmexParResponse amexParResponse = mapper.readValue(response.body().string(), AmexParResponse.class);
+        ResponseBody responseBody = response.body();
+        if (responseBody != null) {
+            AmexParResponse amexParResponse = mapper.readValue(responseBody.string(), AmexParResponse.class);
             return amexParResponse.getPar();
         }
         return null;

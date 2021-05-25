@@ -4,12 +4,13 @@ import com.fasterxml.jackson.databind.*;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.RSADecrypter;
 import com.nimbusds.jose.crypto.RSAEncrypter;
-import com.nimbusds.jose.util.IOUtils;
 import it.gov.pagopa.tkm.ms.parretriever.client.visa.model.request.*;
 import it.gov.pagopa.tkm.ms.parretriever.client.visa.model.response.*;
+import lombok.extern.log4j.*;
 import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.springframework.beans.factory.annotation.*;
+import org.springframework.core.io.*;
 import org.springframework.stereotype.*;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -34,24 +35,41 @@ import java.text.ParseException;
 import java.util.*;
 
 @Component
+@Log4j2
 public class VisaClient {
 
     @Autowired
     private ObjectMapper mapper;
 
-    private static final String KEYSTORE_PATH = "";
-    private static final String KEYSTORE_PASSWORD = "";
-    private static final String USER_ID = "";
-    private static final String PASSWORD = "";
+    @Value("${blobstorage.visa.publicCert}")
+    private Resource publicCert;
+
+    @Value("${keyvault.visaKeyStorePassword}")
+    private String keystorePassword;
+
+    @Value("${keyvault.visaUserId}")
+    private String userId;
+
+    @Value("${keyvault.visaPassword}")
+    private String password;
+
+    @Value("${keyvault.visaPrivateKey}")
+    private String mleClientPrivateKey;
+
+    @Value("${keyvault.visaServerCertificate}")
+    private String mleServerPublicCertificatePath;
+
+    @Value("${keyvault.visaKeyId}")
+    private String keyId;
+
+    @Value("${keyvault.visaClientId}")
+    private String clientId;
+
     private static final String VISA_PAR_API_PATH = "/par/v1/inquiry";
-    private static final String MLE_CLIENT_PRIVATE_KEY_PATH = "";
-    private static final String MLE_SERVER_PUBLIC_CERTIFICATE_PATH = "";
-    private static final String KEY_ID = "";
-    private static final String CLIENT_ID = "";
 
     public String getPar(String pan) throws Exception {
         VisaParRequest visaParRequest = new VisaParRequest(
-                CLIENT_ID,
+                clientId,
                 UUID.randomUUID().toString(),
                 pan);
         String reqPayload = mapper.writeValueAsString(visaParRequest);
@@ -66,16 +84,12 @@ public class VisaClient {
 
     private VisaParEncryptedResponse invokeAPI(String payload) throws Exception {
         HttpURLConnection con = (HttpURLConnection) new URL(VISA_PAR_API_PATH).openConnection();
-        KeyStore keystore = KeyStore.getInstance(KeyStore.getDefaultType());
-        FileInputStream keystoreInputStream = new FileInputStream(KEYSTORE_PATH);
-        keystore.load(keystoreInputStream, KEYSTORE_PASSWORD.toCharArray());
-        keystoreInputStream.close();
         KeyStore ks = KeyStore.getInstance("PKCS12");
-        try (FileInputStream fis = new FileInputStream(KEYSTORE_PATH)) {
-            ks.load(fis, KEYSTORE_PASSWORD.toCharArray());
+        try (FileInputStream fis = new FileInputStream(publicCert.getFile())) {
+            ks.load(fis, keystorePassword.toCharArray());
         }
         KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");
-        kmf.init(ks, KEYSTORE_PASSWORD.toCharArray());
+        kmf.init(ks, keystorePassword.toCharArray());
         SSLContext sslContext = SSLContext.getInstance("TLS");
         sslContext.init(kmf.getKeyManagers(), null, null);
         if (con instanceof HttpsURLConnection) {
@@ -84,8 +98,8 @@ public class VisaClient {
         con.setRequestMethod("POST");
         con.setRequestProperty("Content-Type", "application/json");
         con.setRequestProperty("Accept", "application/json");
-        con.setRequestProperty("keyId", VisaClient.KEY_ID);
-        byte[] encodedAuth = Base64.getEncoder().encode((USER_ID + ":" + PASSWORD).getBytes(StandardCharsets.UTF_8));
+        con.setRequestProperty("keyId", keyId);
+        byte[] encodedAuth = Base64.getEncoder().encode((userId + ":" + password).getBytes(StandardCharsets.UTF_8));
         String authHeaderValue = "Basic " + new String(encodedAuth);
         con.setRequestProperty("Authorization", authHeaderValue);
         if (payload != null && payload.trim().length() > 0) {
@@ -97,13 +111,12 @@ public class VisaClient {
             }
         }
         int status = con.getResponseCode();
-        System.out.println("Http Status: " + status);
         BufferedReader in;
         if (status == 200) {
             in = new BufferedReader(new InputStreamReader(con.getInputStream()));
         } else {
             in = new BufferedReader(new InputStreamReader(con.getErrorStream()));
-            System.out.println("Two-Way (Mutual) SSL test failed");
+            log.error("Two-Way (Mutual) SSL test failed");
         }
         String response;
         StringBuilder content = new StringBuilder();
@@ -112,14 +125,13 @@ public class VisaClient {
         }
         in.close();
         con.disconnect();
-        con.getHeaderFields().forEach((k, v) -> System.out.println(k + " : " + v));
         String responseAsString = content.toString();
         return mapper.readValue(responseAsString, VisaParEncryptedResponse.class);
     }
 
     private String getEncryptedPayload(String requestPayload) throws CertificateException, JOSEException, IOException {
         JWEHeader.Builder headerBuilder = new JWEHeader.Builder(JWEAlgorithm.RSA_OAEP_256, EncryptionMethod.A128GCM);
-        headerBuilder.keyID(VisaClient.KEY_ID);
+        headerBuilder.keyID(keyId);
         headerBuilder.customParam("iat", System.currentTimeMillis());
         JWEObject jweObject = new JWEObject(headerBuilder.build(), new Payload(requestPayload));
         jweObject.encrypt(new RSAEncrypter(getRSAPublicKey()));
@@ -135,11 +147,10 @@ public class VisaClient {
         return mapper.readValue(response, VisaParDecryptedResponse.class);
     }
 
-    private RSAPublicKey getRSAPublicKey() throws CertificateException, IOException {
+    private RSAPublicKey getRSAPublicKey() throws CertificateException {
         final String BEGIN_CERT = "-----BEGIN CERTIFICATE-----";
         final String END_CERT = "-----END CERTIFICATE-----";
-        final String pemEncodedPublicKey = IOUtils.readFileToString(new File(VisaClient.MLE_SERVER_PUBLIC_CERTIFICATE_PATH), StandardCharsets.UTF_8);
-        final com.nimbusds.jose.util.Base64 base64 = new com.nimbusds.jose.util.Base64(pemEncodedPublicKey.replaceAll(BEGIN_CERT, "").replaceAll(END_CERT, ""));
+        final com.nimbusds.jose.util.Base64 base64 = new com.nimbusds.jose.util.Base64(mleServerPublicCertificatePath.replaceAll(BEGIN_CERT, "").replaceAll(END_CERT, ""));
         final Certificate cf = CertificateFactory.getInstance("X.509").generateCertificate(new ByteArrayInputStream(base64.decode()));
         return (RSAPublicKey) cf.getPublicKey();
     }
@@ -147,9 +158,7 @@ public class VisaClient {
     private PrivateKey getRSAPrivateKey() throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
         final String BEGIN_RSA_PRIVATE_KEY = "-----BEGIN RSA PRIVATE KEY-----";
         final String END_RSA_PRIVATE_KEY = "-----END RSA PRIVATE KEY-----";
-
-        final String pemEncodedKey = IOUtils.readFileToString(new File(VisaClient.MLE_CLIENT_PRIVATE_KEY_PATH), StandardCharsets.UTF_8);
-        final com.nimbusds.jose.util.Base64 base64 = new com.nimbusds.jose.util.Base64(pemEncodedKey.replaceAll(BEGIN_RSA_PRIVATE_KEY, "").replaceAll(END_RSA_PRIVATE_KEY, ""));
+        final com.nimbusds.jose.util.Base64 base64 = new com.nimbusds.jose.util.Base64(mleClientPrivateKey.replaceAll(BEGIN_RSA_PRIVATE_KEY, "").replaceAll(END_RSA_PRIVATE_KEY, ""));
         final ASN1Sequence primitive = (ASN1Sequence) ASN1Sequence.fromByteArray(base64.decode());
         final Enumeration<?> e = primitive.getObjects();
         final BigInteger v = ((ASN1Integer) e.nextElement()).getValue();

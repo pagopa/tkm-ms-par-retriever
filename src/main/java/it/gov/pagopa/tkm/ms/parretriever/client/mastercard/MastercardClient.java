@@ -7,13 +7,12 @@ import it.gov.pagopa.tkm.ms.parretriever.client.mastercard.api.*;
 import it.gov.pagopa.tkm.ms.parretriever.client.mastercard.api.model.*;
 import it.gov.pagopa.tkm.ms.parretriever.client.mastercard.api.util.*;
 import it.gov.pagopa.tkm.ms.parretriever.client.mastercard.util.EncryptionUtils;
+import it.gov.pagopa.tkm.ms.parretriever.client.util.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.core.io.*;
 import org.springframework.stereotype.*;
-import org.springframework.util.*;
 
 import java.io.*;
-import java.nio.charset.*;
 import java.security.cert.*;
 import java.security.cert.Certificate;
 import java.time.*;
@@ -58,7 +57,7 @@ public class MastercardClient {
         return FieldLevelEncryptionConfigBuilder.aFieldLevelEncryptionConfig()
                 .withEncryptionPath("$.encryptedPayload.encryptedData", "$.encryptedPayload")
                 .withDecryptionPath("$.encryptedPayload", "$.encryptedPayload.encryptedData")
-                .withEncryptionCertificate(loadEncryptionCertificate(resourceAsString(publicEncryptionKey).getBytes()))
+                .withEncryptionCertificate(loadEncryptionCertificate(ClientUtils.resourceAsString(publicEncryptionKey).getBytes()))
                 .withDecryptionKey(EncryptionUtils.loadDecryptionKey(privateDecryptionKey))
                 .withOaepPaddingDigestAlgorithm("SHA-512")
                 .withEncryptedValueFieldName("encryptedData")
@@ -87,10 +86,6 @@ public class MastercardClient {
     private Certificate loadEncryptionCertificate(byte[] certificate) throws CertificateException {
         CertificateFactory factory = CertificateFactory.getInstance("X.509");
         return factory.generateCertificate(new ByteArrayInputStream(certificate));
-    }
-
-    private String resourceAsString(Resource resource) throws IOException {
-        return StreamUtils.copyToString(resource.getInputStream(), Charset.defaultCharset());
     }
 
 }
