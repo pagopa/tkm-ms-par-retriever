@@ -1,4 +1,4 @@
-package it.gov.pagopa.tkm.ms.parretriever.batch;
+package it.gov.pagopa.tkm.ms.parretriever.service.impl;
 
 import it.gov.pagopa.tkm.ms.parretriever.client.cards.*;
 import it.gov.pagopa.tkm.ms.parretriever.client.cards.model.response.*;

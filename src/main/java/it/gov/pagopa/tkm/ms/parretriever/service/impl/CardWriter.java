@@ -1,4 +1,4 @@
-package it.gov.pagopa.tkm.ms.parretriever.batch;
+package it.gov.pagopa.tkm.ms.parretriever.service.impl;
 
 import com.fasterxml.jackson.databind.*;
 import it.gov.pagopa.tkm.ms.parretriever.client.amex.*;
@@ -7,7 +7,6 @@ import it.gov.pagopa.tkm.ms.parretriever.client.mastercard.*;
 import it.gov.pagopa.tkm.ms.parretriever.client.visa.*;
 import it.gov.pagopa.tkm.ms.parretriever.constant.*;
 import it.gov.pagopa.tkm.ms.parretriever.model.topic.*;
-import it.gov.pagopa.tkm.ms.parretriever.service.impl.*;
 import org.jetbrains.annotations.*;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.item.ItemWriter;

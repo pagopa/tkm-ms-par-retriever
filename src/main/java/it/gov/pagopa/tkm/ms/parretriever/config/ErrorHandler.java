@@ -15,7 +15,7 @@ public class ErrorHandler {
     @ExceptionHandler(ParRetrieverException.class)
     public ResponseEntity<ErrorCodeEnum> handleParRetrieverException(ParRetrieverException parRetrieverException) {
         log.error(parRetrieverException.getMessage());
-        return ResponseEntity.badRequest().body(parRetrieverException.getErrorCodeEnum());
+        return ResponseEntity.badRequest().body(parRetrieverException.getErrorCode());
     }
 
     @ExceptionHandler(Exception.class)

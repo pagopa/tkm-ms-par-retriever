@@ -26,7 +26,7 @@ public class AmexClient {
     @Value("${keyvault.amexClientSecret}")
     private String clientSecret;
 
-    private final static String RETRIEVE_PAR_URL = "https://api.qa.americanexpress.com/payments/digital/v2/product_account_reference";
+    private static final String RETRIEVE_PAR_URL = "https://api.qa.americanexpress.com/payments/digital/v2/product_account_reference";
 
     public String getPar(String pan) throws IOException {
         Properties properties = new Properties();

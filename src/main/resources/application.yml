@@ -1,6 +1,6 @@
 spring:
   application:
-    name: Tkm Par Retriever ${INSTANCE_NUMBER:0}
+    name: Tkm Par Retriever ${HOSTNAME:0}
   batch:
     job:
       enabled: false
@@ -8,7 +8,7 @@ spring:
     producer:
       bootstrap-servers: ${KAFKA_SERVERS}
       group-id: ${KAFKA_GROUP_ID}
-      client-id: ${KAFKA_GROUP_ID}${INSTANCE_NUMBER:0}
+      client-id: ${KAFKA_GROUP_ID}${HOSTNAME:0}
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
 

@@ -1,4 +1,4 @@
-package it.gov.pagopa.tkm.ms.parretriever.batch;
+package it.gov.pagopa.tkm.ms.parretriever.service.impl;
 
 import it.gov.pagopa.tkm.ms.parretriever.client.cards.*;
 import it.gov.pagopa.tkm.ms.parretriever.client.cards.model.response.*;
@@ -23,7 +23,7 @@ public class CardProcessor implements ItemProcessor<ParlessCard, ParlessCard> {
     private ConsentClient consentClient;
 
     @Override
-    public ParlessCard process(@NotNull ParlessCard parlessCard) throws Exception {
+    public ParlessCard process(@NotNull ParlessCard parlessCard) {
         return getConsentForCard(parlessCard) ? parlessCard : null;
     }
 

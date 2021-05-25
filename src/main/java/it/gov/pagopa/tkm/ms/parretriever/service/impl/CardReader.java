@@ -1,4 +1,4 @@
-package it.gov.pagopa.tkm.ms.parretriever.batch;
+package it.gov.pagopa.tkm.ms.parretriever.service.impl;
 
 import it.gov.pagopa.tkm.ms.parretriever.client.cards.model.response.*;
 import org.springframework.batch.core.configuration.annotation.StepScope;

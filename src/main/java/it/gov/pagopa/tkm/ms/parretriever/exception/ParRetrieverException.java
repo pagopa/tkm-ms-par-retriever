@@ -7,11 +7,11 @@ import lombok.*;
 @EqualsAndHashCode(callSuper = false)
 public class ParRetrieverException extends RuntimeException {
 
-    private ErrorCodeEnum errorCodeEnum;
+    private ErrorCodeEnum errorCode;
 
-    public ParRetrieverException(ErrorCodeEnum errorCodeEnum) {
-        super(errorCodeEnum.getErrorCode() + " - " + errorCodeEnum.getDescription());
-        setErrorCodeEnum(errorCodeEnum);
+    public ParRetrieverException(ErrorCodeEnum ec) {
+        super(ec.getErrorCode() + " - " + ec.getDescription());
+        errorCode = ec;
     }
 
 }
