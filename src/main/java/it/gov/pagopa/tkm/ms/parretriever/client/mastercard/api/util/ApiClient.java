@@ -2,6 +2,7 @@ package it.gov.pagopa.tkm.ms.parretriever.client.mastercard.api.util;
 
 import lombok.*;
 import okhttp3.*;
+
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
@@ -21,7 +22,7 @@ public class ApiClient {
     public ApiClient(Interceptor... interceptors) {
         json = new JSON();
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
-        for (Interceptor interceptor: interceptors) {
+        for (Interceptor interceptor : interceptors) {
             builder.addInterceptor(interceptor);
         }
         httpClient = builder.build();

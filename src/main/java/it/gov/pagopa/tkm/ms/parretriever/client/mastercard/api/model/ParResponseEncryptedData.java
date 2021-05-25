@@ -6,9 +6,9 @@ import lombok.*;
 @AllArgsConstructor
 public class ParResponseEncryptedData {
 
-  private String paymentAccountReference;
+    private String paymentAccountReference;
 
-  private String dataValidUntilTimestamp;
+    private String dataValidUntilTimestamp;
 
 }
 

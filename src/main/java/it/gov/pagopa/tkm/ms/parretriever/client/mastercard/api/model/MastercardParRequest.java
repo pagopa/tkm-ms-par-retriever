@@ -6,9 +6,9 @@ import lombok.*;
 @AllArgsConstructor
 public class MastercardParRequest {
 
-  private String requestId;
+    private String requestId;
 
-  private ParRequestEncryptedPayload encryptedPayload;
+    private ParRequestEncryptedPayload encryptedPayload;
 
 }
 

@@ -42,7 +42,7 @@ public class CardWriter implements ItemWriter<ParlessCard> {
     }
 
     private String getParFromCircuit(CircuitEnum circuit, String pan) throws Exception {
-        switch(circuit) {
+        switch (circuit) {
             //case DINERS:
             //case MAESTRO:
             case MASTERCARD:
@@ -72,8 +72,8 @@ public class CardWriter implements ItemWriter<ParlessCard> {
         }
     }
 
-    private List<Token> getTokenListFromStringSet(Set<String> tokens){
-        return  tokens.stream().map(z-> new Token(z, null)).collect(Collectors.toList());
+    private List<Token> getTokenListFromStringSet(Set<String> tokens) {
+        return tokens.stream().map(z -> new Token(z, null)).collect(Collectors.toList());
     }
 
 }

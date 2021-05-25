@@ -11,7 +11,7 @@ public abstract class BaseAuthProvider implements AuthProvider {
     protected ConfigurationProvider configProvider;
 
 
-    public String getRequestUUID(){
+    public String getRequestUUID() {
         return UUID.randomUUID().toString();
     }
 

@@ -6,7 +6,7 @@ import lombok.*;
 @AllArgsConstructor
 public class ParResponseEncryptedPayload {
 
-  private ParResponseEncryptedData encryptedData;
+    private ParResponseEncryptedData encryptedData;
 
 }
 

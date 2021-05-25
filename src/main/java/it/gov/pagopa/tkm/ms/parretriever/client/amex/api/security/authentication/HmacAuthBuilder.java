@@ -4,13 +4,13 @@ public class HmacAuthBuilder extends BaseAuthBuilder {
 
     private HmacAuthProvider provider;
 
-    private HmacAuthBuilder(){
+    private HmacAuthBuilder() {
         super();
         this.provider = new HmacAuthProvider();
     }
 
 
-    public static final HmacAuthBuilder getBuilder(){
+    public static final HmacAuthBuilder getBuilder() {
         return new HmacAuthBuilder();
     }
 
@@ -19,7 +19,7 @@ public class HmacAuthBuilder extends BaseAuthBuilder {
         HmacAuthProvider provider = new HmacAuthProvider();
         provider.setConfiguration(super.getConfiguration());
 
-        return  provider;
+        return provider;
     }
 
 }

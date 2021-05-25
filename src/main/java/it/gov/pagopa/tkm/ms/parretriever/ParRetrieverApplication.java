@@ -9,7 +9,7 @@ import org.springframework.cloud.openfeign.*;
 @SpringBootApplication
 @EnableFeignClients
 //TODO: REMOVE WHEN DB HAS BEEN CREATED
-@EnableAutoConfiguration(exclude={DataSourceAutoConfiguration.class, HibernateJpaAutoConfiguration.class})
+@EnableAutoConfiguration(exclude = {DataSourceAutoConfiguration.class, HibernateJpaAutoConfiguration.class})
 public class ParRetrieverApplication {
 
     public static void main(String[] args) {
