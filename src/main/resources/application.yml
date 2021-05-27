@@ -42,20 +42,21 @@ azure:
     blob-endpoint: ${AZURE_STORAGE_ENDPOINT}
 
 keyvault:
-  readQueuePrvPgpKey: ${${profile:prod}-readQueuePrvPgpKey}
-  readQueuePubPgpKey: ${${profile:prod}-readQueuePubPgpKey}
-  mastercardResponsePrivateKey: ${${profile:prod}-mastercardResponsePrivateKey}
-  mastercardApiKey: ${${profile:prod}-mastercardApiKey}
-  mastercardKeyStorePwd: ${${profile:prod}-mastercardKeyStorePwd}
-  amexClientId: ${${profile:prod}-amexClientId}
-  amexClientSecret: ${${profile:prod}-amexClientSecret}
-  visaClientId: ${${profile:prod}-visaClientId}
-  visaKeyId: ${${profile:prod}-visaKeyId}
-  visaKeyStorePassword: ${${profile:prod}-visaKeyStorePassword}
-  visaPassword: ${${profile:prod}-visaPassword}
-  visaPrivateKey: ${${profile:prod}-visaPrivateKey}
-  visaServerCertificate: ${${profile:prod}-visaServerCertificate}
-  visaUserId: ${${profile:prod}-visaUserId}
+  eventhubLogSaslJaasConfig: ${${AZURE_KEYVAULT_PROFILE:prod}-eventhubLogSaslJaasConfig}
+  readQueuePrvPgpKey: ${${AZURE_KEYVAULT_PROFILE:prod}-readQueuePrvPgpKey}
+  readQueuePubPgpKey: ${${AZURE_KEYVAULT_PROFILE:prod}-readQueuePubPgpKey}
+  mastercardResponsePrivateKey: ${${AZURE_KEYVAULT_PROFILE:prod}-mastercardResponsePrivateKey}
+  mastercardApiKey: ${${AZURE_KEYVAULT_PROFILE:prod}-mastercardApiKey}
+  mastercardKeyStorePwd: ${${AZURE_KEYVAULT_PROFILE:prod}-mastercardKeyStorePwd}
+  amexClientId: ${${AZURE_KEYVAULT_PROFILE:prod}-amexClientId}
+  amexClientSecret: ${${AZURE_KEYVAULT_PROFILE:prod}-amexClientSecret}
+  visaClientId: ${${AZURE_KEYVAULT_PROFILE:prod}-visaClientId}
+  visaKeyId: ${${AZURE_KEYVAULT_PROFILE:prod}-visaKeyId}
+  visaKeyStorePassword: ${${AZURE_KEYVAULT_PROFILE:prod}-visaKeyStorePassword}
+  visaPassword: ${${AZURE_KEYVAULT_PROFILE:prod}-visaPassword}
+  visaPrivateKey: ${${AZURE_KEYVAULT_PROFILE:prod}-visaPrivateKey}
+  visaServerCertificate: ${${AZURE_KEYVAULT_PROFILE:prod}-visaServerCertificate}
+  visaUserId: ${${AZURE_KEYVAULT_PROFILE:prod}-visaUserId}
 
 blobstorage:
   mastercard:
