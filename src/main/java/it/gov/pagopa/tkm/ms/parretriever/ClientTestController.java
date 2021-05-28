@@ -6,7 +6,6 @@ import it.gov.pagopa.tkm.ms.parretriever.client.cards.model.response.*;
 import it.gov.pagopa.tkm.ms.parretriever.client.consent.*;
 import it.gov.pagopa.tkm.ms.parretriever.client.consent.model.response.*;
 import it.gov.pagopa.tkm.ms.parretriever.client.mastercard.*;
-import it.gov.pagopa.tkm.ms.parretriever.client.mastercard.api.model.*;
 import it.gov.pagopa.tkm.ms.parretriever.client.visa.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.web.bind.annotation.*;

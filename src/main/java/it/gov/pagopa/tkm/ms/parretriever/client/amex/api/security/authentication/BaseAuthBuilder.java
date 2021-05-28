@@ -1,6 +1,5 @@
 package it.gov.pagopa.tkm.ms.parretriever.client.amex.api.security.authentication;
 
-
 import it.gov.pagopa.tkm.ms.parretriever.client.amex.api.configuration.ConfigurationProvider;
 import it.gov.pagopa.tkm.ms.parretriever.client.amex.api.security.AuthProviderBuilder;
 
@@ -14,10 +13,8 @@ public abstract class BaseAuthBuilder implements AuthProviderBuilder {
         return this;
     }
 
-
     protected ConfigurationProvider getConfiguration() {
         return this.configProvider;
     }
-
 
 }

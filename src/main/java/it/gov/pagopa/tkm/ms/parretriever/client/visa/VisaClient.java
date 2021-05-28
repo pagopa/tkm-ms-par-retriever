@@ -65,7 +65,7 @@ public class VisaClient {
     @Value("${keyvault.visaClientId}")
     private String clientId;
 
-    private static final String VISA_PAR_API_PATH = "/par/v1/inquiry";
+    private static final String VISA_PAR_API_PATH = "https://sandbox.api.visa.com/par/v1/inquiry";
 
     public String getPar(String pan) throws Exception {
         VisaParRequest visaParRequest = new VisaParRequest(
@@ -85,9 +85,7 @@ public class VisaClient {
     private VisaParEncryptedResponse invokeAPI(String payload) throws Exception {
         HttpURLConnection con = (HttpURLConnection) new URL(VISA_PAR_API_PATH).openConnection();
         KeyStore ks = KeyStore.getInstance("PKCS12");
-        try (FileInputStream fis = new FileInputStream(publicCert.getFile())) {
-            ks.load(fis, keystorePassword.toCharArray());
-        }
+        ks.load(publicCert.getInputStream(), keystorePassword.toCharArray());
         KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");
         kmf.init(ks, keystorePassword.toCharArray());
         SSLContext sslContext = SSLContext.getInstance("TLS");
@@ -129,7 +127,7 @@ public class VisaClient {
         return mapper.readValue(responseAsString, VisaParEncryptedResponse.class);
     }
 
-    private String getEncryptedPayload(String requestPayload) throws CertificateException, JOSEException, IOException {
+    private String getEncryptedPayload(String requestPayload) throws CertificateException, JOSEException {
         JWEHeader.Builder headerBuilder = new JWEHeader.Builder(JWEAlgorithm.RSA_OAEP_256, EncryptionMethod.A128GCM);
         headerBuilder.keyID(keyId);
         headerBuilder.customParam("iat", System.currentTimeMillis());

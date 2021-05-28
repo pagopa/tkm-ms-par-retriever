@@ -26,7 +26,7 @@ public final class ProducerServiceImpl implements ProducerService {
 
     @Override
     public void sendMessage(String message) throws PGPException {
-        String encryptedMessage = new String(pgpUtils.encrypt(message.getBytes(), true));
+        String encryptedMessage = pgpUtils.encrypt(message);
         ListenableFuture<SendResult<String, String>> future = kafkaTemplate.send(TKM_READ_TOKEN_PAR_PAN_TOPIC, encryptedMessage);
         future.addCallback(new ListenableFutureCallback<SendResult<String, String>>() {
             @Override

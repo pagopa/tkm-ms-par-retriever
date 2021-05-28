@@ -2,18 +2,13 @@ package it.gov.pagopa.tkm.ms.parretriever.client.amex.api.security.authenticatio
 
 public class HmacAuthBuilder extends BaseAuthBuilder {
 
-    private HmacAuthProvider provider;
-
     private HmacAuthBuilder() {
         super();
-        this.provider = new HmacAuthProvider();
     }
 
-
-    public static final HmacAuthBuilder getBuilder() {
+    public static HmacAuthBuilder getBuilder() {
         return new HmacAuthBuilder();
     }
-
 
     public AuthProvider build() {
         HmacAuthProvider provider = new HmacAuthProvider();

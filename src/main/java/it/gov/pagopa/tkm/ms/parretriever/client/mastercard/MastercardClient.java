@@ -24,9 +24,6 @@ import static it.gov.pagopa.tkm.ms.parretriever.client.mastercard.constant.Const
 @Service
 public class MastercardClient {
 
-    @Autowired
-    private ResourceLoader resourceLoader;
-
     @Value("${keyvault.mastercardResponsePrivateKey}")
     private String privateDecryptionKey;
 

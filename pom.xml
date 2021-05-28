@@ -118,7 +118,6 @@
                         <exclude>it/gov/pagopa/tkm/ms/consentmanager/repository/**/*.class</exclude>
                         <exclude>it/gov/pagopa/tkm/ms/consentmanager/model/**/*.class</exclude>
                         <exclude>it/gov/pagopa/tkm/ms/consentmanager/constant/**/*.class</exclude>
-                        <exclude>it/gov/pagopa/tkm/ms/consentmanager/exception/**/*.class</exclude>
                         <exclude>it/pagopa/ParRetrieverApplication</exclude>
                     </excludes>
                 </configuration>

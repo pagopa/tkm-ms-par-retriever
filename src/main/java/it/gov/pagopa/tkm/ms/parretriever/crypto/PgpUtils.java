@@ -1,21 +1,20 @@
 package it.gov.pagopa.tkm.ms.parretriever.crypto;
 
-import io.micrometer.core.instrument.util.StringUtils;
+import org.apache.commons.lang3.*;
 import org.bouncycastle.bcpg.ArmoredOutputStream;
 import org.bouncycastle.bcpg.CompressionAlgorithmTags;
 import org.bouncycastle.bcpg.SymmetricKeyAlgorithmTags;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.jce.provider.*;
 import org.bouncycastle.openpgp.*;
 import org.bouncycastle.openpgp.operator.jcajce.*;
 import org.bouncycastle.util.io.Streams;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.*;
+import org.springframework.stereotype.*;
 
-import javax.annotation.PostConstruct;
+import javax.annotation.*;
 import java.io.*;
 import java.security.SecureRandom;
-import java.util.Date;
-import java.util.Iterator;
+import java.util.*;
 
 @Service
 public class PgpUtils {
@@ -38,9 +37,9 @@ public class PgpUtils {
         publicKey = readPublicKey(new ByteArrayInputStream(publicKeyFromKeyVault.getBytes()));
     }
 
-    public byte[] encrypt(byte[] message, boolean armored) throws PGPException {
+    public String encrypt(String message) throws PGPException {
         try {
-            final ByteArrayInputStream in = new ByteArrayInputStream(message);
+            final ByteArrayInputStream in = new ByteArrayInputStream(message.getBytes());
             final ByteArrayOutputStream bOut = new ByteArrayOutputStream();
             final PGPLiteralDataGenerator literal = new PGPLiteralDataGenerator();
             final PGPCompressedDataGenerator comData = new PGPCompressedDataGenerator(CompressionAlgorithmTags.ZIP);
@@ -57,12 +56,12 @@ public class PgpUtils {
             );
             generator.addMethod(new JcePublicKeyKeyEncryptionMethodGenerator(publicKey));
             ByteArrayOutputStream out = new ByteArrayOutputStream();
-            OutputStream theOut = armored ? new ArmoredOutputStream(out) : out;
+            OutputStream theOut = new ArmoredOutputStream(out);
             OutputStream cOut = generator.open(theOut, bytes.length);
             cOut.write(bytes);
             cOut.close();
             theOut.close();
-            return out.toByteArray();
+            return out.toString();
         } catch (Exception e) {
             throw new PGPException("Error in encrypt", e);
         }
@@ -138,4 +137,3 @@ public class PgpUtils {
     }
 
 }
-

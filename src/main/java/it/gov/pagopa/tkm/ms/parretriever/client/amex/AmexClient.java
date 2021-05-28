@@ -48,7 +48,7 @@ public class AmexClient {
 
         String amexParRequest = mapper.writeValueAsString(new AmexParRequest(pan));
         Map<String, String> headers = authProvider.generateAuthHeaders(amexParRequest, url, "POST");
-        RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), amexParRequest);
+        RequestBody body = RequestBody.create(amexParRequest, MediaType.parse("application/json; charset=utf-8"));
         Request.Builder builder = new Request.Builder()
                 .url(url)
                 .post(body);
