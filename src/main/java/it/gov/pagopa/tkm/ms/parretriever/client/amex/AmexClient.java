@@ -45,12 +45,12 @@ public class AmexClient {
         if (httpUrl == null) {
             throw new IOException("HttpUrl not parsable");
         }
-        HttpUrl.Builder httpUrlBuilder = httpUrl.newBuilder();
+
         String amexParRequest = mapper.writeValueAsString(new AmexParRequest(pan));
         Map<String, String> headers = authProvider.generateAuthHeaders(amexParRequest, url, "POST");
         RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), amexParRequest);
         Request.Builder builder = new Request.Builder()
-                .url(httpUrlBuilder.build())
+                .url(url)
                 .post(body);
         for (Map.Entry<String, String> header : headers.entrySet()) {
             builder.addHeader(header.getKey(), header.getValue());
@@ -59,6 +59,7 @@ public class AmexClient {
         OkHttpClient httpClient = new OkHttpClient.Builder().build();
         Response response = httpClient.newCall(request).execute();
         ResponseBody responseBody = response.body();
+
         if (responseBody != null) {
             AmexParResponse amexParResponse = mapper.readValue(responseBody.string(), AmexParResponse.class);
             return amexParResponse.getPar();
