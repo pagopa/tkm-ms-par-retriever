@@ -9,6 +9,7 @@ import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.stereotype.Component;
+import org.springframework.util.*;
 
 import static it.gov.pagopa.tkm.ms.parretriever.client.consent.model.response.ConsentRequestEnum.Allow;
 
@@ -27,19 +28,20 @@ public class CardProcessor implements ItemProcessor<ParlessCard, ParlessCard> {
         return getConsentForCard(parlessCard) ? parlessCard : null;
     }
 
-    private GetConsentResponse getConsent(ParlessCard parlessCard) {
+    private ConsentResponse getConsent(ParlessCard parlessCard) {
         return consentClient.getConsent(parlessCard.getTaxCode(), parlessCard.getHpan(), null);
     }
 
     private boolean getConsentForCard(ParlessCard parlessCard) {
-        String hpan = parlessCard.getHpan();
-        GetConsentResponse consent = getConsent(parlessCard);
+        ConsentResponse consent = getConsent(parlessCard);
         switch (consent.getConsent()) {
             case Allow:
                 return true;
             case Partial:
-                return consent.getDetails().stream().anyMatch(c ->
-                        c.getConsent().equals(Allow) && c.getHpan() != null && c.getHpan().equals(hpan));
+                CardServiceConsent cardServiceConsent = CollectionUtils.firstElement(consent.getDetails());
+                if (cardServiceConsent != null) {
+                    return cardServiceConsent.getServiceConsents().stream().anyMatch(c -> c.getConsent().equals(Allow));
+                }
             case Deny:
             default:
                 return false;

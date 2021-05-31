@@ -10,7 +10,7 @@ import static it.gov.pagopa.tkm.ms.parretriever.constant.ApiParams.*;
 public interface ConsentClient {
 
     @GetMapping("/consent")
-    GetConsentResponse getConsent(
+    ConsentResponse getConsent(
             @RequestHeader(TAX_CODE_HEADER) String taxCode,
             @RequestParam(value = HPAN_QUERY_PARAM, required = false) String hpan,
             @RequestParam(value = SERVICES_QUERY_PARAM, required = false) String[] services

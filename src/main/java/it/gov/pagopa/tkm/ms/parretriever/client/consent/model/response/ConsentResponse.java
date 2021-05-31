@@ -1,27 +1,23 @@
 package it.gov.pagopa.tkm.ms.parretriever.client.consent.model.response;
 
-import com.fasterxml.jackson.annotation.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 
+import java.time.Instant;
 import java.util.*;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Accessors(chain = true)
 public class ConsentResponse {
 
-    public ConsentResponse(Consent consent) {
-        setConsent(consent.getConsent());
-        setHpan(consent.getHpan());
-        setServices(consent.getServices());
-    }
+    private ConsentEntityEnum consent;
 
-    private ConsentRequestEnum consent;
+    private Instant lastUpdateDate;
 
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private String hpan;
-
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private Set<ServiceEnum> services;
+    private Set<CardServiceConsent> details;
 
 }

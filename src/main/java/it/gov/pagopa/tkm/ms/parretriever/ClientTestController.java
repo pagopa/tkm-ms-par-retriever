@@ -35,7 +35,7 @@ public class ClientTestController {
     private AmexClient amexClient;
 
     @GetMapping("/consent")
-    public GetConsentResponse getConsent(
+    public ConsentResponse getConsent(
             @RequestParam("taxcode") String taxCode,
             @RequestParam(value = "hpan", required = false) String hpan,
             @RequestParam(value = "services", required = false) String[] services) {
