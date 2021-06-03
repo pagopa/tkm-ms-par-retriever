@@ -8,7 +8,7 @@ import java.util.*;
 
 import static it.gov.pagopa.tkm.ms.parretriever.constant.ApiParams.*;
 
-@FeignClient(value = "parless-cards", url = "${tkm-ms-urls.card-manager}")
+@FeignClient(value = "parless-cards", url = "${client-urls.card-manager}")
 public interface ParlessCardsClient {
 
     @GetMapping("/parless-cards")
