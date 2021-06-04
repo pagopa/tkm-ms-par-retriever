@@ -1,5 +1,6 @@
 package it.gov.pagopa.tkm.ms.parretriever.client.consent.model.response;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,7 +17,8 @@ public class ConsentResponse {
 
     private ConsentEntityEnum consent;
 
-    private String lastUpdateDate;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy HH:mm:ss", timezone = "Europe/Rome")
+    private Instant lastUpdateDate;
 
     private Set<CardServiceConsent> details;
 
