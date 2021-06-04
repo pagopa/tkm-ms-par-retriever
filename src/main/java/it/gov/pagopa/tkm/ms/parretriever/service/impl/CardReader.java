@@ -20,7 +20,7 @@ public class CardReader implements ItemReader<ParlessCard> {
 
     @Override
     public ParlessCard read() {
-        return queue.pop();
+        return !queue.isEmpty() ? queue.pop() : null;
     }
 
 }

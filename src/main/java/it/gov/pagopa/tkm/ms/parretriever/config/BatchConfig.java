@@ -47,7 +47,7 @@ public class BatchConfig {
 
     @Bean
     @StepScope
-    public ItemReader<ParlessCard> reader(@Value("{#{stepExecutionContext['cardList']}") List<ParlessCard> cards) {
+    public ItemReader<ParlessCard> reader(@Value("#{stepExecutionContext['cardList']}") List<ParlessCard> cards) {
         return new CardReader(cards);
     }
 

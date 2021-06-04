@@ -7,10 +7,16 @@ spring:
   kafka:
     producer:
       bootstrap-servers: ${KAFKA_SERVERS}
-      group-id: ${KAFKA_GROUP_ID}
       client-id: ${KAFKA_GROUP_ID}${HOSTNAME:0}
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      properties:
+        security:
+          protocol: ${KAFKA_SECURITY_PROTOCOL:SASL_SSL}
+        sasl:
+          mechanism: ${KAFKA_SASL_MECHANISM:PLAIN}
+          jaas:
+            config: ${keyvault.parREventhubReadSaslJaasConfig}
 
 server:
   port: ${SERVER_PORT:8080}
@@ -42,7 +48,8 @@ azure:
     blob-endpoint: ${AZURE_STORAGE_ENDPOINT}
 
 keyvault:
-  eventhubLogSaslJaasConfig: ${${AZURE_KEYVAULT_PROFILE:prod}-eventhubLogSaslJaasConfig}
+  eventhubLogSaslJaasConfig: ${${AZURE_KEYVAULT_PROFILE:prod}-eventhubLogSaslJaasConfig:null}
+  parREventhubReadSaslJaasConfig: ${${AZURE_KEYVAULT_PROFILE:prod}-parREventhubReadSaslJaasConfig:null}
   readQueuePrvPgpKey: ${${AZURE_KEYVAULT_PROFILE:prod}-readQueuePrvPgpKey}
   readQueuePubPgpKey: ${${AZURE_KEYVAULT_PROFILE:prod}-readQueuePubPgpKey}
   mastercardResponsePrivateKey: ${${AZURE_KEYVAULT_PROFILE:prod}-mastercardResponsePrivateKey}
@@ -65,12 +72,12 @@ blobstorage:
   visa:
     publicCert: azure-blob://${BLOB_STORAGE_NAME}/myProject_keyAndCertBundle.p12
 
-tkm-ms-urls:
-  consent-manager: http://localhost:7777/tkm-ms-consent-manager
-  card-manager: http://localhost:2001/tkm-ms-card-manager
+client-urls:
+  consent-manager: ${CONSENT_MANAGER_URL}
+  card-manager: ${CARD_MANAGER_URL}
 
 batch-execution:
-  max-number-of-threads: ${MAX_NUMBER_OF_THREADS}
+  max-number-of-threads: ${MAX_NUMBER_OF_THREADS:1}
   max-number-of-cards: ${MAX_NUMBER_OF_CARDS}
   amex-par-retrieve-enabled: true
   mastercard-par-retrieve-enabled: true

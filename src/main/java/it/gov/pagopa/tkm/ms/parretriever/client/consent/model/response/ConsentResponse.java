@@ -16,7 +16,7 @@ public class ConsentResponse {
 
     private ConsentEntityEnum consent;
 
-    private Instant lastUpdateDate;
+    private String lastUpdateDate;
 
     private Set<CardServiceConsent> details;
 
