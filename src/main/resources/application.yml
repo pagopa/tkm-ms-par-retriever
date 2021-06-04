@@ -72,3 +72,6 @@ tkm-ms-urls:
 batch-execution:
   max-number-of-threads: ${MAX_NUMBER_OF_THREADS}
   max-number-of-cards: ${MAX_NUMBER_OF_CARDS}
+  amex-par-retrieve-enabled: true
+  mastercard-par-retrieve-enabled: true
+  visa-par-retrieve-enabled: true
