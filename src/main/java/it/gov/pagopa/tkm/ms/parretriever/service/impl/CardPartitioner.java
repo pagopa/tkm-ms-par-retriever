@@ -9,6 +9,7 @@ import org.springframework.batch.item.ExecutionContext;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.stereotype.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,7 +34,7 @@ public class CardPartitioner implements Partitioner {
         }
 
         int range = cardsSize / maxNumberOfThreads;
-        int fromId = 1;
+        int fromId = 0;
         int toId = range;
 
         for (int i = 1; i <= maxNumberOfThreads; i++) {
@@ -43,11 +44,11 @@ public class CardPartitioner implements Partitioner {
             value.putInt("from", fromId);
             value.putInt("to", toId);
             value.putString("name", "Thread" + i);
-            value.put("cardList", cards.subList(fromId, Math.min(toId, cardsSize)));
+            value.put("cardList", new ArrayList<>(cards.subList(fromId, Math.min(toId, cardsSize))));
 
             result.put("partition" + i, value);
 
-            fromId = toId + 1;
+            fromId = toId;
             toId += range;
             if (i == maxNumberOfThreads && cardsSize % maxNumberOfThreads > 0) {
                 toId += 1;

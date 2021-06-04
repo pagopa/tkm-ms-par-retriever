@@ -3,12 +3,13 @@ package it.gov.pagopa.tkm.ms.parretriever.client.cards.model.response;
 import it.gov.pagopa.tkm.ms.parretriever.constant.*;
 import lombok.*;
 
+import java.io.Serializable;
 import java.util.*;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ParlessCard {
+public class ParlessCard implements Serializable {
 
     private String taxCode;
 
