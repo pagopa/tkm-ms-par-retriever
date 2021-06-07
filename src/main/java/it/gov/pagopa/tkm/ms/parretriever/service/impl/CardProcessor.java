@@ -1,9 +1,9 @@
 package it.gov.pagopa.tkm.ms.parretriever.service.impl;
 
-import it.gov.pagopa.tkm.ms.parretriever.client.cards.*;
-import it.gov.pagopa.tkm.ms.parretriever.client.cards.model.response.*;
-import it.gov.pagopa.tkm.ms.parretriever.client.consent.*;
-import it.gov.pagopa.tkm.ms.parretriever.client.consent.model.response.*;
+import it.gov.pagopa.tkm.ms.parretriever.client.internal.cardmanager.*;
+import it.gov.pagopa.tkm.ms.parretriever.client.internal.cardmanager.model.response.*;
+import it.gov.pagopa.tkm.ms.parretriever.client.internal.consentmanager.*;
+import it.gov.pagopa.tkm.ms.parretriever.client.internal.consentmanager.model.response.*;
 import org.jetbrains.annotations.*;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.item.ItemProcessor;
@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.*;
 import org.springframework.stereotype.Component;
 import org.springframework.util.*;
 
-import static it.gov.pagopa.tkm.ms.parretriever.client.consent.model.response.ConsentRequestEnum.Allow;
+import static it.gov.pagopa.tkm.ms.parretriever.client.internal.consentmanager.model.response.ConsentRequestEnum.Allow;
 
 @Component
 @StepScope

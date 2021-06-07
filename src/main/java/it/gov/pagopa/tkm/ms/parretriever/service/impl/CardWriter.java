@@ -1,10 +1,10 @@
 package it.gov.pagopa.tkm.ms.parretriever.service.impl;
 
 import com.fasterxml.jackson.databind.*;
-import it.gov.pagopa.tkm.ms.parretriever.client.amex.*;
-import it.gov.pagopa.tkm.ms.parretriever.client.cards.model.response.*;
-import it.gov.pagopa.tkm.ms.parretriever.client.mastercard.*;
-import it.gov.pagopa.tkm.ms.parretriever.client.visa.*;
+import it.gov.pagopa.tkm.ms.parretriever.client.external.amex.*;
+import it.gov.pagopa.tkm.ms.parretriever.client.internal.cardmanager.model.response.*;
+import it.gov.pagopa.tkm.ms.parretriever.client.external.mastercard.*;
+import it.gov.pagopa.tkm.ms.parretriever.client.external.visa.*;
 import it.gov.pagopa.tkm.ms.parretriever.constant.*;
 import it.gov.pagopa.tkm.ms.parretriever.model.topic.*;
 import org.jetbrains.annotations.*;

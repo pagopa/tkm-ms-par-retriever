@@ -1,7 +1,7 @@
 package it.gov.pagopa.tkm.ms.parretriever.service;
 
-import it.gov.pagopa.tkm.ms.parretriever.client.cards.*;
-import it.gov.pagopa.tkm.ms.parretriever.client.consent.*;
+import it.gov.pagopa.tkm.ms.parretriever.client.internal.cardmanager.*;
+import it.gov.pagopa.tkm.ms.parretriever.client.internal.consentmanager.*;
 import it.gov.pagopa.tkm.ms.parretriever.constant.*;
 import it.gov.pagopa.tkm.ms.parretriever.service.impl.*;
 import org.junit.jupiter.api.*;

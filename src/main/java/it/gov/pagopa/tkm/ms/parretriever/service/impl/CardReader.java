@@ -1,6 +1,6 @@
 package it.gov.pagopa.tkm.ms.parretriever.service.impl;
 
-import it.gov.pagopa.tkm.ms.parretriever.client.cards.model.response.*;
+import it.gov.pagopa.tkm.ms.parretriever.client.internal.cardmanager.model.response.*;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.stereotype.Component;

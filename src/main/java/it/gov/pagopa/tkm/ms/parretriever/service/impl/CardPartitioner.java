@@ -1,7 +1,7 @@
 package it.gov.pagopa.tkm.ms.parretriever.service.impl;
 
-import it.gov.pagopa.tkm.ms.parretriever.client.cards.*;
-import it.gov.pagopa.tkm.ms.parretriever.client.cards.model.response.*;
+import it.gov.pagopa.tkm.ms.parretriever.client.internal.cardmanager.*;
+import it.gov.pagopa.tkm.ms.parretriever.client.internal.cardmanager.model.response.*;
 import lombok.extern.log4j.*;
 import org.jetbrains.annotations.*;
 import org.springframework.batch.core.partition.support.Partitioner;

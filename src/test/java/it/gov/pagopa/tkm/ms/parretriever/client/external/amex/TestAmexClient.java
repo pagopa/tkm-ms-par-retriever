@@ -1,9 +1,7 @@
-package it.gov.pagopa.tkm.ms.parretriever.service;
+package it.gov.pagopa.tkm.ms.parretriever.client.external.amex;
 
 import com.fasterxml.jackson.databind.*;
-import it.gov.pagopa.tkm.ms.parretriever.client.internal.cardmanager.*;
 import it.gov.pagopa.tkm.ms.parretriever.constant.*;
-import it.gov.pagopa.tkm.ms.parretriever.service.impl.*;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.*;
 import org.mockito.*;
@@ -11,13 +9,10 @@ import org.mockito.junit.jupiter.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ExtendWith(MockitoExtension.class)
-public class TestCardPartitioner {
+public class TestAmexClient {
 
     @InjectMocks
-    private CardPartitioner cardPartitioner;
-
-    @Mock
-    private ParlessCardsClient parlessCardsClient;
+    private AmexClient amexClient;
 
     private DefaultBeans testBeans;
 

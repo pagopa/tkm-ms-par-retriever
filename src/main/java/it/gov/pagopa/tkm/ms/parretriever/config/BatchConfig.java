@@ -1,6 +1,6 @@
 package it.gov.pagopa.tkm.ms.parretriever.config;
 
-import it.gov.pagopa.tkm.ms.parretriever.client.cards.model.response.*;
+import it.gov.pagopa.tkm.ms.parretriever.client.internal.cardmanager.model.response.*;
 import it.gov.pagopa.tkm.ms.parretriever.service.impl.*;
 import org.springframework.batch.core.*;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
