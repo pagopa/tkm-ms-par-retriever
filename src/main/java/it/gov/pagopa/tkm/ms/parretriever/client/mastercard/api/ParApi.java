@@ -20,7 +20,7 @@ public class ParApi {
 
     private final ApiClient localVarApiClient;
 
-    public Call getParPostCall(MastercardParRequest mastercardParRequest) throws ApiException {
+    public Call getParPostCall(String parEndpoint, MastercardParRequest mastercardParRequest) throws ApiException {
         String localVarPath = "/getPaymentAccountReference";
 
         Map<String, String> localVarQueryParams = new HashMap<>();
@@ -41,20 +41,20 @@ public class ParApi {
         final String localVarContentType = localVarApiClient.selectHeaderContentType(localVarContentTypes);
         localVarHeaderParams.put("Content-Type", localVarContentType);
 
-        return localVarApiClient.buildCall(localVarPath, "POST", localVarQueryParams, localVarCollectionQueryParams, mastercardParRequest, localVarHeaderParams);
+        return localVarApiClient.buildCall(parEndpoint, localVarPath, "POST", localVarQueryParams, localVarCollectionQueryParams, mastercardParRequest, localVarHeaderParams);
     }
 
-    private Call getParPostValidateBeforeCall(MastercardParRequest mastercardParRequest) throws ApiException {
-        return getParPostCall(mastercardParRequest);
+    private Call getParPostValidateBeforeCall(String parEndpoint, MastercardParRequest mastercardParRequest) throws ApiException {
+        return getParPostCall(parEndpoint, mastercardParRequest);
     }
 
-    public MastercardParResponse getParPost(MastercardParRequest mastercardParRequest) throws ApiException {
-        ApiResponse<MastercardParResponse> localVarResp = getParPostWithHttpInfo(mastercardParRequest);
+    public MastercardParResponse getParPost(String parEndpoint, MastercardParRequest mastercardParRequest) throws ApiException {
+        ApiResponse<MastercardParResponse> localVarResp = getParPostWithHttpInfo(parEndpoint, mastercardParRequest);
         return localVarResp.getData();
     }
 
-    public ApiResponse<MastercardParResponse> getParPostWithHttpInfo(MastercardParRequest mastercardParRequest) throws ApiException {
-        Call localVarCall = getParPostValidateBeforeCall(mastercardParRequest);
+    public ApiResponse<MastercardParResponse> getParPostWithHttpInfo(String parEndpoint, MastercardParRequest mastercardParRequest) throws ApiException {
+        Call localVarCall = getParPostValidateBeforeCall(parEndpoint, mastercardParRequest);
         Type localVarReturnType = new TypeToken<MastercardParResponse>() {
         }.getType();
         return localVarApiClient.execute(localVarCall, localVarReturnType);

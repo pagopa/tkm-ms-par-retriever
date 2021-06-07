@@ -9,8 +9,6 @@ import java.lang.reflect.Type;
 import java.net.URLEncoder;
 import java.util.*;
 
-import static it.gov.pagopa.tkm.ms.parretriever.client.mastercard.constant.Constants.PAR_ENDPOINT;
-
 public class ApiClient {
 
     @Getter
@@ -89,8 +87,9 @@ public class ApiClient {
         }
         String respBody;
         try {
-            if (response.body() != null)
-                respBody = response.body().string();
+            ResponseBody responseBody = response.body();
+            if (responseBody != null)
+                respBody = responseBody.string();
             else
                 respBody = null;
         } catch (IOException e) {
@@ -121,13 +120,8 @@ public class ApiClient {
     }
 
     public RequestBody serialize(Object obj, String contentType) throws ApiException {
-        if (isJsonMime(contentType)) {
-            String content;
-            if (obj != null) {
-                content = json.serialize(obj);
-            } else {
-                content = null;
-            }
+        if (isJsonMime(contentType) && obj != null) {
+            String content = json.serialize(obj);
             return RequestBody.create(content, MediaType.parse(contentType));
         } else {
             throw new ApiException("Content type \"" + contentType + "\" is not supported");
@@ -149,9 +143,10 @@ public class ApiClient {
             if (returnType == null || response.code() == 204) {
                 // returning null if the returnType is not defined,
                 // or the status code is 204 (No Content)
-                if (response.body() != null) {
+                ResponseBody responseBody = response.body();
+                if (responseBody != null) {
                     try {
-                        response.body().close();
+                        responseBody.close();
                     } catch (Exception e) {
                         throw new ApiException(response.message(), e, response.code(), response.headers().toMultimap());
                     }
@@ -161,26 +156,27 @@ public class ApiClient {
                 return deserialize(response, returnType);
             }
         } else {
-            String respBody = null;
-            if (response.body() != null) {
+            String respBodyString = null;
+            ResponseBody responseBody = response.body();
+            if (responseBody != null) {
                 try {
-                    respBody = response.body().string();
+                    respBodyString = responseBody.string();
                 } catch (IOException e) {
                     throw new ApiException(response.message(), e, response.code(), response.headers().toMultimap());
                 }
             }
-            throw new ApiException(response.message(), response.code(), response.headers().toMultimap(), respBody);
+            throw new ApiException(response.message(), response.code(), response.headers().toMultimap(), respBodyString);
         }
     }
 
-    public Call buildCall(String path, String method, Map<String, String> queryParams, Map<String, String> collectionQueryParams, Object body, Map<String, String> headerParams) throws ApiException {
-        Request request = buildRequest(path, method, queryParams, collectionQueryParams, body, headerParams);
+    public Call buildCall(String parEndpoint, String path, String method, Map<String, String> queryParams, Map<String, String> collectionQueryParams, Object body, Map<String, String> headerParams) throws ApiException {
+        Request request = buildRequest(parEndpoint, path, method, queryParams, collectionQueryParams, body, headerParams);
 
         return httpClient.newCall(request);
     }
 
-    public Request buildRequest(String path, String method, Map<String, String> queryParams, Map<String, String> collectionQueryParams, Object body, Map<String, String> headerParams) throws ApiException {
-        final String url = buildUrl(path, queryParams, collectionQueryParams);
+    public Request buildRequest(String parEndpoint, String path, String method, Map<String, String> queryParams, Map<String, String> collectionQueryParams, Object body, Map<String, String> headerParams) throws ApiException {
+        final String url = buildUrl(parEndpoint, path, queryParams, collectionQueryParams);
         final Request.Builder reqBuilder = new Request.Builder().url(url);
 
         String contentType = headerParams.get("Content-Type");
@@ -192,9 +188,9 @@ public class ApiClient {
         return reqBuilder.method(method, reqBody).build();
     }
 
-    public String buildUrl(String path, Map<String, String> queryParams, Map<String, String> collectionQueryParams) {
+    public String buildUrl(String parEndpoint, String path, Map<String, String> queryParams, Map<String, String> collectionQueryParams) {
         final StringBuilder url = new StringBuilder();
-        url.append(PAR_ENDPOINT).append(path);
+        url.append(parEndpoint).append(path);
 
         if (queryParams != null && !queryParams.isEmpty()) {
             // support (constant) query string in `path`, e.g. "/posts?draft=1"

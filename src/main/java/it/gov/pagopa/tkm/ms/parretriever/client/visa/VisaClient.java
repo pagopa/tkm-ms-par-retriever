@@ -41,7 +41,7 @@ public class VisaClient {
     @Autowired
     private ObjectMapper mapper;
 
-    @Value("${blobstorage.visa.publicCert}")
+    @Value("${blob-storage.visaPublicCert}")
     private Resource publicCert;
 
     @Value("${keyvault.visaKeyStorePassword}")
@@ -65,7 +65,8 @@ public class VisaClient {
     @Value("${keyvault.visaClientId}")
     private String clientId;
 
-    private static final String VISA_PAR_API_PATH = "https://sandbox.api.visa.com/par/v1/inquiry";
+    @Value("${circuit-urls.visa}")
+    private String retrieveParUrl;
 
     public String getPar(String pan) throws Exception {
         VisaParRequest visaParRequest = new VisaParRequest(
@@ -83,7 +84,7 @@ public class VisaClient {
     }
 
     private VisaParEncryptedResponse invokeAPI(String payload) throws Exception {
-        HttpURLConnection con = (HttpURLConnection) new URL(VISA_PAR_API_PATH).openConnection();
+        HttpURLConnection con = (HttpURLConnection) new URL(retrieveParUrl).openConnection();
         KeyStore ks = KeyStore.getInstance("PKCS12");
         ks.load(publicCert.getInputStream(), keystorePassword.toCharArray());
         KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");

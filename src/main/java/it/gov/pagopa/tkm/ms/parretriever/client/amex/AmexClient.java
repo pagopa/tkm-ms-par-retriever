@@ -25,14 +25,15 @@ public class AmexClient {
     @Value("${keyvault.amexClientSecret}")
     private String clientSecret;
 
-    private static final String RETRIEVE_PAR_URL = "https://api.qa.americanexpress.com/payments/digital/v2/product_account_reference";
+    @Value("${circuit-urls.amex}")
+    private String retrieveParUrl;
 
     public String getPar(String pan) throws IOException {
         String amexParRequest = "[\"" + pan + "\"]";
         Properties properties = new Properties();
         properties.put("CLIENT_KEY", clientId);
         properties.put("CLIENT_SECRET", clientSecret);
-        properties.put("RETRIEVE_PAR_URL", RETRIEVE_PAR_URL);
+        properties.put("RETRIEVE_PAR_URL", retrieveParUrl);
         PropertiesConfigurationProvider configurationProvider = new PropertiesConfigurationProvider();
         configurationProvider.setProperties(properties);
         AuthProvider authProvider = HmacAuthBuilder.getBuilder()

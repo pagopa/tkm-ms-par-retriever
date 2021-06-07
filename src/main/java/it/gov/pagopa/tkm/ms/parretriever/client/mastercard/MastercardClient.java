@@ -7,19 +7,18 @@ import it.gov.pagopa.tkm.ms.parretriever.client.mastercard.api.*;
 import it.gov.pagopa.tkm.ms.parretriever.client.mastercard.api.model.*;
 import it.gov.pagopa.tkm.ms.parretriever.client.mastercard.api.util.*;
 import it.gov.pagopa.tkm.ms.parretriever.client.mastercard.util.EncryptionUtils;
-import it.gov.pagopa.tkm.ms.parretriever.client.util.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.core.io.*;
 import org.springframework.stereotype.*;
+import org.springframework.util.*;
 
 import java.io.*;
+import java.nio.charset.*;
 import java.security.cert.*;
 import java.security.cert.Certificate;
 import java.time.*;
 import java.time.temporal.*;
 import java.util.*;
-
-import static it.gov.pagopa.tkm.ms.parretriever.client.mastercard.constant.Constants.SIGNING_KEY_ALIAS;
 
 @Service
 public class MastercardClient {
@@ -27,10 +26,10 @@ public class MastercardClient {
     @Value("${keyvault.mastercardResponsePrivateKey}")
     private String privateDecryptionKey;
 
-    @Value("${blobstorage.mastercard.publicEncryptionKey}")
+    @Value("${blob-storage.mastercardPublicEncryptionKey}")
     private Resource publicEncryptionKey;
 
-    @Value("${blobstorage.mastercard.signingKeyCert}")
+    @Value("${blob-storage.mastercardSigningKeyCert}")
     private Resource signingKeyCert;
 
     @Value("${keyvault.mastercardKeyStorePwd}")
@@ -39,11 +38,16 @@ public class MastercardClient {
     @Value("${keyvault.mastercardApiKey}")
     private String consumerKey;
 
+    @Value("${circuit-urls.mastercard}")
+    private String retrieveParUrl;
+
+    private static final String SIGNING_KEY_ALIAS = "keyalias";
+
     public String getPar(String accountNumber) throws Exception {
         ApiClient client = buildApiClient();
         ParApi api = new ParApi(client);
         MastercardParRequest mastercardParRequest = buildRequest(accountNumber, UUID.randomUUID().toString());
-        MastercardParResponse mastercardParResponse = api.getParPost(mastercardParRequest);
+        MastercardParResponse mastercardParResponse = api.getParPost(retrieveParUrl, mastercardParRequest);
         if (mastercardParResponse != null && mastercardParResponse.getEncryptedPayload() != null && mastercardParResponse.getEncryptedPayload().getEncryptedData() != null) {
             return mastercardParResponse.getEncryptedPayload().getEncryptedData().getPaymentAccountReference();
         }
@@ -54,7 +58,7 @@ public class MastercardClient {
         return FieldLevelEncryptionConfigBuilder.aFieldLevelEncryptionConfig()
                 .withEncryptionPath("$.encryptedPayload.encryptedData", "$.encryptedPayload")
                 .withDecryptionPath("$.encryptedPayload", "$.encryptedPayload.encryptedData")
-                .withEncryptionCertificate(loadEncryptionCertificate(ClientUtils.resourceAsString(publicEncryptionKey).getBytes()))
+                .withEncryptionCertificate(loadEncryptionCertificate(resourceAsString(publicEncryptionKey).getBytes()))
                 .withDecryptionKey(EncryptionUtils.loadDecryptionKey(privateDecryptionKey))
                 .withOaepPaddingDigestAlgorithm("SHA-512")
                 .withEncryptedValueFieldName("encryptedData")
@@ -83,6 +87,10 @@ public class MastercardClient {
     private Certificate loadEncryptionCertificate(byte[] certificate) throws CertificateException {
         CertificateFactory factory = CertificateFactory.getInstance("X.509");
         return factory.generateCertificate(new ByteArrayInputStream(certificate));
+    }
+
+    private String resourceAsString(Resource resource) throws IOException {
+        return StreamUtils.copyToString(resource.getInputStream(), Charset.defaultCharset());
     }
 
 }

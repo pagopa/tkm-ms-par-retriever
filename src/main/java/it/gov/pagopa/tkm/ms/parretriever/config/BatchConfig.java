@@ -40,6 +40,9 @@ public class BatchConfig {
     @Autowired
     private JobExplorer jobExplorer;
 
+    @Value("${batch-execution.max-number-of-threads}")
+    private Integer maxNumberOfThreads;
+
     @Scheduled(cron = "${core.parRetrieverService.getPar.scheduler}")
     public void run() throws Exception {
         jobLauncher.run(parFinderJob(), new JobParametersBuilder().toJobParameters());
@@ -78,7 +81,7 @@ public class BatchConfig {
         return steps.get("parFinderStep.manager")
                 .partitioner("partitionedParFinderStep", partitioner())
                 .step(parFinderStep())
-                .gridSize(/*TODO da file application*/10)
+                .gridSize(maxNumberOfThreads)
                 .taskExecutor(new SimpleAsyncTaskExecutor())
                 .allowStartIfComplete(true)
                 .build();

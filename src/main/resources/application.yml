@@ -65,16 +65,19 @@ keyvault:
   visaServerCertificate: ${${AZURE_KEYVAULT_PROFILE:prod}-visaServerCertificate}
   visaUserId: ${${AZURE_KEYVAULT_PROFILE:prod}-visaUserId}
 
-blobstorage:
-  mastercard:
-    publicEncryptionKey: azure-blob://${BLOB_STORAGE_NAME}/Public-Key-Encrypt.crt
-    signingKeyCert: azure-blob://${BLOB_STORAGE_NAME}/Get_PAR-sandbox.p12
-  visa:
-    publicCert: azure-blob://${BLOB_STORAGE_NAME}/myProject_keyAndCertBundle.p12
+blob-storage:
+  mastercardPublicEncryptionKey: azure-blob://${BLOB_STORAGE_NAME}/Mastercard_Public_Enc_Key.crt
+  mastercardSigningKeyCert: azure-blob://${BLOB_STORAGE_NAME}/Mastercard_Signing_Key_Cert.p12
+  visaPublicCert: azure-blob://${BLOB_STORAGE_NAME}/Visa_Public_Cert.p12
 
 client-urls:
   consent-manager: ${CONSENT_MANAGER_URL}
   card-manager: ${CARD_MANAGER_URL}
+
+circuit-urls:
+  amex: ${AMEX_URL}
+  mastercard: ${MASTERCARD_URL}
+  visa: ${VISA_URL}
 
 batch-execution:
   max-number-of-threads: ${MAX_NUMBER_OF_THREADS:1}
