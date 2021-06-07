@@ -13,6 +13,8 @@ import okhttp3.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.stereotype.*;
 
+import javax.annotation.*;
+
 @Component
 public class AmexClient {
 
@@ -28,32 +30,34 @@ public class AmexClient {
     @Value("${circuit-urls.amex}")
     private String retrieveParUrl;
 
-    public String getPar(String pan) throws IOException {
-        String amexParRequest = "[\"" + pan + "\"]";
+    private AuthProvider authProvider;
+
+    private final OkHttpClient httpClient = new OkHttpClient.Builder().build();
+
+    @PostConstruct
+    public void init() throws IOException {
         Properties properties = new Properties();
         properties.put("CLIENT_KEY", clientId);
         properties.put("CLIENT_SECRET", clientSecret);
         properties.put("RETRIEVE_PAR_URL", retrieveParUrl);
         PropertiesConfigurationProvider configurationProvider = new PropertiesConfigurationProvider();
         configurationProvider.setProperties(properties);
-        AuthProvider authProvider = HmacAuthBuilder.getBuilder()
+        authProvider = HmacAuthBuilder.getBuilder()
                 .setConfiguration(configurationProvider)
                 .build();
-        String url = configurationProvider.getValue("RETRIEVE_PAR_URL");
-        HttpUrl httpUrl = HttpUrl.parse(url);
-        if (httpUrl == null) {
-            throw new IOException("HttpUrl not parsable");
-        }
-        Map<String, String> headers = authProvider.generateAuthHeaders(amexParRequest, url, "POST");
+    }
+
+    public String getPar(String pan) throws IOException {
+        String amexParRequest = "[\"" + pan + "\"]";
+        Map<String, String> headers = authProvider.generateAuthHeaders(amexParRequest, retrieveParUrl, "POST");
         RequestBody body = RequestBody.create(amexParRequest, MediaType.parse("application/json; charset=utf-8"));
         Request.Builder builder = new Request.Builder()
-                .url(url)
+                .url(retrieveParUrl)
                 .post(body);
         for (Map.Entry<String, String> header : headers.entrySet()) {
             builder.addHeader(header.getKey(), header.getValue());
         }
         Request request = builder.build();
-        OkHttpClient httpClient = new OkHttpClient.Builder().build();
         Response response = httpClient.newCall(request).execute();
         ResponseBody responseBody = response.body();
         if (responseBody != null) {

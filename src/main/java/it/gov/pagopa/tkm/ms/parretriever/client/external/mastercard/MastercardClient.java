@@ -8,10 +8,11 @@ import it.gov.pagopa.tkm.ms.parretriever.client.external.mastercard.api.model.*;
 import it.gov.pagopa.tkm.ms.parretriever.client.external.mastercard.api.util.*;
 import it.gov.pagopa.tkm.ms.parretriever.client.external.mastercard.util.EncryptionUtils;
 import org.springframework.beans.factory.annotation.*;
-import org.springframework.core.io.*;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.*;
 import org.springframework.util.*;
 
+import javax.annotation.*;
 import java.io.*;
 import java.nio.charset.*;
 import java.security.cert.*;
@@ -43,9 +44,14 @@ public class MastercardClient {
 
     private static final String SIGNING_KEY_ALIAS = "keyalias";
 
+    private ParApi api;
+
+    @PostConstruct
+    public void init() throws Exception {
+        api = new ParApi(buildApiClient());
+    }
+
     public String getPar(String accountNumber) throws Exception {
-        ApiClient client = buildApiClient();
-        ParApi api = new ParApi(client);
         MastercardParRequest mastercardParRequest = buildRequest(accountNumber, UUID.randomUUID().toString());
         MastercardParResponse mastercardParResponse = api.getParPost(retrieveParUrl, mastercardParRequest);
         if (mastercardParResponse != null && mastercardParResponse.getEncryptedPayload() != null && mastercardParResponse.getEncryptedPayload().getEncryptedData() != null) {
