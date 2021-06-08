@@ -52,6 +52,7 @@ keyvault:
   parREventhubReadSaslJaasConfig: ${${AZURE_KEYVAULT_PROFILE:prod}-parREventhubReadSaslJaasConfig:null}
   readQueuePrvPgpKey: ${${AZURE_KEYVAULT_PROFILE:prod}-readQueuePrvPgpKey}
   readQueuePubPgpKey: ${${AZURE_KEYVAULT_PROFILE:prod}-readQueuePubPgpKey}
+  readQueuePrvPgpKeyPassphrase: ${${AZURE_KEYVAULT_PROFILE:prod}-readQueuePrvPgpKeyPassphrase:null}
   mastercardResponsePrivateKey: ${${AZURE_KEYVAULT_PROFILE:prod}-mastercardResponsePrivateKey}
   mastercardApiKey: ${${AZURE_KEYVAULT_PROFILE:prod}-mastercardApiKey}
   mastercardKeyStorePwd: ${${AZURE_KEYVAULT_PROFILE:prod}-mastercardKeyStorePwd}
