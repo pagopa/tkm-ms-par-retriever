@@ -60,8 +60,7 @@ public class TestAmexClient {
     @Test
     void givenPan_assertApiGetsCalled() throws IOException {
         String responseAsString = mapper.writeValueAsString(testBeans.AMEX_PAR_RESPONSE);
-        MockResponse mockResponse = new MockResponse()
-                .setBody(responseAsString);
+        MockResponse mockResponse = new MockResponse().setBody(responseAsString);
         mockServer.enqueue(mockResponse);
         when(mockMapper.readValue(responseAsString, AmexParResponse[].class)).thenReturn(mapper.readValue(responseAsString, AmexParResponse[].class));
         String actualPar = amexClient.getPar(testBeans.PAN);

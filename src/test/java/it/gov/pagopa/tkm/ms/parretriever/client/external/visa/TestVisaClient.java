@@ -17,7 +17,6 @@ import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mockStatic;
-import static org.mockito.Mockito.when;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ExtendWith(MockitoExtension.class)
@@ -58,7 +57,7 @@ public class TestVisaClient {
         VisaClient.class.getDeclaredField("clientId").setAccessible(true);
         VisaClient.class.getDeclaredField("retrieveParUrl").setAccessible(true);
         VisaClient.class.getDeclaredField("mapper").setAccessible(true);
-        ReflectionTestUtils.setField(visaClient, "publicCert", new ClassPathResource("visa_public_cert_test.p12"));
+        ReflectionTestUtils.setField(visaClient, "publicCert", new ClassPathResource("public_cert_test.p12"));
         ReflectionTestUtils.setField(visaClient, "keystorePassword", "password");
         ReflectionTestUtils.setField(visaClient, "userId", "TEST_USER_ID");
         ReflectionTestUtils.setField(visaClient, "password", "TEST_PASSWORD");
@@ -73,8 +72,8 @@ public class TestVisaClient {
     @BeforeAll
     static void setUp() throws IOException {
         mockServer = new MockWebServer();
-        clientPrivateKey = FileUtils.readFileToString(new File("src/test/resources/visa_client_private_key_test.key"));
-        clientPublicCert = FileUtils.readFileToString(new File("src/test/resources/visa_client_public_cert_test.crt"));
+        clientPrivateKey = FileUtils.readFileToString(new File("src/test/resources/client_private_key_test.key"));
+        clientPublicCert = FileUtils.readFileToString(new File("src/test/resources/client_public_cert_test.crt"));
         mockServer.start();
     }
 
@@ -86,8 +85,7 @@ public class TestVisaClient {
     @Test
     void givenPan_assertApiGetsCalled() throws Exception {
         String responseAsStringEnc = mapper.writeValueAsString(testBeans.VISA_PAR_ENC_RESPONSE);
-        MockResponse mockResponse = new MockResponse()
-                .setBody(responseAsStringEnc);
+        MockResponse mockResponse = new MockResponse().setBody(responseAsStringEnc);
         mockServer.enqueue(mockResponse);
         String actualPar = visaClient.getPar(testBeans.PAN);
         assertEquals(testBeans.PAR, actualPar);
