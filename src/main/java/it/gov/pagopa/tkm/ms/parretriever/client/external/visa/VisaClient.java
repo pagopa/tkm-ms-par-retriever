@@ -32,6 +32,7 @@ import java.security.interfaces.RSAPublicKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.RSAPrivateKeySpec;
 import java.text.ParseException;
+import java.time.*;
 import java.util.*;
 
 @Component
@@ -54,10 +55,10 @@ public class VisaClient {
     private String password;
 
     @Value("${keyvault.visaPrivateKey}")
-    private String mleClientPrivateKey;
+    private String clientPrivateKey;
 
     @Value("${keyvault.visaServerCertificate}")
-    private String mleServerPublicCertificatePath;
+    private String serverPublicCertificate;
 
     @Value("${keyvault.visaKeyId}")
     private String keyId;
@@ -131,7 +132,7 @@ public class VisaClient {
     private String getEncryptedPayload(String requestPayload) throws CertificateException, JOSEException {
         JWEHeader.Builder headerBuilder = new JWEHeader.Builder(JWEAlgorithm.RSA_OAEP_256, EncryptionMethod.A128GCM);
         headerBuilder.keyID(keyId);
-        headerBuilder.customParam("iat", System.currentTimeMillis());
+        headerBuilder.customParam("iat", Instant.now().toEpochMilli());
         JWEObject jweObject = new JWEObject(headerBuilder.build(), new Payload(requestPayload));
         jweObject.encrypt(new RSAEncrypter(getRSAPublicKey()));
         return "{\"encData\":\"" + jweObject.serialize() + "\"}";
@@ -147,17 +148,13 @@ public class VisaClient {
     }
 
     private RSAPublicKey getRSAPublicKey() throws CertificateException {
-        final String BEGIN_CERT = "-----BEGIN CERTIFICATE-----";
-        final String END_CERT = "-----END CERTIFICATE-----";
-        final com.nimbusds.jose.util.Base64 base64 = new com.nimbusds.jose.util.Base64(mleServerPublicCertificatePath.replaceAll(BEGIN_CERT, "").replaceAll(END_CERT, ""));
+        final com.nimbusds.jose.util.Base64 base64 = new com.nimbusds.jose.util.Base64(serverPublicCertificate.replaceAll("-----BEGIN CERTIFICATE-----", "").replaceAll("-----END CERTIFICATE-----", ""));
         final Certificate cf = CertificateFactory.getInstance("X.509").generateCertificate(new ByteArrayInputStream(base64.decode()));
         return (RSAPublicKey) cf.getPublicKey();
     }
 
     private PrivateKey getRSAPrivateKey() throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
-        final String BEGIN_RSA_PRIVATE_KEY = "-----BEGIN RSA PRIVATE KEY-----";
-        final String END_RSA_PRIVATE_KEY = "-----END RSA PRIVATE KEY-----";
-        final com.nimbusds.jose.util.Base64 base64 = new com.nimbusds.jose.util.Base64(mleClientPrivateKey.replaceAll(BEGIN_RSA_PRIVATE_KEY, "").replaceAll(END_RSA_PRIVATE_KEY, ""));
+        final com.nimbusds.jose.util.Base64 base64 = new com.nimbusds.jose.util.Base64(clientPrivateKey.replaceAll("-----BEGIN RSA PRIVATE KEY-----", "").replaceAll("-----END RSA PRIVATE KEY-----", ""));
         final ASN1Sequence primitive = (ASN1Sequence) ASN1Sequence.fromByteArray(base64.decode());
         final Enumeration<?> e = primitive.getObjects();
         final BigInteger v = ((ASN1Integer) e.nextElement()).getValue();
