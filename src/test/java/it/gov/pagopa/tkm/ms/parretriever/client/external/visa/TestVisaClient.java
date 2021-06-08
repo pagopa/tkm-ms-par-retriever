@@ -87,8 +87,8 @@ public class TestVisaClient {
         String responseAsStringEnc = mapper.writeValueAsString(testBeans.VISA_PAR_ENC_RESPONSE);
         MockResponse mockResponse = new MockResponse().setBody(responseAsStringEnc);
         mockServer.enqueue(mockResponse);
-        String actualPar = visaClient.getPar(testBeans.PAN);
-        assertEquals(testBeans.PAR, actualPar);
+        String actualPar = visaClient.getPar(testBeans.PAN_1);
+        assertEquals(testBeans.PAR_1, actualPar);
     }
 
 }

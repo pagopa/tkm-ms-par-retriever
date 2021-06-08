@@ -14,7 +14,6 @@ import org.springframework.core.io.*;
 import org.springframework.test.util.*;
 
 import java.io.*;
-import java.lang.reflect.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -66,8 +65,8 @@ public class TestMastercardClient {
     void givenPan_assertApiGetsCalled() throws Exception {
         MockResponse mockResponse = new MockResponse().setBody(mapper.writeValueAsString(testBeans.MASTERCARD_PAR_RESPONSE));
         mockServer.enqueue(mockResponse);
-        String actualPar = mastercardClient.getPar(testBeans.PAN);
-        assertEquals(testBeans.PAR, actualPar);
+        String actualPar = mastercardClient.getPar(testBeans.PAN_1);
+        assertEquals(testBeans.PAR_1, actualPar);
     }
 
 }

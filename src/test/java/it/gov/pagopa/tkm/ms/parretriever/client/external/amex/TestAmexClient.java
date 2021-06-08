@@ -63,8 +63,8 @@ public class TestAmexClient {
         MockResponse mockResponse = new MockResponse().setBody(responseAsString);
         mockServer.enqueue(mockResponse);
         when(mockMapper.readValue(responseAsString, AmexParResponse[].class)).thenReturn(mapper.readValue(responseAsString, AmexParResponse[].class));
-        String actualPar = amexClient.getPar(testBeans.PAN);
-        assertEquals(testBeans.PAR, actualPar);
+        String actualPar = amexClient.getPar(testBeans.PAN_1);
+        assertEquals(testBeans.PAR_1, actualPar);
     }
 
 }
