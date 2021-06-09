@@ -17,6 +17,8 @@ spring:
           mechanism: ${KAFKA_SASL_MECHANISM:PLAIN}
           jaas:
             config: ${keyvault.parREventhubReadSaslJaasConfig}
+    topics:
+      read-queue: ${KAFKA_READ_QUEUE_TOPIC}
 
 server:
   port: ${SERVER_PORT:8080}

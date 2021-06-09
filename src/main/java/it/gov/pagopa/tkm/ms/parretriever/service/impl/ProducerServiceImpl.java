@@ -4,11 +4,9 @@ import it.gov.pagopa.tkm.ms.parretriever.service.*;
 import it.gov.pagopa.tkm.service.*;
 import lombok.extern.log4j.Log4j2;
 import org.bouncycastle.openpgp.PGPException;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.*;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
-
-import static it.gov.pagopa.tkm.ms.parretriever.constant.Constants.TKM_READ_TOKEN_PAR_PAN_TOPIC;
 
 @Service
 @Log4j2
@@ -20,10 +18,13 @@ public final class ProducerServiceImpl implements ProducerService {
     @Autowired
     private PgpUtils pgpUtils;
 
+    @Value("${spring.kafka.topics.read-queue}")
+    private String readQueueTopic;
+
     @Override
     public void sendMessage(String message) throws PGPException {
         String encryptedMessage = pgpUtils.encrypt(message);
-        kafkaTemplate.send(TKM_READ_TOKEN_PAR_PAN_TOPIC, encryptedMessage);
+        kafkaTemplate.send(readQueueTopic, encryptedMessage);
     }
 
 }
