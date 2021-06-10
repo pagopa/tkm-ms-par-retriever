@@ -1,7 +1,5 @@
 package it.gov.pagopa.tkm.ms.parretriever.service.impl;
 
-import com.google.common.util.concurrent.RateLimiter;
-import it.gov.pagopa.tkm.ms.cardmanager.service.ParlessCardsService;
 import it.gov.pagopa.tkm.ms.parretriever.client.internal.cardmanager.*;
 import it.gov.pagopa.tkm.ms.parretriever.client.internal.cardmanager.model.response.*;
 import it.gov.pagopa.tkm.ms.parretriever.constant.CircuitEnum;
