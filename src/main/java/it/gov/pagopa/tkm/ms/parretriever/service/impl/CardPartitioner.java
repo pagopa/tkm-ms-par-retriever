@@ -55,14 +55,14 @@ public class CardPartitioner implements Partitioner {
         }
 
         Map<String, ExecutionContext> result = new HashMap<>();
-        EnumMap<CircuitEnum, Integer> threadsPerCircuit = new EnumMap<>(CircuitEnum.class);
+        Map<CircuitEnum, Integer> threadsPerCircuit = new HashMap<>();
 
         //numero di carte per ogni circuito
-        EnumMap<CircuitEnum, List<ParlessCard>> parlessCardsPerCircuit = new EnumMap<>(CircuitEnum.class);
+        Map<CircuitEnum, List<ParlessCard>> parlessCardsPerCircuit = new HashMap<>();
 
         //Popolamento map circuito/carte
         for (int i = 0; i < cardsSize; i++) {
-            CircuitEnum circuit = cards.get(i).getCircuit();
+            CircuitEnum circuit = groupCircuitEnum(cards.get(i).getCircuit());
 
             if (!parlessCardsPerCircuit.containsKey(circuit)) {
                 List<ParlessCard> circuitCards = Stream.of(cards.get(i)).collect(Collectors.toList());
@@ -77,12 +77,12 @@ public class CardPartitioner implements Partitioner {
         //Quindi se ho un numero di thread superiore
         //do ad ogni circuito il max numero di thread possibile senza fare calcoli
         if (maxNumberOfThreads > maxNumberOfThreadsFromCircuitLimits()) {
-            for (CircuitEnum circuitEnum : CircuitEnum.values()) {
+            for (CircuitEnum circuitEnum : parlessCardsPerCircuit.keySet()) {
                 threadsPerCircuit.put(circuitEnum, getApiCallMaxRateByCircuit(circuitEnum).intValue());
             }
         } else {
             //tempo di elaborazione previsto per ogni circuito con thread singolo
-            EnumMap<CircuitEnum, Double> singleThreadElaborationTimePerCircuit = new EnumMap<>(CircuitEnum.class);
+            Map<CircuitEnum, Double> singleThreadElaborationTimePerCircuit = new HashMap<>();
 
             parlessCardsPerCircuit.keySet().forEach(c -> {
                 singleThreadElaborationTimePerCircuit.put(c, parlessCardsPerCircuit.get(c).size() /
@@ -162,14 +162,14 @@ public class CardPartitioner implements Partitioner {
     }
 
     //Distribuzione del numero di thread ad ogni circuito
-    private EnumMap<CircuitEnum, Integer> normalizeNumberOfThreads(Map<CircuitEnum, Double> elaborationTimes,
+    private Map<CircuitEnum, Integer> normalizeNumberOfThreads(Map<CircuitEnum, Double> elaborationTimes,
                                                                Double totalElaborationTime, int maxNumberOfThreads) {
 
         //Assegnazione del numero di thread a ciascun circuito distribuendo secondo la proporzione
         //numero_di_thread_circuito= (tempo_di_elaborazione_circuito/tempo_totale_elaborazione)*numero_max_thread
         //valori arrotondati ad intero
-        EnumMap<CircuitEnum, Integer> threadsPerCircuit = new EnumMap<>(CircuitEnum.class);
-        EnumMap<CircuitEnum, Integer> underLimitCircuits = new EnumMap<>(CircuitEnum.class);
+        Map<CircuitEnum, Integer> threadsPerCircuit = new HashMap<>();
+        Map<CircuitEnum, Integer> underLimitCircuits = new HashMap<>();
 
         for (Map.Entry<CircuitEnum, Double> entry : elaborationTimes.entrySet()) {
             double doubleNumberOfThreads = (entry.getValue() / totalElaborationTime) * maxNumberOfThreads;
@@ -239,5 +239,23 @@ public class CardPartitioner implements Partitioner {
         return subListIndexes;
 
     }
+
+
+    private CircuitEnum groupCircuitEnum(CircuitEnum circuit){
+        switch (circuit) {
+            case AMEX:
+                return CircuitEnum.AMEX;
+            case MASTERCARD:
+                return CircuitEnum.MASTERCARD;
+            case VISA:
+            case VISA_ELECTRON:
+            case VPAY:
+                return CircuitEnum.VISA;
+            default:
+                return null;
+        }
+
+    }
+
 
 }
