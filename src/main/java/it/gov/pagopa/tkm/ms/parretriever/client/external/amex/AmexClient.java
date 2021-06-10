@@ -1,4 +1,4 @@
-package it.gov.pagopa.tkm.ms.parretriever.client.amex;
+package it.gov.pagopa.tkm.ms.parretriever.client.external.amex;
 
 import java.io.IOException;
 import java.util.Map;

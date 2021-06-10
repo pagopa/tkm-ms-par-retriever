@@ -2,6 +2,7 @@ package it.gov.pagopa.tkm.ms.parretriever.service.impl;
 
 import com.fasterxml.jackson.databind.*;
 import com.google.common.util.concurrent.RateLimiter;
+import it.gov.pagopa.tkm.ms.parretriever.client.external.amex.AmexClient;
 import it.gov.pagopa.tkm.ms.parretriever.client.external.mastercard.MastercardClient;
 import it.gov.pagopa.tkm.ms.parretriever.client.external.visa.VisaClient;
 import it.gov.pagopa.tkm.ms.parretriever.client.internal.cardmanager.model.response.ParlessCard;
@@ -38,7 +39,7 @@ public class CardWriter implements ItemWriter<ParlessCard> {
     private MastercardClient mastercardClient;
 
     @Autowired
-    private it.gov.pagopa.tkm.ms.parretriever.client.amex.AmexClient amexClient;
+    private AmexClient amexClient;
 
     @Autowired
     private ObjectMapper mapper;
