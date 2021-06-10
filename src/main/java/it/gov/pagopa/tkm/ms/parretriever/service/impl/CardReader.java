@@ -1,6 +1,7 @@
 package it.gov.pagopa.tkm.ms.parretriever.service.impl;
 
-import it.gov.pagopa.tkm.ms.parretriever.client.cards.model.response.*;
+import it.gov.pagopa.tkm.ms.parretriever.client.internal.cardmanager.model.response.*;
+import org.apache.commons.collections.*;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.stereotype.Component;
@@ -15,12 +16,14 @@ public class CardReader implements ItemReader<ParlessCard> {
     private final ArrayDeque<ParlessCard> queue = new ArrayDeque<>();
 
     public CardReader(List<ParlessCard> list) {
-        queue.addAll(list);
+        if (list != null) {
+            queue.addAll(list);
+        }
     }
 
     @Override
     public ParlessCard read() {
-        return !queue.isEmpty() ? queue.pop() : null;
+        return CollectionUtils.isNotEmpty(queue) ? queue.pop() : null;
     }
 
 }

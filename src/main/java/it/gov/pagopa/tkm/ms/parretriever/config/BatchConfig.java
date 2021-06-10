@@ -1,6 +1,6 @@
 package it.gov.pagopa.tkm.ms.parretriever.config;
 
-import it.gov.pagopa.tkm.ms.parretriever.client.cards.model.response.*;
+import it.gov.pagopa.tkm.ms.parretriever.client.internal.cardmanager.model.response.*;
 import it.gov.pagopa.tkm.ms.parretriever.service.impl.*;
 import org.springframework.batch.core.*;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
@@ -41,6 +41,9 @@ public class BatchConfig {
     @Autowired
     private JobExplorer jobExplorer;
 
+    @Value("${batch-execution.max-number-of-threads}")
+    private Integer maxNumberOfThreads;
+
     @Scheduled(cron = "${core.parRetrieverService.getPar.scheduler}")
     public void run() throws Exception {
         jobLauncher.run(parFinderJob(), new JobParametersBuilder().toJobParameters());
@@ -80,7 +83,7 @@ public class BatchConfig {
         return steps.get("parFinderStep.manager")
                 .partitioner("partitionedParFinderStep", partitioner())
                 .step(parFinderStep())
-                .gridSize(/*TODO da file application*/10)
+                .gridSize(maxNumberOfThreads)
                 .taskExecutor(new SimpleAsyncTaskExecutor())
                 .allowStartIfComplete(true)
                 .build();
