@@ -10,7 +10,6 @@ import org.springframework.batch.item.ExecutionContext;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.stereotype.*;
 
-import javax.persistence.criteria.CriteriaBuilder;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
