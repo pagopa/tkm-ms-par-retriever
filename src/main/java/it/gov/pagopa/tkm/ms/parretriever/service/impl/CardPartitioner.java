@@ -5,8 +5,6 @@ import it.gov.pagopa.tkm.ms.parretriever.client.internal.cardmanager.model.respo
 import it.gov.pagopa.tkm.ms.parretriever.constant.CircuitEnum;
 import lombok.extern.log4j.*;
 import org.jetbrains.annotations.*;
-import org.springframework.batch.core.StepExecution;
-import org.springframework.batch.core.annotation.BeforeStep;
 import org.springframework.batch.core.partition.support.Partitioner;
 import org.springframework.batch.item.ExecutionContext;
 import org.springframework.beans.factory.annotation.*;
