@@ -9,7 +9,9 @@ import it.gov.pagopa.tkm.ms.parretriever.client.visa.*;
 import it.gov.pagopa.tkm.ms.parretriever.constant.*;
 import it.gov.pagopa.tkm.ms.parretriever.model.topic.*;
 import org.jetbrains.annotations.*;
+import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.StepExecution;
+import org.springframework.batch.core.annotation.BeforeStep;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.item.ExecutionContext;
 import org.springframework.batch.item.ItemWriter;
@@ -23,6 +25,9 @@ import java.util.stream.*;
 @Component
 @StepScope
 public class CardWriter implements ItemWriter<ParlessCard> {
+    public CardWriter(List<ParlessCard> list, Double ratelimit) {
+        this.rateLimit=ratelimit;
+    }
 
     @Autowired
     private ProducerServiceImpl producerService;
@@ -57,11 +62,7 @@ public class CardWriter implements ItemWriter<ParlessCard> {
     @Value("${batch-execution.visa-max-api-client-call-rate}")
     private Double visaMaxApiClientCallRate;
 
-    RateLimiter amexRateLimiter = RateLimiter.create(amexMaxApiClientCallRate);
-    RateLimiter mastercardRateLimiter = RateLimiter.create(mastercardMaxApiClientCallRate);
-    RateLimiter visaRateLimiter = RateLimiter.create(visaMaxApiClientCallRate);
-
-    private StepExecution stepExecution;
+    private Double rateLimit;
 
     @Override
     public void write(@NotNull List<? extends ParlessCard> list) throws Exception {
@@ -86,11 +87,11 @@ public class CardWriter implements ItemWriter<ParlessCard> {
     }
 
     private void writeCardsOnKafkaQueue(List<? extends ParlessCard> parlessCardResponseList) throws Exception {
-        ExecutionContext stepContext = this.stepExecution.getExecutionContext();
-        RateLimiter rateLimiter = (RateLimiter)stepContext.get("rateLimiter");
-        rateLimiter.acquire(1);
 
+        RateLimiter rateLimiter = RateLimiter.create(rateLimit);
         for (ParlessCard parlessCard : parlessCardResponseList) {
+            rateLimiter.acquire(1);
+
             CircuitEnum circuit = parlessCard.getCircuit();
             if (!checkParRetrieveEnabledAndRateLimitByCircuit(circuit)) continue;
 
@@ -112,22 +113,18 @@ public class CardWriter implements ItemWriter<ParlessCard> {
     private boolean checkParRetrieveEnabledAndRateLimitByCircuit(CircuitEnum circuit) {
         switch (circuit) {
             case AMEX:
-                return amexParRetrieveEnabled && acquireLimiterSlot(amexRateLimiter);
+                return amexParRetrieveEnabled;
             case MASTERCARD:
-                return mastercardParRetrieveEnabled && acquireLimiterSlot(mastercardRateLimiter);
+                return mastercardParRetrieveEnabled;
             case VISA:
             case VISA_ELECTRON:
             case VPAY:
-                return visaParRetrieveEnabled && acquireLimiterSlot(visaRateLimiter);
+                return visaParRetrieveEnabled;
             default:
                 return false;
         }
 
     }
 
-    private Boolean acquireLimiterSlot(RateLimiter limiter){
-        limiter.acquire(1);
-        return true;
-  }
 
 }

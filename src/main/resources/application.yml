@@ -32,7 +32,7 @@ logging:
 core:
   parRetrieverService:
     getPar:
-      scheduler: ${PAR_RETRIEVER_GET_PAR_SCHEDULER:0 * * * * *}
+      scheduler: ${PAR_RETRIEVER_GET_PAR_SCHEDULER:0/30 * * * * *}
 
 azure:
   keyvault:
@@ -82,3 +82,8 @@ batch-execution:
   amex-par-retrieve-enabled: true
   mastercard-par-retrieve-enabled: true
   visa-par-retrieve-enabled: true
+  amex-max-api-client-call-rate: 16
+  mastercard-max-api-client-call-rate: 20
+  visa-max-api-client-call-rate: 10
+
+

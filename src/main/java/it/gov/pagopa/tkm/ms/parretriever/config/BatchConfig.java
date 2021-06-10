@@ -9,6 +9,7 @@ import org.springframework.batch.core.configuration.annotation.StepBuilderFactor
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.core.launch.JobLauncher;
+import org.springframework.batch.core.listener.ExecutionContextPromotionListener;
 import org.springframework.batch.core.partition.support.Partitioner;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemReader;
@@ -59,8 +60,9 @@ public class BatchConfig {
 
     @Bean
     @StepScope
-    public ItemWriter<ParlessCard> writer() {
-        return new CardWriter();
+    public ItemWriter<ParlessCard> writer(@Value("#{stepExecutionContext['cardList']}") List<ParlessCard> cards,
+                                          @Value("#{stepExecutionContext['rateLimit']}") Double rateLimit) {
+        return new CardWriter(cards, rateLimit);
     }
 
     @Bean
@@ -90,7 +92,7 @@ public class BatchConfig {
                 .<ParlessCard, ParlessCard>chunk(Integer.MAX_VALUE)
                 .reader(reader(null))
                 .processor(processor())
-                .writer(writer())
+                .writer(writer(null, null))
                 .allowStartIfComplete(true)
                 .build();
     }
