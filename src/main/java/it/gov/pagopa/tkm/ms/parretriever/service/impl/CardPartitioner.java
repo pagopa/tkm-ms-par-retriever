@@ -154,7 +154,11 @@ public class CardPartitioner implements Partitioner {
     }
 
     private Double maxNumberOfThreadsFromCircuitLimits(){
-        return amexMaxApiClientCallRate + mastercardMaxApiClientCallRate + visaMaxApiClientCallRate;
+        Double total = 0d;
+        for (CircuitEnum circuit: CircuitEnum.values()){
+            total+=getApiCallMaxRateByCircuit(circuit);
+        }
+        return total;
     }
 
     //Distribuzione del numero di thread ad ogni circuito
