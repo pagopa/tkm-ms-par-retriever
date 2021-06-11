@@ -34,7 +34,7 @@ logging:
 core:
   parRetrieverService:
     getPar:
-      scheduler: ${PAR_RETRIEVER_GET_PAR_SCHEDULER:0/30 * * * * *}
+      scheduler: ${PAR_RETRIEVER_GET_PAR_SCHEDULER:0 * * * * *}
 
 azure:
   keyvault:

@@ -118,8 +118,5 @@ public class CardWriter implements ItemWriter<ParlessCard> {
             default:
                 return false;
         }
-
-    }
-
-
+   }
 }
