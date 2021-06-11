@@ -69,9 +69,9 @@ keyvault:
   visaUserId: ${${AZURE_KEYVAULT_PROFILE:prod}-visaUserId}
 
 blob-storage:
-  mastercardPublicEncryptionKey: azure-blob://${BLOB_STORAGE_NAME}/Mastercard_Public_Enc_Key.crt
-  mastercardSigningKeyCert: azure-blob://${BLOB_STORAGE_NAME}/Mastercard_Signing_Key_Cert.p12
-  visaPublicCert: azure-blob://${BLOB_STORAGE_NAME}/Visa_Public_Cert.p12
+  mastercardPublicEncryptionKey: azure-blob://${BLOB_STORAGE_NAME}/Public-Key-Encrypt.crt
+  mastercardSigningKeyCert: azure-blob://${BLOB_STORAGE_NAME}/Get_PAR-sandbox.p12
+  visaPublicCert: azure-blob://${BLOB_STORAGE_NAME}/myProject_keyAndCertBundle.p12
 
 client-urls:
   consent-manager: ${CONSENT_MANAGER_URL}
