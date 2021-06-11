@@ -48,7 +48,7 @@ public class CardPartitioner implements Partitioner {
     @Override
     public Map<String, ExecutionContext> partition(@Value("${batch-execution.max-number-of-threads}") int maxNumberOfThreads) {
 
-        List<ParlessCard> cards = getTestParlessCards();
+        List<ParlessCard> cards = parlessCardsClient.getParlessCards(maxNumberOfCards);
         int cardsSize = cards.size();
 
         if (cardsSize == 0) {
@@ -98,7 +98,7 @@ public class CardPartitioner implements Partitioner {
         }
 
         //creazione degli execution context (thread) per ciascun circuito
-        int circuitIndex=0;
+        int circuitIndex = 0;
         for (CircuitEnum circuit : parlessCardsPerCircuit.keySet()) {
 
             List<ParlessCard> circuitCards = parlessCardsPerCircuit.get(circuit);
@@ -128,11 +128,11 @@ public class CardPartitioner implements Partitioner {
                 value.putString("name", "Thread" + i);
                 value.put("cardList", new ArrayList<>(circuitCards.subList(fromId, Math.min(toId, cardsSizeByCircuit))));
                 value.put("rateLimit", maxApiRatePerExecutionContext);
-                int j =i+circuitIndex;
+                int j = i + circuitIndex;
                 result.put("partition" + j, value);
 
             }
-            circuitIndex=circuitIndex+subListIndexes.length-1;
+            circuitIndex = circuitIndex + subListIndexes.length - 1;
         }
 
         return result;
@@ -158,11 +158,11 @@ public class CardPartitioner implements Partitioner {
 
     }
 
-    private Double maxNumberOfThreadsFromCircuitLimits(Set<CircuitEnum> circuits){
+    private Double maxNumberOfThreadsFromCircuitLimits(Set<CircuitEnum> circuits) {
         Double total = 0d;
-        for (CircuitEnum circuit: circuits){
+        for (CircuitEnum circuit : circuits) {
             CircuitEnum actualCircuitEnum = groupVisaCircuitEnum(circuit);
-            total+=getApiCallMaxRateByCircuit(actualCircuitEnum);
+            total += getApiCallMaxRateByCircuit(actualCircuitEnum);
         }
         return total;
     }
@@ -224,8 +224,8 @@ public class CardPartitioner implements Partitioner {
     }
 
     private int[] subListIndexes(Integer numberOfParlessCards, Integer maxNumberOfThread) {
-        if (numberOfParlessCards<=maxNumberOfThread){
-            maxNumberOfThread=numberOfParlessCards;
+        if (numberOfParlessCards <= maxNumberOfThread) {
+            maxNumberOfThread = numberOfParlessCards;
         }
 
         int ratio = numberOfParlessCards / maxNumberOfThread;
@@ -239,7 +239,7 @@ public class CardPartitioner implements Partitioner {
         }
 
         for (int i = remaining + 1; i < maxNumberOfThread + 1; i++) {
-            if (i==maxNumberOfThread) ratio =ratio+1;
+            if (i == maxNumberOfThread) ratio = ratio + 1;
             subListIndexes[i] = subListIndexes[i - 1] + ratio;
 
         }
@@ -248,7 +248,7 @@ public class CardPartitioner implements Partitioner {
     }
 
 
-    private CircuitEnum groupVisaCircuitEnum(CircuitEnum circuit){
+    private CircuitEnum groupVisaCircuitEnum(CircuitEnum circuit) {
         switch (circuit) {
             case AMEX:
                 return CircuitEnum.AMEX;
@@ -261,37 +261,6 @@ public class CardPartitioner implements Partitioner {
             default:
                 return null;
         }
-  }
-
-
-    private List<ParlessCard> getTestParlessCards(){
-        List<ParlessCard> cards = new ArrayList<>();
-        for (int i=0; i<200; i++){
-            ParlessCard c = new ParlessCard();
-            c.setCircuit(CircuitEnum.VISA);
-         cards.add(c);
-        }
-        for (int i=0; i<180; i++){
-            ParlessCard c = new ParlessCard();
-            c.setCircuit(CircuitEnum.VISA_ELECTRON);
-            cards.add(c);
-        }
-        for (int i=0; i<100; i++){
-            ParlessCard c = new ParlessCard();
-            c.setCircuit(CircuitEnum.VPAY);
-            cards.add(c);
-        }
-        for (int i=0; i<300; i++){
-            ParlessCard c = new ParlessCard();
-            c.setCircuit(CircuitEnum.AMEX);
-            cards.add(c);
-        }
-        for (int i=0; i<400; i++){
-            ParlessCard c = new ParlessCard();
-            c.setCircuit(CircuitEnum.MASTERCARD);
-            cards.add(c);
-        }
-
-        return  cards;
     }
 }
+
