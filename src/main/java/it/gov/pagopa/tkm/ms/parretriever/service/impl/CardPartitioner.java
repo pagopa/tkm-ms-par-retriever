@@ -10,6 +10,7 @@ import org.springframework.batch.item.ExecutionContext;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.stereotype.*;
 
+import javax.persistence.criteria.CriteriaBuilder;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -43,12 +44,12 @@ public class CardPartitioner implements Partitioner {
     @Autowired
     private ParlessCardsClient parlessCardsClient;
 
-
     @NotNull
     @Override
     public Map<String, ExecutionContext> partition(@Value("${batch-execution.max-number-of-threads}") int maxNumberOfThreads) {
 
         List<ParlessCard> cards = parlessCardsClient.getParlessCards(maxNumberOfCards);
+
         int cardsSize = cards.size();
 
         if (cardsSize == 0) {
@@ -93,7 +94,7 @@ public class CardPartitioner implements Partitioner {
             double totalElaborationTime =
                     singleThreadElaborationTimePerCircuit.values().stream().reduce(0d, Double::sum);
 
-            threadsPerCircuit = normalizeNumberOfThreads(singleThreadElaborationTimePerCircuit,
+            threadsPerCircuit = normalizeNumberOfThreadsV2(singleThreadElaborationTimePerCircuit,
                     totalElaborationTime, maxNumberOfThreads);
         }
 
@@ -121,7 +122,7 @@ public class CardPartitioner implements Partitioner {
                 int fromId = subListIndexes[i - 1];
                 int toId = subListIndexes[i];
                 ExecutionContext value = new ExecutionContext();
-                log.debug("\nStarting : Thread" + i + " from : " + fromId + " to : " + toId);
+               log.debug("\nStarting : Thread" + i + " from : " + fromId + " to : " + toId);
 
                 value.putInt("from", fromId);
                 value.putInt("to", toId);
@@ -146,20 +147,22 @@ public class CardPartitioner implements Partitioner {
         switch (circuit) {
             case AMEX:
                 return amexMaxApiClientCallRate;
+
             case MASTERCARD:
-                return mastercardMaxApiClientCallRate;
-            case VISA:
+                    return mastercardMaxApiClientCallRate;
+
+           case VISA:
             case VISA_ELECTRON:
             case VPAY:
-                return visaMaxApiClientCallRate;
+               return visaMaxApiClientCallRate;
             default:
                 return 1d;
         }
 
     }
 
-    private Double maxNumberOfThreadsFromCircuitLimits(Set<CircuitEnum> circuits) {
-        Double total = 0d;
+    private double maxNumberOfThreadsFromCircuitLimits(Set<CircuitEnum> circuits) {
+        double total = 0d;
         for (CircuitEnum circuit : circuits) {
             CircuitEnum actualCircuitEnum = groupVisaCircuitEnum(circuit);
             total += getApiCallMaxRateByCircuit(actualCircuitEnum);
@@ -168,60 +171,68 @@ public class CardPartitioner implements Partitioner {
     }
 
     //Distribuzione del numero di thread ad ogni circuito
-    private Map<CircuitEnum, Integer> normalizeNumberOfThreads(Map<CircuitEnum, Double> elaborationTimes,
-                                                               Double totalElaborationTime, int maxNumberOfThreads) {
-
-        //Assegnazione del numero di thread a ciascun circuito distribuendo secondo la proporzione
+    private Map<CircuitEnum, Integer> normalizeNumberOfThreadsV2(Map<CircuitEnum, Double> elaborationTimes,
+                                                                      Double totalElaborationTime, int maxNumberOfThreads) {
+   //Assegnazione del numero di thread a ciascun circuito distribuendo secondo la proporzione
         //numero_di_thread_circuito= (tempo_di_elaborazione_circuito/tempo_totale_elaborazione)*numero_max_thread
         //valori arrotondati ad intero
         Map<CircuitEnum, Integer> threadsPerCircuit = new HashMap<>();
-        Map<CircuitEnum, Integer> underLimitCircuits = new HashMap<>();
+        Set<CircuitEnum> filledCircuits = new HashSet<>();
 
-        for (Map.Entry<CircuitEnum, Double> entry : elaborationTimes.entrySet()) {
-            double doubleNumberOfThreads = (entry.getValue() / totalElaborationTime) * maxNumberOfThreads;
-            threadsPerCircuit.put(entry.getKey(), Math.max((int) Math.round(doubleNumberOfThreads), 1));
-        }
+        int numberOfThreads = maxNumberOfThreads;
         int threadsUsedByCircuits = 0;
-        double threadsUsedByUnderLoadedCircuits = 0;
 
-        for (Map.Entry<CircuitEnum, Integer> entry : threadsPerCircuit.entrySet()) {
-            int threadPerCircuit = entry.getValue();
-            int apiCallMaxRateByCircuit = getApiCallMaxRateByCircuit(entry.getKey()).intValue();
-            if (threadPerCircuit >= apiCallMaxRateByCircuit) {
-                threadPerCircuit = apiCallMaxRateByCircuit;
-                threadsUsedByCircuits += threadPerCircuit;
-            } else {
-                underLimitCircuits.put(entry.getKey(), threadPerCircuit);
-                threadsUsedByCircuits += threadPerCircuit;
-                threadsUsedByUnderLoadedCircuits += threadPerCircuit;
+        double elaborationTimeCounter = totalElaborationTime;
+        double elaborationTime;
+
+        //Alcuni circuiti potrebbero avere numero di thread assegnati superiore al loro massimo
+        //In questo caso il loro numero di thread viene posto al massimo
+        //e i thread in più che avevano vengono distribuiti tra gli altri circuiti
+        //Il processo si ripete finchè tutti i thread disponibili sono stati assegnati
+        while (numberOfThreads > 0) {
+            elaborationTime = elaborationTimeCounter;
+            threadsUsedByCircuits=0;
+            for (Map.Entry<CircuitEnum, Double> entry : elaborationTimes.entrySet()) {
+
+                int apiCallMaxRateByCircuit = getApiCallMaxRateByCircuit(entry.getKey()).intValue();
+                double doubleNumberOfThreads = (entry.getValue() / elaborationTime) * numberOfThreads;
+
+                int calculatedValue = Math.max((int) Math.round(doubleNumberOfThreads), 1);
+                int totalValue = (threadsPerCircuit.get(entry.getKey()) == null ?
+                        0 : threadsPerCircuit.get(entry.getKey())) + calculatedValue;
+
+                if (!filledCircuits.contains(entry.getKey())) {
+                    if (totalValue >= apiCallMaxRateByCircuit) {
+                        calculatedValue = apiCallMaxRateByCircuit;
+                        filledCircuits.add(entry.getKey());
+                        threadsPerCircuit.put(entry.getKey(), calculatedValue);
+                        elaborationTimeCounter -= entry.getValue();
+                    } else {
+                        int currentValue = threadsPerCircuit.get(entry.getKey()) == null ?
+                                0 : threadsPerCircuit.get(entry.getKey());
+                        threadsPerCircuit.put(entry.getKey(), currentValue + calculatedValue);
+                    }
+                }
+                threadsUsedByCircuits += threadsPerCircuit.get(entry.getKey());
             }
-            threadsPerCircuit.put(entry.getKey(), threadPerCircuit);
+            numberOfThreads = maxNumberOfThreads -  threadsUsedByCircuits;
         }
 
-        //Numero di thread ancora disponibili da distribuire
-        int threadSurplus = maxNumberOfThreads - threadsUsedByCircuits;
-
-        //Uno o più circuiti potrebbero avere un numero di thread calcolato superiore a quelli che possono gestire
-        //in questo caso, il loro numero di thread viene posto al massimo possibile
-        //e i thread in più che erano stati assegnati loro vengono distribuiti agli altri circuiti
-        for (Map.Entry<CircuitEnum, Integer> entry : underLimitCircuits.entrySet()) {
-
-            double addedThreadD = Math.ceil(entry.getValue() / threadsUsedByUnderLoadedCircuits * (double) threadSurplus);
-            int addedThread = (int) addedThreadD;
-            int apiCallMaxRateByCircuit = getApiCallMaxRateByCircuit(entry.getKey()).intValue();
-            int calculatedValue = threadsPerCircuit.get(entry.getKey()) + addedThread;
-            int allowedValue = Math.min(calculatedValue, apiCallMaxRateByCircuit);
-
-            threadsUsedByCircuits = threadsUsedByCircuits - entry.getValue() + allowedValue;
-
-            if (threadsUsedByCircuits > maxNumberOfThreads) {
-                allowedValue--;
+        //A causa dell'arrotondamento dei valori <1  ad 1,
+        // la somma del numero di thread usati potrebbe essere superiore al max numero
+        //di thread ammessi - ciclo di correzione
+        while (threadsUsedByCircuits > maxNumberOfThreads) {
+            for (Map.Entry<CircuitEnum, Integer> entry : threadsPerCircuit.entrySet()) {
+                if (entry.getValue() > 1 && threadsUsedByCircuits > maxNumberOfThreads) {
+                    threadsPerCircuit.put(entry.getKey(), entry.getValue() - 1);
+                    threadsUsedByCircuits--;
+                }
             }
-            threadsPerCircuit.put(entry.getKey(), allowedValue);
         }
 
         return threadsPerCircuit;
     }
+
 
     private int[] subListIndexes(Integer numberOfParlessCards, Integer maxNumberOfThread) {
         if (numberOfParlessCards <= maxNumberOfThread) {
@@ -247,7 +258,6 @@ public class CardPartitioner implements Partitioner {
 
     }
 
-
     private CircuitEnum groupVisaCircuitEnum(CircuitEnum circuit) {
         switch (circuit) {
             case AMEX:
@@ -262,5 +272,6 @@ public class CardPartitioner implements Partitioner {
                 return null;
         }
     }
+
 }
 
