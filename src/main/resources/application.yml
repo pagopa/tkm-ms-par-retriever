@@ -88,8 +88,8 @@ batch-execution:
   amex-par-retrieve-enabled: true
   mastercard-par-retrieve-enabled: true
   visa-par-retrieve-enabled: true
-  amex-max-api-client-call-rate: ${AMEX_MAX_RATE:10}
-  mastercard-max-api-client-call-rate: ${MASTERCARD_MAX_RATE:10}
-  visa-max-api-client-call-rate: ${VISA_MAX_RATE:10}
+  amex-max-api-client-call-rate: ${AMEX_MAX_RATE:5}
+  mastercard-max-api-client-call-rate: ${MASTERCARD_MAX_RATE:5}
+  visa-max-api-client-call-rate: ${VISA_MAX_RATE:5}
 
 
