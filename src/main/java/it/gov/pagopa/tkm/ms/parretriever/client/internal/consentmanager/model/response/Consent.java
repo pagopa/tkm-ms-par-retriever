@@ -1,14 +1,15 @@
 package it.gov.pagopa.tkm.ms.parretriever.client.internal.consentmanager.model.response;
 
 import lombok.*;
-import lombok.experimental.*;
+import lombok.Builder;
 
 import javax.validation.constraints.*;
 import java.util.*;
 
 @Data
 @NoArgsConstructor
-@Accessors(chain = true)
+@AllArgsConstructor
+@Builder
 public class Consent {
 
     @NotNull

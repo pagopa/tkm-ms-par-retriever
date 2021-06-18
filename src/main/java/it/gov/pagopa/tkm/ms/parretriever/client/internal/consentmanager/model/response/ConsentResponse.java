@@ -1,10 +1,11 @@
 package it.gov.pagopa.tkm.ms.parretriever.client.internal.consentmanager.model.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import it.gov.pagopa.tkm.constant.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.experimental.Accessors;
+import lombok.Builder;
 
 import java.time.Instant;
 import java.util.*;
@@ -12,12 +13,12 @@ import java.util.*;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Accessors(chain = true)
+@Builder
 public class ConsentResponse {
 
     private ConsentEntityEnum consent;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy HH:mm:ss", timezone = "Europe/Rome")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = TkmDatetimeConstant.DATE_TIME_PATTERN, timezone = TkmDatetimeConstant.DATE_TIME_TIMEZONE)
     private Instant lastUpdateDate;
 
     private Set<CardServiceConsent> details;
