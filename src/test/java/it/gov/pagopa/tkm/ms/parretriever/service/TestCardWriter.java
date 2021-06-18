@@ -44,11 +44,6 @@ public class TestCardWriter {
         testBeans = new DefaultBeans();
     }
 
-    @Test
-    void writeOnQueue_exceptionCheck() {
-        List<ParlessCard> parlessCards = testBeans.PARLESS_CARDS_LIST;
-        cardWriter = new CardWriter(parlessCards, (double) parlessCards.size());
-        assertDoesNotThrow(() -> cardWriter.write(parlessCards));
-    }
+    //TODO TESTS
 
 }

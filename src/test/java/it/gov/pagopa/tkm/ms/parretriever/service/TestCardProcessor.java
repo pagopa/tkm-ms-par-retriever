@@ -33,20 +33,6 @@ public class TestCardProcessor {
         testBeans = new DefaultBeans();
     }
 
-    @Test
-    void processParlessCard_process() {
-        cardProcessor = new CardProcessor();
-        for (ParlessCard card: testBeans.PARLESS_CARDS_LIST) {
-            ParlessCard processedCard = cardProcessor.process(card);
-            assertEquals(card, processedCard);
-        }
-    }
-
-    @Test
-    void givenEmptyCard_returnNull() {
-        cardProcessor = new CardProcessor();
-        ParlessCard card = cardProcessor.process(new ParlessCard());
-        assertNull(card);
-    }
+    //TODO TESTS
 
 }
