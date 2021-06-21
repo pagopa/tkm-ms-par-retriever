@@ -82,54 +82,54 @@ public class DefaultBeans {
             "SdBhLBGIeHh/UfW3Dz3o3RPJJgh5rlpdnhRitfVfmt8=\n" +
             "-----END RSA PRIVATE KEY-----";
 
-    public final List<ParlessCard> PARLESS_CARD_LIST_6000 = createParlessCardList600();
-    private  List<ParlessCard> PARLESS_AMEX_CARD_LIST_1800;
-    private List<ParlessCard> PARLESS_VISA_CARD_LIST_2000;
-    private List<ParlessCard> PARLESS_MASTERCARD_CARD_LIST_2200;
+    public final List<ParlessCard> PARLESS_CARD_LIST = createParlessCardList();
+    private  List<ParlessCard> PARLESS_AMEX_CARD_LIST;
+    private List<ParlessCard> PARLESS_VISA_CARD_LIST;
+    private List<ParlessCard> PARLESS_MASTERCARD_CARD_LIST;
 
     public Map<String, ExecutionContext> EXECUTION_CONTEXT_MAP_15_THREADS = createExecutionsContextMap15Threads();
 
 
-    private List<ParlessCard> createParlessCardList600(){
+    private List<ParlessCard> createParlessCardList(){
         List<ParlessCard> parlessCards = new ArrayList<>();
-        PARLESS_AMEX_CARD_LIST_1800=createAmexParlessCardList180();
-        PARLESS_VISA_CARD_LIST_2000=createVisaParlessCardList200();
-        PARLESS_MASTERCARD_CARD_LIST_2200=createMastercardParlessCardList220();
-        parlessCards.addAll(PARLESS_AMEX_CARD_LIST_1800);
-        parlessCards.addAll(PARLESS_VISA_CARD_LIST_2000);
-        parlessCards.addAll(PARLESS_MASTERCARD_CARD_LIST_2200);
+        PARLESS_AMEX_CARD_LIST=createAmexParlessCardList();
+        PARLESS_VISA_CARD_LIST=createVisaParlessCardList();
+        PARLESS_MASTERCARD_CARD_LIST=createMastercardParlessCardList();
+        parlessCards.addAll(PARLESS_AMEX_CARD_LIST);
+        parlessCards.addAll(PARLESS_VISA_CARD_LIST);
+        parlessCards.addAll(PARLESS_MASTERCARD_CARD_LIST);
 
         return parlessCards;
     }
 
-    private List<ParlessCard> createAmexParlessCardList180(){
+    private List<ParlessCard> createAmexParlessCardList(){
         List<ParlessCard> parlessCards = new ArrayList<>();
 
-        for (int i=0; i<1800; i++){
+        for (int i=0; i<5; i++){
             parlessCards.add(PARLESS_AMEX_CARD);
         }
         return parlessCards;
     }
 
-    private List<ParlessCard> createVisaParlessCardList200(){
+    private List<ParlessCard> createVisaParlessCardList(){
         List<ParlessCard> parlessCards = new ArrayList<>();
 
-        for (int i=0; i<900; i++){
+        for (int i=0; i<2; i++){
             parlessCards.add(PARLESS_VISA_CARD);
         }
-        for (int i=0; i<600; i++){
+        for (int i=0; i<2; i++){
             parlessCards.add(PARLESS_VISA_ELECTRON_CARD);
         }
-        for (int i=0; i<500; i++){
+        for (int i=0; i<1; i++){
             parlessCards.add(PARLESS_VPAY_CARD);
         }
         return parlessCards;
     }
 
-    private List<ParlessCard> createMastercardParlessCardList220(){
+    private List<ParlessCard> createMastercardParlessCardList(){
         List<ParlessCard> parlessCards = new ArrayList<>();
 
-        for (int i=0; i<2200; i++){
+        for (int i=0; i<5; i++){
             parlessCards.add(PARLESS_MASTERCARD_CARD);
         }
 
@@ -147,9 +147,9 @@ public class DefaultBeans {
     };
 
     private Map<String, ExecutionContext> createAmexExecutionContextsMap(Map<String, ExecutionContext> executionContextMap, int circuitIndex){
-        List<ParlessCard> amexCircuitCards= PARLESS_AMEX_CARD_LIST_1800;
+        List<ParlessCard> amexCircuitCards= PARLESS_AMEX_CARD_LIST;
         for (int i=0; i<5; i++){
-            int step = 360;
+            int step = 1;
             ExecutionContext value = new ExecutionContext();
             int from= i*step;
             int to= (i+1)*step;
@@ -167,9 +167,9 @@ public class DefaultBeans {
 
 
     private Map<String, ExecutionContext> createVisaExecutionContextsMap(Map<String, ExecutionContext> executionContextMap, int circuitIndex){
-        List<ParlessCard> visaCircuitCards= PARLESS_VISA_CARD_LIST_2000;
+        List<ParlessCard> visaCircuitCards= PARLESS_VISA_CARD_LIST;
         for (int i=0; i<5; i++){
-            int step = 400;
+            int step = 1;
             ExecutionContext value = new ExecutionContext();
             int from= i*step;
             int to= (i+1)*step;
@@ -186,9 +186,9 @@ public class DefaultBeans {
     }
 
     private Map<String, ExecutionContext> createMastercardExecutionContextsMap(Map<String, ExecutionContext> executionContextMap, int circuitIndex){
-        List<ParlessCard> mastercardCircuitCards= PARLESS_MASTERCARD_CARD_LIST_2200;
+        List<ParlessCard> mastercardCircuitCards= PARLESS_MASTERCARD_CARD_LIST;
         for (int i=0; i<5; i++){
-            int step = 440;
+            int step = 1;
             ExecutionContext value = new ExecutionContext();
             int from= i*step;
             int to= (i+1)*step;

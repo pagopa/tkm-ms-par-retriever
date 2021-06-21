@@ -1,7 +1,6 @@
 package it.gov.pagopa.tkm.ms.parretriever.service;
 
 import com.fasterxml.jackson.databind.*;
-import com.sun.xml.internal.ws.spi.db.FieldSetter;
 import it.gov.pagopa.tkm.ms.parretriever.client.internal.cardmanager.*;
 import it.gov.pagopa.tkm.ms.parretriever.constant.*;
 import it.gov.pagopa.tkm.ms.parretriever.service.impl.*;
@@ -13,7 +12,6 @@ import org.springframework.batch.item.ExecutionContext;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -71,12 +69,21 @@ public class TestCardPartitioner {
 
     @Test
     void givenCardsList_returnExecutionContext(){
-        ReflectionTestUtils.setField(cardPartitioner, "maxNumberOfCards", 6000);
+        ReflectionTestUtils.setField(cardPartitioner, "maxNumberOfCards", 15);
         ReflectionTestUtils.setField(cardPartitioner, "amexMaxApiClientCallRate", 5d);
         ReflectionTestUtils.setField(cardPartitioner, "mastercardMaxApiClientCallRate", 5d);
         ReflectionTestUtils.setField(cardPartitioner, "visaMaxApiClientCallRate", 5d);
 
-        when(parlessCardsClient.getParlessCards(6000)).thenReturn(testBeans.PARLESS_CARD_LIST_6000);
+        when(parlessCardsClient.getParlessCards(15)).thenReturn(testBeans.PARLESS_CARD_LIST);
+       Map<String, ExecutionContext> mapA= cardPartitioner.partition(15);
+       Map<String, ExecutionContext> mapB= testBeans.EXECUTION_CONTEXT_MAP_15_THREADS;
+
+       if (mapA.equals(mapB)){
+           System.out.println("\n \n \n ________ MAPS ARE EQUAL");
+        } else {
+           System.out.println("\n \n \n ________ MAPS ARE NOT EQUAL");
+       }
+
         assertEquals(cardPartitioner.partition(15), testBeans.EXECUTION_CONTEXT_MAP_15_THREADS);
 
     }
