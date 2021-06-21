@@ -44,15 +44,19 @@ public class CardPartitioner implements Partitioner {
     @Autowired
     private ParlessCardsClient parlessCardsClient;
 
+
     @NotNull
     @Override
     public Map<String, ExecutionContext> partition(@Value("${batch-execution.max-number-of-threads}") int maxNumberOfThreads) {
 
+        if (maxNumberOfThreads ==0){
+            return new HashMap<>();
+        }
+
         List<ParlessCard> cards = parlessCardsClient.getParlessCards(maxNumberOfCards);
+        int cardsSize = cards == null?0:cards.size();
 
-        int cardsSize = cards.size();
-
-        if (cardsSize == 0) {
+        if (cardsSize ==0) {
             return new HashMap<>();
         }
 
@@ -78,7 +82,7 @@ public class CardPartitioner implements Partitioner {
         //del numero di chiamate al secondo per ciascun circuito
         //Quindi se ho un numero di thread superiore
         //do ad ogni circuito il max numero di thread possibile senza fare calcoli
-        if (maxNumberOfThreads > maxNumberOfThreadsFromCircuitLimits(parlessCardsPerCircuit.keySet())) {
+        if (maxNumberOfThreads >= maxNumberOfThreadsFromCircuitLimits(parlessCardsPerCircuit.keySet())) {
             for (CircuitEnum circuitEnum : parlessCardsPerCircuit.keySet()) {
                 threadsPerCircuit.put(circuitEnum, getApiCallMaxRateByCircuit(circuitEnum).intValue());
             }
@@ -103,6 +107,7 @@ public class CardPartitioner implements Partitioner {
         for (CircuitEnum circuit : parlessCardsPerCircuit.keySet()) {
 
             List<ParlessCard> circuitCards = parlessCardsPerCircuit.get(circuit);
+
             int cardsSizeByCircuit = circuitCards.size();
             int maxNumberOfThreadsByCircuit = threadsPerCircuit.get(circuit);
             //se il numero di carte è inferiore al numero di thread, crea un thread per carta
@@ -123,13 +128,13 @@ public class CardPartitioner implements Partitioner {
                 int toId = subListIndexes[i];
                 ExecutionContext value = new ExecutionContext();
                log.debug("\nStarting : Thread" + i + " from : " + fromId + " to : " + toId);
+                int j = i + circuitIndex;
 
                 value.putInt("from", fromId);
                 value.putInt("to", toId);
-                value.putString("name", "Thread" + i);
+                value.putString("name", "Thread" + j);
                 value.put("cardList", new ArrayList<>(circuitCards.subList(fromId, Math.min(toId, cardsSizeByCircuit))));
                 value.put("rateLimit", maxApiRatePerExecutionContext);
-                int j = i + circuitIndex;
                 result.put("partition" + j, value);
 
             }
@@ -233,7 +238,6 @@ public class CardPartitioner implements Partitioner {
         return threadsPerCircuit;
     }
 
-
     private int[] subListIndexes(Integer numberOfParlessCards, Integer maxNumberOfThread) {
         if (numberOfParlessCards <= maxNumberOfThread) {
             maxNumberOfThread = numberOfParlessCards;
@@ -250,7 +254,6 @@ public class CardPartitioner implements Partitioner {
         }
 
         for (int i = remaining + 1; i < maxNumberOfThread + 1; i++) {
-            if (i == maxNumberOfThread) ratio = ratio + 1;
             subListIndexes[i] = subListIndexes[i - 1] + ratio;
 
         }

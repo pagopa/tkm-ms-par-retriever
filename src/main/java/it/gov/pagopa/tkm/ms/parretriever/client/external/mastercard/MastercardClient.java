@@ -61,6 +61,9 @@ public class MastercardClient {
     }
 
     private FieldLevelEncryptionConfig buildEncryptionConfig() throws Exception {
+
+        publicEncryptionKey.getFile();
+
         return FieldLevelEncryptionConfigBuilder.aFieldLevelEncryptionConfig()
                 .withEncryptionPath("$.encryptedPayload.encryptedData", "$.encryptedPayload")
                 .withDecryptionPath("$.encryptedPayload", "$.encryptedPayload.encryptedData")
