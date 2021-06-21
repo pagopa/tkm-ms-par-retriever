@@ -78,12 +78,6 @@ public class TestCardPartitioner {
        Map<String, ExecutionContext> mapA= cardPartitioner.partition(15);
        Map<String, ExecutionContext> mapB= testBeans.EXECUTION_CONTEXT_MAP_15_THREADS;
 
-       if (mapA.equals(mapB)){
-           System.out.println("\n \n \n ________ MAPS ARE EQUAL");
-        } else {
-           System.out.println("\n \n \n ________ MAPS ARE NOT EQUAL");
-       }
-
         assertEquals(cardPartitioner.partition(15), testBeans.EXECUTION_CONTEXT_MAP_15_THREADS);
 
     }

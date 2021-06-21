@@ -64,7 +64,7 @@ public class CardPartitioner implements Partitioner {
         Map<CircuitEnum, Integer> threadsPerCircuit = new HashMap<>();
 
         //numero di carte per ogni circuito
-        Map<CircuitEnum, List<ParlessCard>> parlessCardsPerCircuit = new HashMap<>();
+        Map<CircuitEnum, List<ParlessCard>> parlessCardsPerCircuit = new TreeMap<>();
 
         //Popolamento map circuito/carte
         for (int i = 0; i < cardsSize; i++) {
@@ -104,8 +104,8 @@ public class CardPartitioner implements Partitioner {
 
         //creazione degli execution context (thread) per ciascun circuito
         int circuitIndex = 0;
-        for (CircuitEnum circuit : parlessCardsPerCircuit.keySet()) {
-
+        for (Map.Entry<CircuitEnum, List<ParlessCard>> entry : parlessCardsPerCircuit.entrySet()) {
+             CircuitEnum circuit = entry.getKey();
             List<ParlessCard> circuitCards = parlessCardsPerCircuit.get(circuit);
 
             int cardsSizeByCircuit = circuitCards.size();
@@ -127,7 +127,6 @@ public class CardPartitioner implements Partitioner {
                 int fromId = subListIndexes[i - 1];
                 int toId = subListIndexes[i];
                 ExecutionContext value = new ExecutionContext();
-               log.debug("\nStarting : Thread" + i + " from : " + fromId + " to : " + toId);
                 int j = i + circuitIndex;
 
                 value.putInt("from", fromId);

@@ -105,7 +105,7 @@ public class DefaultBeans {
     private List<ParlessCard> createAmexParlessCardList(){
         List<ParlessCard> parlessCards = new ArrayList<>();
 
-        for (int i=0; i<5; i++){
+        for (int i=0; i<100; i++){
             parlessCards.add(PARLESS_AMEX_CARD);
         }
         return parlessCards;
@@ -114,13 +114,13 @@ public class DefaultBeans {
     private List<ParlessCard> createVisaParlessCardList(){
         List<ParlessCard> parlessCards = new ArrayList<>();
 
-        for (int i=0; i<2; i++){
+        for (int i=0; i<40; i++){
             parlessCards.add(PARLESS_VISA_CARD);
         }
-        for (int i=0; i<2; i++){
+        for (int i=0; i<40; i++){
             parlessCards.add(PARLESS_VISA_ELECTRON_CARD);
         }
-        for (int i=0; i<1; i++){
+        for (int i=0; i<20; i++){
             parlessCards.add(PARLESS_VPAY_CARD);
         }
         return parlessCards;
@@ -129,7 +129,7 @@ public class DefaultBeans {
     private List<ParlessCard> createMastercardParlessCardList(){
         List<ParlessCard> parlessCards = new ArrayList<>();
 
-        for (int i=0; i<5; i++){
+        for (int i=0; i<100; i++){
             parlessCards.add(PARLESS_MASTERCARD_CARD);
         }
 
@@ -137,10 +137,10 @@ public class DefaultBeans {
     }
 
     public final Map<String, ExecutionContext> createExecutionsContextMap15Threads(){
-        Map<String, ExecutionContext> executionContextMap = new HashMap<>();
-        executionContextMap=createAmexExecutionContextsMap(executionContextMap, 0);
-        executionContextMap=createVisaExecutionContextsMap(executionContextMap, 5);
-        executionContextMap=createMastercardExecutionContextsMap(executionContextMap, 10);
+        Map<String, ExecutionContext> executionContextMap = new TreeMap<>();
+        executionContextMap=createVisaExecutionContextsMap(executionContextMap, 0);
+        executionContextMap=createMastercardExecutionContextsMap(executionContextMap, 5);
+        executionContextMap=createAmexExecutionContextsMap(executionContextMap, 10);
 
         return executionContextMap;
 
@@ -149,7 +149,7 @@ public class DefaultBeans {
     private Map<String, ExecutionContext> createAmexExecutionContextsMap(Map<String, ExecutionContext> executionContextMap, int circuitIndex){
         List<ParlessCard> amexCircuitCards= PARLESS_AMEX_CARD_LIST;
         for (int i=0; i<5; i++){
-            int step = 1;
+            int step = 20;
             ExecutionContext value = new ExecutionContext();
             int from= i*step;
             int to= (i+1)*step;
@@ -161,6 +161,7 @@ public class DefaultBeans {
             value.put("cardList", new ArrayList<>(amexCircuitCards.subList(from,  to)));
             value.put("rateLimit", 1d);
             executionContextMap.put("partition" + j, value);
+
         }
         return executionContextMap;
     }
@@ -169,7 +170,7 @@ public class DefaultBeans {
     private Map<String, ExecutionContext> createVisaExecutionContextsMap(Map<String, ExecutionContext> executionContextMap, int circuitIndex){
         List<ParlessCard> visaCircuitCards= PARLESS_VISA_CARD_LIST;
         for (int i=0; i<5; i++){
-            int step = 1;
+            int step = 20;
             ExecutionContext value = new ExecutionContext();
             int from= i*step;
             int to= (i+1)*step;
@@ -181,6 +182,7 @@ public class DefaultBeans {
             value.put("cardList", new ArrayList<>(visaCircuitCards.subList(from,  to)));
             value.put("rateLimit", 1d);
             executionContextMap.put("partition" + j, value);
+
         }
         return executionContextMap;
     }
@@ -188,7 +190,7 @@ public class DefaultBeans {
     private Map<String, ExecutionContext> createMastercardExecutionContextsMap(Map<String, ExecutionContext> executionContextMap, int circuitIndex){
         List<ParlessCard> mastercardCircuitCards= PARLESS_MASTERCARD_CARD_LIST;
         for (int i=0; i<5; i++){
-            int step = 1;
+            int step = 20;
             ExecutionContext value = new ExecutionContext();
             int from= i*step;
             int to= (i+1)*step;
@@ -200,6 +202,7 @@ public class DefaultBeans {
             value.put("cardList", new ArrayList<>(mastercardCircuitCards.subList(from,  to)));
             value.put("rateLimit", 1d);
             executionContextMap.put("partition" + j, value);
+
         }
         return executionContextMap;
     }
