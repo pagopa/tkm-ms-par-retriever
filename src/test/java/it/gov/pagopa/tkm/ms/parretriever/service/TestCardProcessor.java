@@ -10,8 +10,7 @@ import org.junit.jupiter.api.extension.*;
 import org.mockito.*;
 import org.mockito.junit.jupiter.*;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ExtendWith(MockitoExtension.class)
@@ -33,6 +32,21 @@ public class TestCardProcessor {
         testBeans = new DefaultBeans();
     }
 
-    //TODO TESTS
+    @Test
+    void processParlessCard_process() {
+        for (ParlessCard card : testBeans.PARLESS_CARDS_LIST) {
+            ParlessCard processedCard = null;
+            if (consentClient.getConsent(card.getTaxCode(), card.getHpan(), null) != null) {
+                processedCard = cardProcessor.process(card);
+                assertEquals(card, processedCard);
+            }
+            assertNull(processedCard);
+        }
+    }
+
+    @Test
+    void badProcessing_throwNullPointerException() {
+        assertThrows(NullPointerException.class, () -> cardProcessor.process(testBeans.PARLESS_CARD_1));
+    }
 
 }

@@ -66,6 +66,22 @@ public class DefaultBeans {
 
     public final List<ParlessCard> PARLESS_CARDS_LIST = Arrays.asList(PARLESS_CARD_1, PARLESS_CARD_2);
 
+    public final String MASTERCARD_RESPONSE_PRIVATE_KEY = "-----BEGIN RSA PRIVATE KEY-----\n" +
+            "MIICXAIBAAKBgQCMhM/5iBYjLJFKM5sZRXJvGu/K5nLDf1v4oaTM+DxZaH9q1gwZ\n" +
+            "BJ3OVe9Dc6l63FSD8LH0fgzIC9Xbnal4LGkymroFZu1HSzFZWLXuAm3F8xMojAZV\n" +
+            "k6DuAMVff0zhv+7lh/qs71Y1qwV4YXtpYqRaA0Nipq0xHa56pCLIQnty0QIDAQAB\n" +
+            "AoGAZKhW2qbzRKsOQJsLBWVL/e7LywqdNxGqbkZMaU+A24MRkxRVgi5eZIoGZMkb\n" +
+            "pJjkKcdnkn4g5cQko7ciyKT3jWXd3Pw/j6gUtEVeooDSAR5QPjW3J1wh06bAk0Rz\n" +
+            "E3l0V1g+Fna91BBqbeWblceKP8iRN0ak5VZhkT2jrkuS3OkCQQDk9A7d4CZxQ3JK\n" +
+            "csw0EKH7frl9TUJ/EQ33RbzpKnRWdBITsNnXPkg6Dyr7IpF4CL4tR23fRbqEGiC/\n" +
+            "rqBHC+nLAkEAnR5XgFWUENb8oK7oRKvDZDViRpZz2r33OG0uihpmoCGp9ANr6t00\n" +
+            "VHNk5v+wYuyfj7MVB3dG/NTXXG1fdz8yUwJBAKWC7XBmR0Qf/vJk9Mw6re7SWKOF\n" +
+            "g6m6GX+FUaC5iSqqdBr6ATECHFKkfmzYO5MrtteiyIHctY4kGUKYqdNSgGsCQH0h\n" +
+            "Rwq8HTn0HipSYkUejnRmV6hj9kzFcfiMa74tHIJ3jQT7HJ1mImEHrdqS1AVU8hbd\n" +
+            "xue1ROHjGMlRifBMcmUCQBcBArUv6frNTeAhgXJxmjWxaV4Ua6uU901yISiXXGvh\n" +
+            "SdBhLBGIeHh/UfW3Dz3o3RPJJgh5rlpdnhRitfVfmt8=\n" +
+            "-----END RSA PRIVATE KEY-----";
+
     public final List<ParlessCard> PARLESS_CARD_LIST_6000 = createParlessCardList600();
     private  List<ParlessCard> PARLESS_AMEX_CARD_LIST_1800;
     private List<ParlessCard> PARLESS_VISA_CARD_LIST_2000;

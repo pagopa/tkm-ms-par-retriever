@@ -11,6 +11,7 @@ import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.*;
 import org.mockito.*;
 import org.mockito.junit.jupiter.*;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.List;
 
@@ -40,10 +41,38 @@ public class TestCardWriter {
     private DefaultBeans testBeans;
 
     @BeforeEach
-    void init() {
+    void init() throws NoSuchFieldException {
         testBeans = new DefaultBeans();
+        CardWriter.class.getDeclaredField("rateLimit").setAccessible(true);
+        CardWriter.class.getDeclaredField("amexParRetrieveEnabled").setAccessible(true);
+        CardWriter.class.getDeclaredField("mastercardParRetrieveEnabled").setAccessible(true);
+        CardWriter.class.getDeclaredField("visaParRetrieveEnabled").setAccessible(true);
+        CardWriter.class.getDeclaredField("amexMaxApiClientCallRate").setAccessible(true);
+        CardWriter.class.getDeclaredField("mastercardMaxApiClientCallRate").setAccessible(true);
+        CardWriter.class.getDeclaredField("visaMaxApiClientCallRate").setAccessible(true);
+        CardWriter.class.getDeclaredField("amexClient").setAccessible(true);
+        CardWriter.class.getDeclaredField("mastercardClient").setAccessible(true);
+        CardWriter.class.getDeclaredField("visaClient").setAccessible(true);
+        CardWriter.class.getDeclaredField("mapper").setAccessible(true);
+        CardWriter.class.getDeclaredField("producerService").setAccessible(true);
+        ReflectionTestUtils.setField(cardWriter, "rateLimit", (double) testBeans.PARLESS_CARDS_LIST.size());
+        ReflectionTestUtils.setField(cardWriter, "amexParRetrieveEnabled", true);
+        ReflectionTestUtils.setField(cardWriter, "mastercardParRetrieveEnabled", true);
+        ReflectionTestUtils.setField(cardWriter, "visaParRetrieveEnabled", true);
+        ReflectionTestUtils.setField(cardWriter, "amexMaxApiClientCallRate", 5.0);
+        ReflectionTestUtils.setField(cardWriter, "mastercardMaxApiClientCallRate", 5.0);
+        ReflectionTestUtils.setField(cardWriter, "visaMaxApiClientCallRate", 5.0);
+        ReflectionTestUtils.setField(cardWriter, "amexClient", amexClient);
+        ReflectionTestUtils.setField(cardWriter, "mastercardClient", mastercardClient);
+        ReflectionTestUtils.setField(cardWriter, "visaClient", visaClient);
+        ReflectionTestUtils.setField(cardWriter, "mapper", mapper);
+        ReflectionTestUtils.setField(cardWriter, "producerService", producerService);
     }
 
-    //TODO TESTS
+    @Test
+    void writeOnQueue_exceptionCheck() {
+        List<ParlessCard> parlessCards = testBeans.PARLESS_CARDS_LIST;
+        assertDoesNotThrow(() -> cardWriter.write(parlessCards));
+    }
 
 }
