@@ -109,6 +109,7 @@ public class DefaultBeans {
     public Map<String, ExecutionContext> EXECUTION_CONTEXT_MAP_15_THREADS = createExecutionsContextMap15Threads();
     public Map<String, ExecutionContext> EXECUTION_CONTEXT_MAP_12_THREADS = createExecutionsContextMap12Threads();
     public Map<String, ExecutionContext> EXECUTION_CONTEXT_MAP_THREADS_UNBALANCED = createExecutionsContextMapThreadsUnbalanced();
+    public Map<String, ExecutionContext> EXECUTION_CONTEXT_MAP_THREADS_SMALL = createExecutionsContextMapThreadSmall();
 
 
     public ConsentResponse CARD_CONSENT_RESPONSE_ALLOW = new ConsentResponse(ConsentEntityEnum.Allow, Instant.now(),
@@ -203,9 +204,9 @@ public class DefaultBeans {
 
     public final Map<String, ExecutionContext> createExecutionsContextMap15Threads(){
         Map<String, ExecutionContext> executionContextMap = new TreeMap<>();
-        createVisaExecutionContextsMap(executionContextMap, 0, 20, 5, false);
-        createMastercardExecutionContextsMap(executionContextMap, 5, 20, 5, false);
-        createAmexExecutionContextsMap(executionContextMap, 10, 20, 5, false);
+        createVisaExecutionContextsMap(executionContextMap, 0, 20, 5, 1);
+        createMastercardExecutionContextsMap(executionContextMap, 5, 20, 5, 1);
+        createAmexExecutionContextsMap(executionContextMap, 10, 20, 5, 1);
 
         return executionContextMap;
 
@@ -213,9 +214,9 @@ public class DefaultBeans {
 
     public final Map<String, ExecutionContext> createExecutionsContextMap12Threads(){
         Map<String, ExecutionContext> executionContextMap = new TreeMap<>();
-        createVisaExecutionContextsMap(executionContextMap, 0, 25, 4, false);
-        createMastercardExecutionContextsMap(executionContextMap, 4, 25, 4, false);
-        createAmexExecutionContextsMap(executionContextMap, 8, 25, 4, false);
+        createVisaExecutionContextsMap(executionContextMap, 0, 25, 4, 1);
+        createMastercardExecutionContextsMap(executionContextMap, 4, 25, 4, 1);
+        createAmexExecutionContextsMap(executionContextMap, 8, 25, 4, 1);
 
         return executionContextMap;
 
@@ -224,9 +225,20 @@ public class DefaultBeans {
 
     public final Map<String, ExecutionContext> createExecutionsContextMapThreadsUnbalanced(){
         Map<String, ExecutionContext> executionContextMap = new TreeMap<>();
-        createVisaExecutionContextsMap(executionContextMap, 0, 5, 2, true);
-        createMastercardExecutionContextsMap(executionContextMap, 2, 14, 5, true);
-        createAmexExecutionContextsMap(executionContextMap, 7, 5, 2, true);
+        createVisaExecutionContextsMap(executionContextMap, 0, 5, 2, 2);
+        createMastercardExecutionContextsMap(executionContextMap, 2, 14, 5, 2);
+        createAmexExecutionContextsMap(executionContextMap, 7, 5, 2, 2);
+
+        return executionContextMap;
+
+    };
+
+
+    public final Map<String, ExecutionContext> createExecutionsContextMapThreadSmall(){
+        Map<String, ExecutionContext> executionContextMap = new TreeMap<>();
+        createVisaExecutionContextsMap(executionContextMap, 0, 1, 2, 3);
+        createMastercardExecutionContextsMap(executionContextMap, 2, 1, 4, 3);
+        createAmexExecutionContextsMap(executionContextMap, 6, 1, 4, 3);
 
         return executionContextMap;
 
@@ -235,8 +247,14 @@ public class DefaultBeans {
 
     private Map<String, ExecutionContext> createAmexExecutionContextsMap(Map<String, ExecutionContext> executionContextMap,
                                                                          int circuitIndex, int step, int numberOfThreads,
-                                                                         boolean secondList){
-        List<ParlessCard> amexCircuitCards=secondList? PARLESS_AMEX_CARD_LIST_2:PARLESS_AMEX_CARD_LIST;
+                                                                         int listNumber){
+        List<ParlessCard> amexCircuitCards=null;
+       switch (listNumber){
+           case 1:amexCircuitCards = PARLESS_AMEX_CARD_LIST; break;
+
+           case 2:amexCircuitCards =  PARLESS_AMEX_CARD_LIST_2; break;
+           case 3:amexCircuitCards =  PARLESS_AMEX_CARD_LIST_3; break;
+       }
 
         for (int i=0; i<numberOfThreads; i++){
             ExecutionContext value = new ExecutionContext();
@@ -258,8 +276,15 @@ public class DefaultBeans {
 
     private Map<String, ExecutionContext> createVisaExecutionContextsMap(Map<String, ExecutionContext> executionContextMap,
                                                                          int circuitIndex, int step, int numberOfThreads,
-                                                                         boolean secondList){
-        List<ParlessCard> visaCircuitCards= secondList? PARLESS_VISA_CARD_LIST_2:PARLESS_VISA_CARD_LIST;
+                                                                         int listNumber){
+
+        List<ParlessCard>  visaCircuitCards=null;
+        switch (listNumber){
+            case 1:visaCircuitCards = PARLESS_VISA_CARD_LIST; break;
+
+            case 2:visaCircuitCards =  PARLESS_VISA_CARD_LIST_2; break;
+            case 3:visaCircuitCards =  PARLESS_VISA_CARD_LIST_3; break;
+        }
 
         for (int i=0; i<numberOfThreads; i++){
             ExecutionContext value = new ExecutionContext();
@@ -280,8 +305,15 @@ public class DefaultBeans {
 
     private Map<String, ExecutionContext> createMastercardExecutionContextsMap(Map<String, ExecutionContext> executionContextMap,
                                                                                int circuitIndex, int step, int numberOfThreads,
-                                                                               boolean secondList){
-        List<ParlessCard> mastercardCircuitCards= secondList? PARLESS_MASTERCARD_CARD_LIST_2:PARLESS_MASTERCARD_CARD_LIST;
+                                                                               int listNumber){
+
+        List<ParlessCard>  mastercardCircuitCards=null;
+        switch (listNumber){
+            case 1:mastercardCircuitCards = PARLESS_MASTERCARD_CARD_LIST; break;
+
+            case 2:mastercardCircuitCards =  PARLESS_MASTERCARD_CARD_LIST_2; break;
+            case 3:mastercardCircuitCards =  PARLESS_MASTERCARD_CARD_LIST_3; break;
+        }
 
         for (int i=0; i<numberOfThreads; i++){
             ExecutionContext value = new ExecutionContext();

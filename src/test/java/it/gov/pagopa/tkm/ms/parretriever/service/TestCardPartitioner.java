@@ -118,7 +118,7 @@ public class TestCardPartitioner {
 
         when(parlessCardsClient.getParlessCards(10)).thenReturn(testBeans.PARLESS_CARD_SMALL_LIST);
 
-        assertEquals(cardPartitioner.partition(12), testBeans.EXECUTION_CONTEXT_MAP_THREADS_UNBALANCED);
+        assertEquals(cardPartitioner.partition(12), testBeans.EXECUTION_CONTEXT_MAP_THREADS_SMALL);
 
     }
 
