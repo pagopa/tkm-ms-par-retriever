@@ -42,7 +42,8 @@ public class TestCardPartitioner {
 
     @Test
     void givenEmptyList_returnEmptyMap(){
-        ReflectionTestUtils.setField(cardPartitioner, "maxNumberOfCards", 100);
+
+       ReflectionTestUtils.setField(cardPartitioner, "maxNumberOfCards", 100);
 
         when(parlessCardsClient.getParlessCards(100)).thenReturn(new ArrayList<>());
             Map<String, ExecutionContext> executionContextMap= new HashMap<>();
