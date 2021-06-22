@@ -71,7 +71,7 @@ public class TestCardWriter {
 
     @Test
     void writeOnQueue_exceptionCheck() {
-        List<ParlessCard> parlessCards = testBeans.PARLESS_CARDS_LIST;
+        List<ParlessCard> parlessCards = testBeans.PARLESS_CARDS_LIST_ALL_CIRCUITS;
         assertDoesNotThrow(() -> cardWriter.write(parlessCards));
     }
 

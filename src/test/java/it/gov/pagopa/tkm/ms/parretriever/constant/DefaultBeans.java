@@ -48,6 +48,11 @@ public class DefaultBeans {
             TAX_CODE, PAN_2, HPAN_2, TOKEN_SET_2, CircuitEnum.VISA
     );
 
+    public final ParlessCard PARLESS_CARD_3 = new ParlessCard(
+            TAX_CODE, PAN_2, HPAN_2, TOKEN_SET_2, CircuitEnum.MASTERCARD
+    );
+
+
     public final ParlessCard PARLESS_AMEX_CARD = new ParlessCard(
             TAX_CODE, PAN_AMEX, HPAN_1, TOKEN_SET_1, CircuitEnum.AMEX
     );
@@ -66,6 +71,8 @@ public class DefaultBeans {
     );
 
     public final List<ParlessCard> PARLESS_CARDS_LIST = Arrays.asList(PARLESS_CARD_1, PARLESS_CARD_2);
+    public final List<ParlessCard> PARLESS_CARDS_LIST_ALL_CIRCUITS = Arrays.asList(PARLESS_CARD_1, PARLESS_CARD_2, PARLESS_CARD_3);
+
 
     public final String MASTERCARD_RESPONSE_PRIVATE_KEY = "-----BEGIN RSA PRIVATE KEY-----\n" +
             "MIICXAIBAAKBgQCMhM/5iBYjLJFKM5sZRXJvGu/K5nLDf1v4oaTM+DxZaH9q1gwZ\n" +
@@ -85,16 +92,23 @@ public class DefaultBeans {
 
     public final List<ParlessCard> PARLESS_CARD_LIST = createParlessCardList();
     public final List<ParlessCard> PARLESS_CARD_LIST_UNBALANCED = createParlessCardListUnbalanced();
+    public final List<ParlessCard> PARLESS_CARD_SMALL_LIST = createParlessCardSmallList();
+
     private  List<ParlessCard> PARLESS_AMEX_CARD_LIST;
     private  List<ParlessCard> PARLESS_AMEX_CARD_LIST_2;
+    private  List<ParlessCard> PARLESS_AMEX_CARD_LIST_3;
+
     private List<ParlessCard> PARLESS_VISA_CARD_LIST;
     private List<ParlessCard> PARLESS_VISA_CARD_LIST_2;
+    private List<ParlessCard> PARLESS_VISA_CARD_LIST_3;
+
     private List<ParlessCard> PARLESS_MASTERCARD_CARD_LIST;
     private List<ParlessCard> PARLESS_MASTERCARD_CARD_LIST_2;
+    private List<ParlessCard> PARLESS_MASTERCARD_CARD_LIST_3;
 
     public Map<String, ExecutionContext> EXECUTION_CONTEXT_MAP_15_THREADS = createExecutionsContextMap15Threads();
     public Map<String, ExecutionContext> EXECUTION_CONTEXT_MAP_12_THREADS = createExecutionsContextMap12Threads();
-    public Map<String, ExecutionContext> EXECUTION_CONTEXT_MAP_12_THREADS_UNBALANCED = createExecutionsContextMapThreadsUnbalanced();
+    public Map<String, ExecutionContext> EXECUTION_CONTEXT_MAP_THREADS_UNBALANCED = createExecutionsContextMapThreadsUnbalanced();
 
 
     public ConsentResponse CARD_CONSENT_RESPONSE_ALLOW = new ConsentResponse(ConsentEntityEnum.Allow, Instant.now(),
@@ -140,6 +154,18 @@ public class DefaultBeans {
     }
 
 
+    private List<ParlessCard> createParlessCardSmallList(){
+
+        List<ParlessCard> parlessCards = new ArrayList<>();
+        PARLESS_AMEX_CARD_LIST_3=createAmexParlessCardList(4);
+        PARLESS_VISA_CARD_LIST_3=createVisaParlessCardList(2,0,0);
+        PARLESS_MASTERCARD_CARD_LIST_3=createMastercardParlessCardList(4);
+        parlessCards.addAll(PARLESS_AMEX_CARD_LIST_3);
+        parlessCards.addAll(PARLESS_VISA_CARD_LIST_3);
+        parlessCards.addAll(PARLESS_MASTERCARD_CARD_LIST_3);
+
+        return parlessCards;
+    }
 
     private List<ParlessCard> createAmexParlessCardList(int size){
         List<ParlessCard> parlessCards = new ArrayList<>();
