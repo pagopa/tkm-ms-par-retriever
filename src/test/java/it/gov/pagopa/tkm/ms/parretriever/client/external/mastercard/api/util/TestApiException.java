@@ -74,4 +74,40 @@ public class TestApiException {
         assertEquals(responseHeaders, apiException.getResponseHeaders());
     }
 
+    @Test
+    void verifyProperties_setterGetter() {
+        apiException = new ApiException();
+
+        apiException.setCode(5);
+        assertEquals(5, apiException.getCode());
+
+        Map<String, List<String>> responseHeaders = getStringListMap();
+        apiException.setResponseHeaders(responseHeaders);
+        assertEquals(responseHeaders, apiException.getResponseHeaders());
+
+        apiException.setResponseBody("body");
+        assertEquals("body", apiException.getResponseBody());
+    }
+
+    @Test
+    void verifyData_objectMethods() {
+        Map<String, List<String>> responseHeaders = getStringListMap();
+
+        apiException = new ApiException(null, 5, responseHeaders, "body");
+
+        ApiException exception = new ApiException();
+        exception.setCode(5);
+        exception.setResponseHeaders(responseHeaders);
+        exception.setResponseBody("body");
+
+        boolean equals = apiException.equals(exception);
+        assertTrue(equals);
+
+        assertTrue(apiException.hashCode() != 0);
+
+        assertTrue(apiException.canEqual(exception));
+
+        assertNotNull(apiException.toString());
+    }
+
 }

@@ -60,6 +60,12 @@ public class TestConsentResponse {
         assertNotNull(consentResponse.toString());
 
         assertTrue(consentResponse.canEqual(response));
+
+        assertNotNull(new ConsentResponse.ConsentResponseBuilder()
+                .consent(ConsentEntityEnum.Deny)
+                .lastUpdateDate(Instant.now())
+                .details(getCardServiceConsents())
+                .toString());
     }
 
 }
