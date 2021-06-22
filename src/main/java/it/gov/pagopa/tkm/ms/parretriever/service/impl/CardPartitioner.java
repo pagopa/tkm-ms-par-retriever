@@ -108,7 +108,6 @@ public class CardPartitioner implements Partitioner {
              CircuitEnum circuit = entry.getKey();
 
             List<ParlessCard> circuitCards = parlessCardsPerCircuit.get(circuit);
-
             int cardsSizeByCircuit = circuitCards.size();
             int maxNumberOfThreadsByCircuit = threadsPerCircuit.get(circuit);
             //se il numero di carte è inferiore al numero di thread, crea un thread per carta

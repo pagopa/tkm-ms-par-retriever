@@ -95,4 +95,17 @@ public class TestCardPartitioner {
     }
 
 
+    @Test
+    void givenCardsListWithLessThreadUnbalanced_returnExecutionContext(){
+        ReflectionTestUtils.setField(cardPartitioner, "maxNumberOfCards", 90);
+        ReflectionTestUtils.setField(cardPartitioner, "amexMaxApiClientCallRate", 5d);
+        ReflectionTestUtils.setField(cardPartitioner, "mastercardMaxApiClientCallRate", 5d);
+        ReflectionTestUtils.setField(cardPartitioner, "visaMaxApiClientCallRate", 5d);
+
+        when(parlessCardsClient.getParlessCards(90)).thenReturn(testBeans.PARLESS_CARD_LIST_UNBALANCED);
+
+        assertEquals(cardPartitioner.partition(9), testBeans.EXECUTION_CONTEXT_MAP_12_THREADS_UNBALANCED);
+
+    }
+
 }
