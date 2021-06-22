@@ -65,6 +65,12 @@ public class TestConsent {
         assertEquals(consent.toString(), eqObj.toString());
 
         assertTrue(consent.canEqual(eqObj));
+
+        assertNotNull(new Consent.ConsentBuilder()
+                .consent(ConsentRequestEnum.Deny)
+                .hpan("hpan")
+                .services(getServiceEnums())
+                .toString());
     }
 
 }
