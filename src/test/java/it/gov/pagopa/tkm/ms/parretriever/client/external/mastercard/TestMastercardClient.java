@@ -15,7 +15,7 @@ import org.springframework.test.util.*;
 
 import java.io.*;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ExtendWith(MockitoExtension.class)
@@ -59,6 +59,11 @@ public class TestMastercardClient {
     @AfterAll
     static void tearDown() throws IOException {
         mockServer.shutdown();
+    }
+
+    @Test
+    void init_api() {
+        assertDoesNotThrow(() -> mastercardClient.init());
     }
 
     @Test

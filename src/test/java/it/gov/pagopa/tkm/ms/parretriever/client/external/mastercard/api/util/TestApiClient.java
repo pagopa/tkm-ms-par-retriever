@@ -1,9 +1,11 @@
 package it.gov.pagopa.tkm.ms.parretriever.client.external.mastercard.api.util;
 
 import com.mastercard.developer.interceptors.OkHttpOAuth1Interceptor;
+import io.netty.internal.tcnative.SSLSession;
 import it.gov.pagopa.tkm.ms.parretriever.constant.DefaultBeans;
 import okhttp3.*;
 import okhttp3.internal.connection.RealCall;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -12,10 +14,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import sun.security.pkcs.PKCS8Key;
 
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -107,14 +110,31 @@ public class TestApiClient {
 
         String url = apiClient.escapeString("ciao");
         assertNotNull(url);
+
+        String str = new String("ciao".getBytes(StandardCharsets.UTF_8), StandardCharsets.US_ASCII);
+        url = apiClient.escapeString(str);
+        assertEquals(str, url);
     }
 
     @Test
-    void deserialize_jsonResponse() throws ApiException {
+    void deserialize_jsonResponse() throws ApiException, IOException {
         createApiClient_newInstance();
 
         Object deserialize = apiClient.deserialize(null, null);
         assertNull(deserialize);
+
+        Response response = getResponse(null, 200);
+        deserialize = apiClient.deserialize(response, String.class);
+        assertNull(deserialize);
+
+        response = getResponseHeader();
+        Response eqResponse = getResponseHeader();
+        deserialize = apiClient.deserialize(response, String.class);
+        assertEquals(Objects.requireNonNull(eqResponse.body()).string(), deserialize.toString());
+
+        response = getResponseHeader();
+        Response finalResponse = response;
+        assertThrows(ApiException.class, () -> apiClient.deserialize(finalResponse, Integer.class));
     }
 
     @Test
@@ -167,6 +187,60 @@ public class TestApiClient {
         OkHttpClient client = new OkHttpClient();
         apiClient.setHttpClient(client);
         assertEquals(client, apiClient.getHttpClient());
+    }
+
+    @Test
+    void handleResponse_stringResponse() throws MalformedURLException, ApiException {
+        createApiClient_newInstance();
+
+        Response response = getResponse(null, 200);
+        Object responseHandled = apiClient.handleResponse(response, String.class);
+        assertNull(responseHandled);
+
+        ResponseBody responseBody = getResponseBody();
+
+        response = getResponse(responseBody, 200);
+        Response finalResponse = response;
+        assertDoesNotThrow(() -> apiClient.handleResponse(finalResponse, String.class));
+
+        response = getResponse(null, 404);
+        Response finalResponse1 = response;
+        assertThrows(ApiException.class, () -> apiClient.handleResponse(finalResponse1, null));
+
+        response = getResponse(responseBody, 404);
+        Response finalResponse2 = response;
+        assertThrows(ApiException.class, () -> apiClient.handleResponse(finalResponse2, String.class));
+    }
+
+    @NotNull
+    private ResponseBody getResponseBody() {
+        return ResponseBody.create("{\n" +
+                "\"clientId\": \"0123456789012345678901234567999\",\n" +
+                "\"correlatnId\": \"0123456789012345678901234567000\",\n" +
+                "\"primaryAccount\": \"1234567898000000\",\n" +
+                "}", MediaType.parse("application/json; charset=utf-8"));
+    }
+
+    @NotNull
+    private Response getResponse(ResponseBody responseBody, int code) throws MalformedURLException {
+        return new Response(
+                new Request.Builder().url(new URL("https://sandbox.api.visa.com/v1/binRangeDetails")).build(),
+                Protocol.HTTP_1_1, "response", code,
+                new Handshake(TlsVersion.TLS_1_0, CipherSuite.TLS_AES_128_CCM_8_SHA256, new ArrayList<>(),
+                        ArrayList::new),
+                new Headers.Builder().build(), responseBody, null, null, null,
+                1, 1, null);
+    }
+
+    private Response getResponseHeader() throws MalformedURLException {
+        return new Response(
+                new Request.Builder().url(new URL("https://sandbox.api.visa.com/v1/binRangeDetails")).build(),
+                Protocol.HTTP_1_1, "response", 200,
+                new Handshake(TlsVersion.TLS_1_0, CipherSuite.TLS_AES_128_CCM_8_SHA256, new ArrayList<>(),
+                        ArrayList::new),
+                new Headers.Builder().add("Content-Type", "ciao").build(), getResponseBody(),
+                null, null, null,
+                1, 1, null);
     }
 
 }

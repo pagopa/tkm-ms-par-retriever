@@ -6,7 +6,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -15,12 +18,38 @@ import static org.junit.jupiter.api.Assertions.*;
 public class TestApiResponse {
 
     @InjectMocks
-    private final ApiResponse<Object> response = new ApiResponse<>(0, new HashMap<>(), new Object());
+    private ApiResponse<Object> response = new ApiResponse<>(0, new HashMap<>(), new Object());
 
     @Test
     void checkProperties_setterGetter() {
         assertEquals(0, response.getStatusCode());
         assertNotNull(response.getHeaders());
+    }
+
+    @Test
+    void verifyData_objectMethods() {
+        int statusCode = 10;
+
+        Map<String, List<String>> headers = new HashMap<>();
+        List<String> values = new ArrayList<>();
+        values.add("200");
+        values.add("OK");
+        headers.put("response", values);
+
+        Object data = new Object();
+
+        response = new ApiResponse<>(statusCode, headers, data);
+
+        ApiResponse<Object> objectApiResponse = new ApiResponse<>(statusCode, headers, data);
+
+        boolean equals = response.equals(objectApiResponse);
+        assertTrue(equals);
+
+        assertTrue(response.hashCode() != 0);
+
+        assertNotNull(response.toString());
+
+        assertTrue(response.canEqual(objectApiResponse));
     }
 
 }
