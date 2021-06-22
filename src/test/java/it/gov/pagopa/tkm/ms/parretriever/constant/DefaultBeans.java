@@ -4,6 +4,7 @@ import it.gov.pagopa.tkm.ms.parretriever.client.external.amex.model.response.*;
 import it.gov.pagopa.tkm.ms.parretriever.client.external.mastercard.api.model.*;
 import it.gov.pagopa.tkm.ms.parretriever.client.external.visa.model.response.*;
 import it.gov.pagopa.tkm.ms.parretriever.client.internal.cardmanager.model.response.*;
+import it.gov.pagopa.tkm.ms.parretriever.client.internal.consentmanager.model.response.*;
 import org.springframework.batch.item.ExecutionContext;
 
 import java.time.*;
@@ -89,6 +90,20 @@ public class DefaultBeans {
 
     public Map<String, ExecutionContext> EXECUTION_CONTEXT_MAP_15_THREADS = createExecutionsContextMap15Threads();
     public Map<String, ExecutionContext> EXECUTION_CONTEXT_MAP_12_THREADS = createExecutionsContextMap12Threads();
+    public ConsentResponse CARD_CONSENT_RESPONSE_ALLOW = new ConsentResponse(ConsentEntityEnum.Allow, Instant.now(),
+            new HashSet<>(Arrays.asList(new CardServiceConsent("hashpan",
+                    new HashSet<>(Arrays.asList(new ServiceConsent(ConsentRequestEnum.Allow, ServiceEnum.FA))))))
+             );
+
+    public ConsentResponse CARD_CONSENT_RESPONSE_DENY = new ConsentResponse(ConsentEntityEnum.Deny, Instant.now(),
+            new HashSet<>(Arrays.asList(new CardServiceConsent("hashpan",
+                    new HashSet<>(Arrays.asList(new ServiceConsent(ConsentRequestEnum.Allow, ServiceEnum.FA))))))
+    );
+
+    public ConsentResponse CARD_CONSENT_RESPONSE_PARTIAL = new ConsentResponse(ConsentEntityEnum.Partial, Instant.now(),
+            new HashSet<>(Arrays.asList(new CardServiceConsent("hashpan",
+                    new HashSet<>(Arrays.asList(new ServiceConsent(ConsentRequestEnum.Allow, ServiceEnum.FA))))))
+    );
 
 
     private List<ParlessCard> createParlessCardList(){
