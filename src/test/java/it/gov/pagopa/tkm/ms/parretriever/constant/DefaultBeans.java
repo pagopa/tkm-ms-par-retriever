@@ -88,6 +88,7 @@ public class DefaultBeans {
     private List<ParlessCard> PARLESS_MASTERCARD_CARD_LIST;
 
     public Map<String, ExecutionContext> EXECUTION_CONTEXT_MAP_15_THREADS = createExecutionsContextMap15Threads();
+    public Map<String, ExecutionContext> EXECUTION_CONTEXT_MAP_12_THREADS = createExecutionsContextMap12Threads();
 
 
     private List<ParlessCard> createParlessCardList(){
@@ -145,6 +146,18 @@ public class DefaultBeans {
         return executionContextMap;
 
     };
+
+    public final Map<String, ExecutionContext> createExecutionsContextMap12Threads(){
+        Map<String, ExecutionContext> executionContextMap = new TreeMap<>();
+        executionContextMap=createVisaExecutionContextsMapFourThreads(executionContextMap, 0);
+        executionContextMap=createMastercardExecutionContextsMapFourThread(executionContextMap, 4);
+        executionContextMap=createAmexExecutionContextsMapFourThreads(executionContextMap, 8);
+
+        return executionContextMap;
+
+    };
+
+
 
     private Map<String, ExecutionContext> createAmexExecutionContextsMap(Map<String, ExecutionContext> executionContextMap, int circuitIndex){
         List<ParlessCard> amexCircuitCards= PARLESS_AMEX_CARD_LIST;
@@ -206,5 +219,83 @@ public class DefaultBeans {
         }
         return executionContextMap;
     }
+
+
+    private Map<String, ExecutionContext> createAmexExecutionContextsMapFourThreads(Map<String, ExecutionContext> executionContextMap, int circuitIndex){
+        List<ParlessCard> amexCircuitCards= PARLESS_AMEX_CARD_LIST;
+        for (int i=0; i<4; i++){
+            int step = 25;
+            ExecutionContext value = new ExecutionContext();
+            int from= i*step;
+            int to= (i+1)*step;
+            int j = 1+ i + circuitIndex;
+
+            value.putInt("from", from);
+            value.putInt("to", to);
+            value.putString("name", "Thread" + j);
+            value.put("cardList", new ArrayList<>(amexCircuitCards.subList(from,  to)));
+            value.put("rateLimit", 1.25d);
+            executionContextMap.put("partition" + j, value);
+
+        }
+        return executionContextMap;
+    }
+
+
+    private Map<String, ExecutionContext> createVisaExecutionContextsMapFourThreads(Map<String, ExecutionContext> executionContextMap, int circuitIndex){
+        List<ParlessCard> visaCircuitCards= PARLESS_VISA_CARD_LIST;
+        for (int i=0; i<4; i++){
+            int step = 25;
+            ExecutionContext value = new ExecutionContext();
+            int from= i*step;
+            int to= (i+1)*step;
+            int j = 1+ i + circuitIndex;
+
+            value.putInt("from", from);
+            value.putInt("to", to);
+            value.putString("name", "Thread" + j);
+            value.put("cardList", new ArrayList<>(visaCircuitCards.subList(from,  to)));
+            List<ParlessCard> list = (List<ParlessCard>) value.get("cardList");
+
+            value.put("rateLimit", 1.25d);
+            executionContextMap.put("partition" + j, value);
+        }
+        return executionContextMap;
+    }
+
+    private Map<String, ExecutionContext> createMastercardExecutionContextsMapFourThread(Map<String, ExecutionContext> executionContextMap, int circuitIndex){
+        List<ParlessCard> mastercardCircuitCards= PARLESS_MASTERCARD_CARD_LIST;
+        for (int i=0; i<4; i++){
+            int step = 25;
+            ExecutionContext value = new ExecutionContext();
+            int from= i*step;
+            int to= (i+1)*step;
+            int j = 1+ i + circuitIndex;
+
+            value.putInt("from", from);
+            value.putInt("to", to);
+            value.putString("name", "Thread" + j);
+            value.put("cardList", new ArrayList<>(mastercardCircuitCards.subList(from,  to)));
+            value.put("rateLimit", 1.25d);
+            executionContextMap.put("partition" + j, value);
+
+        }
+        return executionContextMap;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 }

@@ -60,8 +60,8 @@ public class CardPartitioner implements Partitioner {
             return new HashMap<>();
         }
 
-        Map<String, ExecutionContext> result = new HashMap<>();
-        Map<CircuitEnum, Integer> threadsPerCircuit = new HashMap<>();
+        Map<String, ExecutionContext> result = new TreeMap<>();
+        Map<CircuitEnum, Integer> threadsPerCircuit = new TreeMap<>();
 
         //numero di carte per ogni circuito
         Map<CircuitEnum, List<ParlessCard>> parlessCardsPerCircuit = new TreeMap<>();
@@ -106,6 +106,7 @@ public class CardPartitioner implements Partitioner {
         int circuitIndex = 0;
         for (Map.Entry<CircuitEnum, List<ParlessCard>> entry : parlessCardsPerCircuit.entrySet()) {
              CircuitEnum circuit = entry.getKey();
+
             List<ParlessCard> circuitCards = parlessCardsPerCircuit.get(circuit);
 
             int cardsSizeByCircuit = circuitCards.size();
@@ -177,10 +178,11 @@ public class CardPartitioner implements Partitioner {
     //Distribuzione del numero di thread ad ogni circuito
     private Map<CircuitEnum, Integer> normalizeNumberOfThreadsV2(Map<CircuitEnum, Double> elaborationTimes,
                                                                       Double totalElaborationTime, int maxNumberOfThreads) {
-   //Assegnazione del numero di thread a ciascun circuito distribuendo secondo la proporzione
+
+        //Assegnazione del numero di thread a ciascun circuito distribuendo secondo la proporzione
         //numero_di_thread_circuito= (tempo_di_elaborazione_circuito/tempo_totale_elaborazione)*numero_max_thread
         //valori arrotondati ad intero
-        Map<CircuitEnum, Integer> threadsPerCircuit = new HashMap<>();
+        Map<CircuitEnum, Integer> threadsPerCircuit = new TreeMap<>();
         Set<CircuitEnum> filledCircuits = new HashSet<>();
 
         int numberOfThreads = maxNumberOfThreads;

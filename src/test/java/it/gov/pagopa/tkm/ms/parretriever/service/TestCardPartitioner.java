@@ -70,16 +70,27 @@ public class TestCardPartitioner {
 
     @Test
     void givenCardsList_returnExecutionContext(){
-        ReflectionTestUtils.setField(cardPartitioner, "maxNumberOfCards", 15);
+        ReflectionTestUtils.setField(cardPartitioner, "maxNumberOfCards", 300);
         ReflectionTestUtils.setField(cardPartitioner, "amexMaxApiClientCallRate", 5d);
         ReflectionTestUtils.setField(cardPartitioner, "mastercardMaxApiClientCallRate", 5d);
         ReflectionTestUtils.setField(cardPartitioner, "visaMaxApiClientCallRate", 5d);
 
-        when(parlessCardsClient.getParlessCards(15)).thenReturn(testBeans.PARLESS_CARD_LIST);
-       Map<String, ExecutionContext> mapA= cardPartitioner.partition(15);
-       Map<String, ExecutionContext> mapB= testBeans.EXECUTION_CONTEXT_MAP_15_THREADS;
+        when(parlessCardsClient.getParlessCards(300)).thenReturn(testBeans.PARLESS_CARD_LIST);
 
         assertEquals(cardPartitioner.partition(15), testBeans.EXECUTION_CONTEXT_MAP_15_THREADS);
+
+    }
+
+    @Test
+    void givenCardsListWithLessThread_returnExecutionContext(){
+        ReflectionTestUtils.setField(cardPartitioner, "maxNumberOfCards", 300);
+        ReflectionTestUtils.setField(cardPartitioner, "amexMaxApiClientCallRate", 5d);
+        ReflectionTestUtils.setField(cardPartitioner, "mastercardMaxApiClientCallRate", 5d);
+        ReflectionTestUtils.setField(cardPartitioner, "visaMaxApiClientCallRate", 5d);
+
+        when(parlessCardsClient.getParlessCards(300)).thenReturn(testBeans.PARLESS_CARD_LIST);
+
+        assertEquals(cardPartitioner.partition(12), testBeans.EXECUTION_CONTEXT_MAP_12_THREADS);
 
     }
 
