@@ -6,10 +6,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -44,6 +41,13 @@ public class TestApiResponse {
 
         boolean equals = response.equals(objectApiResponse);
         assertTrue(equals);
+
+        objectApiResponse = new ApiResponse<>(10, new HashMap<String, List<String>>() {{
+            put("response", Arrays.asList("200", "OK"));
+        }}, new Object());
+
+        boolean eq = response.equals(objectApiResponse);
+        assertFalse(eq);
 
         assertTrue(response.hashCode() != 0);
 
