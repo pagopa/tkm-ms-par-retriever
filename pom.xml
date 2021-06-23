@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>par-retriever</artifactId>
-    <version>1.1-SNAPSHOT</version>
+    <version>1.1</version>
 
     <parent>
         <groupId>it.gov.pagopa.tkm.ms</groupId>
@@ -202,7 +202,7 @@
 
     <scm>
         <developerConnection>scm:git:https://github.com/pagopa/tkm-ms-par-retriever.git</developerConnection>
-        <tag>HEAD</tag>
+        <tag>par-retriever-1.1</tag>
     </scm>
 
 </project>
