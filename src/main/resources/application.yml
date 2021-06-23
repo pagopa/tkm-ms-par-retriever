@@ -1,0 +1,95 @@
+spring:
+  application:
+    name: Tkm Par Retriever ${HOSTNAME:0}
+  batch:
+    job:
+      enabled: false
+  kafka:
+    producer:
+      bootstrap-servers: ${KAFKA_SERVERS}
+      client-id: ${KAFKA_GROUP_ID}${HOSTNAME:0}
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      properties:
+        security:
+          protocol: ${KAFKA_SECURITY_PROTOCOL:SASL_SSL}
+        sasl:
+          mechanism: ${KAFKA_SASL_MECHANISM:PLAIN}
+          jaas:
+            config: ${keyvault.parREventhubReadSaslJaasConfig}
+    topics:
+      read-queue: ${KAFKA_READ_QUEUE_TOPIC}
+
+server:
+  port: ${SERVER_PORT:8080}
+  servlet:
+    context-path: ${CONTEXT_PATH:/}
+
+logging:
+  level:
+    root: ${LOGGING_LEVEL:INFO}
+  pattern:
+    level: "${LOGGING_PATTERN:%p [${spring.application.name}][%X{traceId}]}"
+
+core:
+  parRetrieverService:
+    getPar:
+      scheduler: ${PAR_RETRIEVER_GET_PAR_SCHEDULER:0 * * * * *}
+
+azure:
+  keyvault:
+    enabled: true
+    client-id: ${AZURE_KEYVAULT_CLIENT_ID}
+    client-key: ${AZURE_KEYVAULT_CLIENT_KEY}
+    tenant-id: ${AZURE_KEYVAULT_TENANT_ID}
+    uri: ${AZURE_KEYVAULT_URI}
+  storage:
+    default-endpoints-protocol: https
+    account-name: ${AZURE_STORAGE_ACCOUNT_NAME}
+    account-key: ${AZURE_STORAGE_ACCOUNT_KEY}
+    blob-endpoint: ${AZURE_STORAGE_ENDPOINT}
+
+keyvault:
+  eventhubLogSaslJaasConfig: ${${AZURE_KEYVAULT_PROFILE:prod}-eventhubLogSaslJaasConfig:null}
+  parREventhubReadSaslJaasConfig: ${${AZURE_KEYVAULT_PROFILE:prod}-parREventhubReadSaslJaasConfig:null}
+  readQueuePrvPgpKey: ${${AZURE_KEYVAULT_PROFILE:prod}-readQueuePrvPgpKey}
+  readQueuePubPgpKey: ${${AZURE_KEYVAULT_PROFILE:prod}-readQueuePubPgpKey}
+  readQueuePrvPgpKeyPassphrase: ${${AZURE_KEYVAULT_PROFILE:prod}-readQueuePrvPgpKeyPassphrase:null}
+  mastercardResponsePrivateKey: ${${AZURE_KEYVAULT_PROFILE:prod}-mastercardResponsePrivateKey}
+  mastercardApiKey: ${${AZURE_KEYVAULT_PROFILE:prod}-mastercardApiKey}
+  mastercardKeyStorePwd: ${${AZURE_KEYVAULT_PROFILE:prod}-mastercardKeyStorePwd}
+  amexClientId: ${${AZURE_KEYVAULT_PROFILE:prod}-amexClientId}
+  amexClientSecret: ${${AZURE_KEYVAULT_PROFILE:prod}-amexClientSecret}
+  visaClientId: ${${AZURE_KEYVAULT_PROFILE:prod}-visaClientId}
+  visaKeyId: ${${AZURE_KEYVAULT_PROFILE:prod}-visaKeyId}
+  visaKeyStorePassword: ${${AZURE_KEYVAULT_PROFILE:prod}-visaKeyStorePassword}
+  visaPassword: ${${AZURE_KEYVAULT_PROFILE:prod}-visaPassword}
+  visaPrivateKey: ${${AZURE_KEYVAULT_PROFILE:prod}-visaPrivateKey}
+  visaServerCertificate: ${${AZURE_KEYVAULT_PROFILE:prod}-visaServerCertificate}
+  visaUserId: ${${AZURE_KEYVAULT_PROFILE:prod}-visaUserId}
+
+blob-storage:
+  mastercardPublicEncryptionKey: azure-blob://${BLOB_STORAGE_NAME}/Mastercard_Public_Enc_Key.crt
+  mastercardSigningKeyCert: azure-blob://${BLOB_STORAGE_NAME}/Mastercard_Signing_Key_Cert.p12
+  visaPublicCert: azure-blob://${BLOB_STORAGE_NAME}/Visa_Public_Cert.p12
+
+client-urls:
+  consent-manager: ${CONSENT_MANAGER_URL}
+  card-manager: ${CARD_MANAGER_URL}
+
+circuit-urls:
+  amex: ${AMEX_URL}
+  mastercard: ${MASTERCARD_URL}
+  visa: ${VISA_URL}
+
+batch-execution:
+  max-number-of-threads: ${MAX_NUMBER_OF_THREADS:1}
+  max-number-of-cards: ${MAX_NUMBER_OF_CARDS}
+  amex-par-retrieve-enabled: true
+  mastercard-par-retrieve-enabled: true
+  visa-par-retrieve-enabled: true
+  amex-max-api-client-call-rate: ${AMEX_MAX_RATE:5}
+  mastercard-max-api-client-call-rate: ${MASTERCARD_MAX_RATE:5}
+  visa-max-api-client-call-rate: ${VISA_MAX_RATE:5}
+
+
