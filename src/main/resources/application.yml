@@ -45,8 +45,8 @@ azure:
     uri: ${AZURE_KEYVAULT_URI}
   storage:
     default-endpoints-protocol: https
-    account-name: ${AZURE_STORAGE_ACCOUNT_NAME}
-    account-key: ${AZURE_STORAGE_ACCOUNT_KEY}
+    account-name: ${keyvault.blobAccountName}
+    account-key: ${keyvault.blobAccountKey}
     blob-endpoint: ${AZURE_STORAGE_ENDPOINT}
 
 keyvault:
