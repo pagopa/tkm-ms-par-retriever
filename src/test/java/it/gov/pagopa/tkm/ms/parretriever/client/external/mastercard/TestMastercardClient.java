@@ -41,7 +41,7 @@ public class TestMastercardClient {
         MastercardClient.class.getDeclaredField("retrieveParUrl").setAccessible(true);
         MastercardClient.class.getDeclaredField("api").setAccessible(true);
         ReflectionTestUtils.setField(mastercardClient, "privateDecryptionKey", FileUtils.readFileToString(new File("src/test/resources/client_private_key_test.key")));
-        ReflectionTestUtils.setField(mastercardClient, "publicEncryptionKey", new ClassPathResource("client_public_cert_test.crt"));
+        ReflectionTestUtils.setField(mastercardClient, "publicEncryptionKey", FileUtils.readFileToString(new File("src/test/resources/client_public_cert_test.crt")));
         ReflectionTestUtils.setField(mastercardClient, "signingKeyCert", new ClassPathResource("public_cert_test.p12"));
         ReflectionTestUtils.setField(mastercardClient, "signingKeyPassword", "password");
         ReflectionTestUtils.setField(mastercardClient, "consumerKey", "TEST_CONSUMER_KEY");

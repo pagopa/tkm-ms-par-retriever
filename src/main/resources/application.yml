@@ -70,9 +70,9 @@ keyvault:
   visaPrivateKey: ${${AZURE_KEYVAULT_PROFILE:prod}-visaPrivateKey}
   visaServerCertificate: ${${AZURE_KEYVAULT_PROFILE:prod}-visaServerCertificate}
   visaUserId: ${${AZURE_KEYVAULT_PROFILE:prod}-visaUserId}
+  mastercardPublicEncryptionKey: ${${AZURE_KEYVAULT_PROFILE:prod}-mastercardPublicEncryptionKey}
 
 blob-storage:
-  mastercardPublicEncryptionKey: azure-blob://${BLOB_STORAGE_NAME}/Mastercard_Public_Enc_Key.crt
   mastercardSigningKeyCert: azure-blob://${BLOB_STORAGE_NAME}/Mastercard_Signing_Key_Cert.p12
   visaPublicCert: azure-blob://${BLOB_STORAGE_NAME}/Visa_Public_Cert.p12
 
