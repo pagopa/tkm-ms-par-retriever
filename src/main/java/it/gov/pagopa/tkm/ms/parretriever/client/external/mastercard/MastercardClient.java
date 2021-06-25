@@ -3,6 +3,7 @@ package it.gov.pagopa.tkm.ms.parretriever.client.external.mastercard;
 import com.mastercard.developer.encryption.*;
 import com.mastercard.developer.interceptors.*;
 import com.mastercard.developer.utils.*;
+import com.nimbusds.jose.util.Base64;
 import it.gov.pagopa.tkm.ms.parretriever.client.external.mastercard.api.*;
 import it.gov.pagopa.tkm.ms.parretriever.client.external.mastercard.api.model.*;
 import it.gov.pagopa.tkm.ms.parretriever.client.external.mastercard.api.util.*;
@@ -27,8 +28,8 @@ public class MastercardClient {
     @Value("${keyvault.mastercardResponsePrivateKey}")
     private String privateDecryptionKey;
 
-    @Value("${blob-storage.mastercardPublicEncryptionKey}")
-    private Resource publicEncryptionKey;
+    @Value("${kayvault.mastercardPublicEncryptionKey}")
+    private String publicEncryptionKey;
 
     @Value("${blob-storage.mastercardSigningKeyCert}")
     private Resource signingKeyCert;
@@ -64,7 +65,7 @@ public class MastercardClient {
         return FieldLevelEncryptionConfigBuilder.aFieldLevelEncryptionConfig()
                 .withEncryptionPath("$.encryptedPayload.encryptedData", "$.encryptedPayload")
                 .withDecryptionPath("$.encryptedPayload", "$.encryptedPayload.encryptedData")
-                .withEncryptionCertificate(loadEncryptionCertificate(resourceAsString(publicEncryptionKey).getBytes()))
+                .withEncryptionCertificate(loadEncryptionCertificate(new Base64(publicEncryptionKey.replaceAll("-----BEGIN CERTIFICATE-----", "").replaceAll("-----END CERTIFICATE-----", ""))))
                 .withDecryptionKey(EncryptionUtils.loadDecryptionKey(privateDecryptionKey))
                 .withOaepPaddingDigestAlgorithm("SHA-512")
                 .withEncryptedValueFieldName("encryptedData")
@@ -90,9 +91,9 @@ public class MastercardClient {
         return new MastercardParRequest(requestId, encryptedPayload);
     }
 
-    private Certificate loadEncryptionCertificate(byte[] certificate) throws CertificateException {
+    private Certificate loadEncryptionCertificate(Base64 certificate) throws CertificateException {
         CertificateFactory factory = CertificateFactory.getInstance("X.509");
-        return factory.generateCertificate(new ByteArrayInputStream(certificate));
+        return factory.generateCertificate(new ByteArrayInputStream(certificate.decode()));
     }
 
     private String resourceAsString(Resource resource) throws IOException {
