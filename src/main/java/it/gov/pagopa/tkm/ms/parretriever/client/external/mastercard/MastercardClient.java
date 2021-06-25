@@ -28,7 +28,7 @@ public class MastercardClient {
     @Value("${keyvault.mastercardResponsePrivateKey}")
     private String privateDecryptionKey;
 
-    @Value("${kayvault.mastercardPublicEncryptionKey}")
+    @Value("${keyvault.mastercardPublicEncryptionKey}")
     private String publicEncryptionKey;
 
     @Value("${blob-storage.mastercardSigningKeyCert}")
