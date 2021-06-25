@@ -1,5 +1,6 @@
 package it.gov.pagopa.tkm.ms.parretriever.service.impl;
 
+import it.gov.pagopa.tkm.ms.parretriever.config.KafkaConfig;
 import it.gov.pagopa.tkm.ms.parretriever.service.*;
 import it.gov.pagopa.tkm.service.*;
 import lombok.extern.log4j.Log4j2;
@@ -13,7 +14,7 @@ import org.springframework.stereotype.Service;
 public final class ProducerServiceImpl implements ProducerService {
 
     @Autowired
-    private KafkaTemplate<String, String> kafkaTemplate;
+    private KafkaConfig kafkaConfig;
 
     @Autowired
     private PgpUtils pgpUtils;
@@ -24,7 +25,7 @@ public final class ProducerServiceImpl implements ProducerService {
     @Override
     public void sendMessage(String message) throws PGPException {
         String encryptedMessage = pgpUtils.encrypt(message);
-        kafkaTemplate.send(readQueueTopic, encryptedMessage);
+        kafkaConfig.kafkaTemplate().send(readQueueTopic, encryptedMessage);
     }
 
 }
