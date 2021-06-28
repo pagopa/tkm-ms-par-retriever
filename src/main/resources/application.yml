@@ -16,7 +16,7 @@ spring:
         sasl:
           mechanism: ${KAFKA_SASL_MECHANISM:PLAIN}
           jaas:
-            config: ${keyvault.parREventhubReadSaslJaasConfig}
+            config: ${keyvault.tkmReadTokenParPanProducerSaslJaasConfig}
     topics:
       read-queue: ${KAFKA_READ_QUEUE_TOPIC}
 
@@ -54,7 +54,7 @@ keyvault:
   blobAccountName: ${${AZURE_KEYVAULT_PROFILE:prod}-blobAccountName}
   blobAccountKey: ${${AZURE_KEYVAULT_PROFILE:prod}-blobAccountKey}
   eventhubLogSaslJaasConfig: ${${AZURE_KEYVAULT_PROFILE:prod}-eventhubLogSaslJaasConfig:null}
-  parREventhubReadSaslJaasConfig: ${${AZURE_KEYVAULT_PROFILE:prod}-parREventhubReadSaslJaasConfig:null}
+  tkmReadTokenParPanProducerSaslJaasConfig: ${${AZURE_KEYVAULT_PROFILE:prod}-tkmReadTokenParPanProducerSaslJaasConfig:null}
   readQueuePrvPgpKey: ${${AZURE_KEYVAULT_PROFILE:prod}-readQueuePrvPgpKey}
   readQueuePubPgpKey: ${${AZURE_KEYVAULT_PROFILE:prod}-readQueuePubPgpKey}
   readQueuePrvPgpKeyPassphrase: ${${AZURE_KEYVAULT_PROFILE:prod}-readQueuePrvPgpKeyPassphrase:null}
