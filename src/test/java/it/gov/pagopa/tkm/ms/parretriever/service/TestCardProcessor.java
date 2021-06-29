@@ -27,6 +27,9 @@ public class TestCardProcessor {
     @Mock
     private ConsentClient consentClient;
 
+    @Mock
+    private CryptoService cryptoService;
+
     private DefaultBeans testBeans;
 
     @BeforeEach
