@@ -91,13 +91,15 @@ public class CardWriter implements ItemWriter<ParlessCard> {
             if (!checkParRetrieveEnabledAndRateLimitByCircuit(circuit)) continue;
 
             String par = getParFromCircuit(circuit, parlessCard.getPan());
-            ReadQueue readQueue = new ReadQueue(parlessCard.getTaxCode(),
-                    parlessCard.getPan(),
-                    parlessCard.getHpan(),
-                    par,
-                    circuit,
-                    getTokenListFromStringSet(parlessCard.getTokens()));
-            producerService.sendMessage(mapper.writeValueAsString(readQueue));
+            if (par != null) {
+                ReadQueue readQueue = new ReadQueue(parlessCard.getTaxCode(),
+                        parlessCard.getPan(),
+                        parlessCard.getHpan(),
+                        par,
+                        circuit,
+                        getTokenListFromStringSet(parlessCard.getTokens()));
+                producerService.sendMessage(mapper.writeValueAsString(readQueue));
+            }
         }
     }
 
