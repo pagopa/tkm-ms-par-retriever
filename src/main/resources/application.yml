@@ -7,7 +7,7 @@ spring:
   kafka:
     producer:
       bootstrap-servers: ${KAFKA_SERVERS}
-      client-id: ${KAFKA_GROUP_ID}${HOSTNAME:0}
+      client-id: ${KAFKA_GROUP_ID:null}${HOSTNAME:0}
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
       properties:

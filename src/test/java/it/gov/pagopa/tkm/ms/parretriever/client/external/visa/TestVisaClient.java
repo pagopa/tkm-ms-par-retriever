@@ -43,20 +43,10 @@ public class TestVisaClient {
     private final MockedStatic<Instant> mockedInstant = mockStatic(Instant.class);
 
     @BeforeEach
-    void init() throws Exception {
+    void init() {
         testBeans = new DefaultBeans();
         mockedUuid.when(UUID::randomUUID).thenReturn(UUID_TEST);
         mockedInstant.when(Instant::now).thenReturn(DefaultBeans.INSTANT);
-        VisaClient.class.getDeclaredField("publicCert").setAccessible(true);
-        VisaClient.class.getDeclaredField("keystorePassword").setAccessible(true);
-        VisaClient.class.getDeclaredField("userId").setAccessible(true);
-        VisaClient.class.getDeclaredField("password").setAccessible(true);
-        VisaClient.class.getDeclaredField("clientPrivateKey").setAccessible(true);
-        VisaClient.class.getDeclaredField("serverPublicCertificate").setAccessible(true);
-        VisaClient.class.getDeclaredField("keyId").setAccessible(true);
-        VisaClient.class.getDeclaredField("clientId").setAccessible(true);
-        VisaClient.class.getDeclaredField("retrieveParUrl").setAccessible(true);
-        VisaClient.class.getDeclaredField("mapper").setAccessible(true);
         ReflectionTestUtils.setField(visaClient, "publicCert", new ClassPathResource("public_cert_test.p12"));
         ReflectionTestUtils.setField(visaClient, "keystorePassword", "password");
         ReflectionTestUtils.setField(visaClient, "userId", "TEST_USER_ID");

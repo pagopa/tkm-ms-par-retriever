@@ -35,9 +35,6 @@ public class TestAmexClient {
     @BeforeEach
     void init() throws Exception {
         testBeans = new DefaultBeans();
-        AmexClient.class.getDeclaredField("clientId").setAccessible(true);
-        AmexClient.class.getDeclaredField("clientSecret").setAccessible(true);
-        AmexClient.class.getDeclaredField("retrieveParUrl").setAccessible(true);
         ReflectionTestUtils.setField(amexClient, "clientId", "TEST_ID");
         ReflectionTestUtils.setField(amexClient, "clientSecret", "TEST_SECRET");
         ReflectionTestUtils.setField(amexClient, "retrieveParUrl", "http://localhost:" + mockServer.getPort());
