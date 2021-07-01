@@ -34,40 +34,40 @@ public class DefaultBeans {
 
     public final MastercardParResponse MASTERCARD_PAR_RESPONSE = new MastercardParResponse("RESPONSE_ID_TEST", new ParResponseEncryptedPayload(new ParResponseEncryptedData(PAR_1, INSTANT.toString())));
 
-    public final String TOKEN_1 = "abcde123";
-    public final String TOKEN_2 = "xyz6543";
-    public final String TOKEN_3 = "aerr126";
+    public final ParlessCardToken TOKEN_1 = new ParlessCardToken("abcde123", "3332e5eea07ab9d93cd59e3748b9746f66c8abc3a7a126a5c1965ff8525e00ba");
+    public final ParlessCardToken TOKEN_2 = new ParlessCardToken("xyz6543", "74bc610b1b2b79d0f63230a78923b297967915fff573ae9136667a0fd02804f2");
+    public final ParlessCardToken TOKEN_3 = new ParlessCardToken("aerr126", "4a5b9a70a9a71ee14d6e401b5086aafa290d88964de43f6c6cba86c8a5e5cc5b");
 
-    public final Set<String> TOKEN_SET_1 = new HashSet<>(Arrays.asList(TOKEN_1, TOKEN_2));
-    public final Set<String> TOKEN_SET_2 = new HashSet<>(Arrays.asList(TOKEN_2, TOKEN_3));
+    public final Set<ParlessCardToken> TOKEN_SET_1 = new HashSet<>(Arrays.asList(TOKEN_1, TOKEN_2));
+    public final Set<ParlessCardToken> TOKEN_SET_2 = new HashSet<>(Arrays.asList(TOKEN_2, TOKEN_3));
 
     public final ParlessCard PARLESS_CARD_1 = new ParlessCard(
-            TAX_CODE, PAN_1, HPAN_1, TOKEN_SET_1, CircuitEnum.AMEX
+            PAN_1, HPAN_1, CircuitEnum.AMEX, TOKEN_SET_1
     );
     public final ParlessCard PARLESS_CARD_2 = new ParlessCard(
-            TAX_CODE, PAN_2, HPAN_2, TOKEN_SET_2, CircuitEnum.VISA
+            PAN_2, HPAN_2, CircuitEnum.VISA, TOKEN_SET_2
     );
 
     public final ParlessCard PARLESS_CARD_3 = new ParlessCard(
-            TAX_CODE, PAN_2, HPAN_2, TOKEN_SET_2, CircuitEnum.MASTERCARD
+            PAN_2, HPAN_2, CircuitEnum.MASTERCARD, TOKEN_SET_2
     );
 
 
     public final ParlessCard PARLESS_AMEX_CARD = new ParlessCard(
-            TAX_CODE, PAN_AMEX, HPAN_1, TOKEN_SET_1, CircuitEnum.AMEX
+            PAN_AMEX, HPAN_1, CircuitEnum.AMEX, TOKEN_SET_1
     );
     public final ParlessCard PARLESS_VISA_CARD = new ParlessCard(
-            TAX_CODE, PAN_VISA, HPAN_2, TOKEN_SET_2, CircuitEnum.VISA
+            PAN_VISA, HPAN_2, CircuitEnum.VISA, TOKEN_SET_2
     );
     public final ParlessCard PARLESS_VISA_ELECTRON_CARD = new ParlessCard(
-            TAX_CODE, PAN_VISA, HPAN_2, TOKEN_SET_2, CircuitEnum.VISA_ELECTRON
+            PAN_VISA, HPAN_2, CircuitEnum.VISA_ELECTRON, TOKEN_SET_2
     );
     public final ParlessCard PARLESS_VPAY_CARD = new ParlessCard(
-            TAX_CODE, PAN_VISA, HPAN_2, TOKEN_SET_2, CircuitEnum.VPAY
+            PAN_VISA, HPAN_2, CircuitEnum.VPAY, TOKEN_SET_2
     );
 
     public final ParlessCard PARLESS_MASTERCARD_CARD = new ParlessCard(
-            TAX_CODE, PAN_MASTERCARD, HPAN_3, TOKEN_SET_2, CircuitEnum.MASTERCARD
+            PAN_MASTERCARD, HPAN_3, CircuitEnum.MASTERCARD, TOKEN_SET_2
     );
 
     public final List<ParlessCard> PARLESS_CARDS_LIST = Arrays.asList(PARLESS_CARD_1, PARLESS_CARD_2);

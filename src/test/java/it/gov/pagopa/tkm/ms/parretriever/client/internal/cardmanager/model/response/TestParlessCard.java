@@ -33,22 +33,19 @@ public class TestParlessCard {
         parlessCard.setCircuit(CircuitEnum.AMEX);
         assertEquals(CircuitEnum.AMEX, parlessCard.getCircuit());
 
-        parlessCard.setTaxCode("taxCode");
-        assertEquals("taxCode", parlessCard.getTaxCode());
-
-        Set<String> tokens = new HashSet<>();
-        tokens.add("token");
+        Set<ParlessCardToken> tokens = new HashSet<>();
+        tokens.add(new ParlessCardToken("token", "3c469e9d6c5875d37a43f353d4f88e61fcf812c66eee3457465a40b0da4153e0"));
         parlessCard.setTokens(tokens);
         assertEquals(tokens, parlessCard.getTokens());
     }
 
     @Test
     void createInstance_complete() {
-        Set<String> tokens = new HashSet<>();
-        tokens.add("token");
+        Set<ParlessCardToken> tokens = new HashSet<>();
+        tokens.add(new ParlessCardToken("token", "3c469e9d6c5875d37a43f353d4f88e61fcf812c66eee3457465a40b0da4153e0"));
 
-        parlessCard = new ParlessCard("taxCode", "pan", "hpan", tokens, CircuitEnum.AMEX);
-        ParlessCard card = new ParlessCard("taxCode", "pan", "hpan", tokens, CircuitEnum.AMEX);
+        parlessCard = new ParlessCard("pan", "hpan", CircuitEnum.AMEX, tokens);
+        ParlessCard card = new ParlessCard("pan", "hpan", CircuitEnum.AMEX, tokens);
 
         boolean equals = parlessCard.equals(card);
         assertTrue(equals);

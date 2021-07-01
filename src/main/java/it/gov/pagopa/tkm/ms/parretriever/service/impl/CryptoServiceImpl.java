@@ -23,19 +23,19 @@ import javax.annotation.PostConstruct;
 @Log4j2
 public class CryptoServiceImpl implements CryptoService {
 
-    @Value("${azure.keyvault.client-id")
+    @Value("${azure.keyvault.client-id}")
     private String clientId;
 
-    @Value("${azure.keyvault.client-key")
+    @Value("${azure.keyvault.client-key}")
     private String clientKey;
 
-    @Value("${azure.keyvault.tenant-id")
+    @Value("${azure.keyvault.tenant-id}")
     private String tenantId;
 
-    @Value("${azure.keyvault.uri")
+    @Value("${azure.keyvault.uri}")
     private String uri;
 
-    @Value("${keyvault.cryptographicKeyId")
+    @Value("${keyvault.cryptographicKeyId}")
     private String cryptographicKeyId;
 
     private CryptographyClient cryptographyClient;

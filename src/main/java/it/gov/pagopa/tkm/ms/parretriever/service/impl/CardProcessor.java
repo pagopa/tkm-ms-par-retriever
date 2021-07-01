@@ -33,37 +33,14 @@ public class CardProcessor implements ItemProcessor<ParlessCard, ParlessCard> {
 
     @Override
     public ParlessCard process(@NotNull ParlessCard parlessCard) {
-        return getConsentForCard(parlessCard) ? decryptCardData(parlessCard) : null;
+        return parlessCard.getCircuit() != null ? decrypt(parlessCard) : null;
     }
 
-    private ParlessCard decryptCardData(ParlessCard parlessCard) {
+    private ParlessCard decrypt(ParlessCard parlessCard) {
         parlessCard.setPan(cryptoService.decrypt(parlessCard.getPan()));
-        Set<String> decryptedTokens = parlessCard.getTokens()
-                .stream()
-                .map(s -> cryptoService.decrypt(s))
-                .collect(Collectors.toSet());
-        parlessCard.setTokens(decryptedTokens);
+        parlessCard.getTokens().forEach(parlessCardToken ->
+                parlessCardToken.setToken(cryptoService.decrypt(parlessCardToken.getToken())));
         return parlessCard;
-    }
-
-    private ConsentResponse getConsent(ParlessCard parlessCard) {
-        return consentClient.getConsent(parlessCard.getTaxCode(), parlessCard.getHpan(), null);
-    }
-
-    private boolean getConsentForCard(ParlessCard parlessCard) {
-        ConsentResponse consent = getConsent(parlessCard);
-        switch (consent.getConsent()) {
-            case Allow:
-                return true;
-            case Partial:
-                CardServiceConsent cardServiceConsent = CollectionUtils.firstElement(consent.getDetails());
-                if (cardServiceConsent != null) {
-                    return cardServiceConsent.getServiceConsents().stream().anyMatch(c -> c.getConsent().equals(Allow));
-                }
-            case Deny:
-            default:
-                return false;
-        }
     }
 
 }

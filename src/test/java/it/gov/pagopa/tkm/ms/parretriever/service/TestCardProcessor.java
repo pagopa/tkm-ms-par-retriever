@@ -10,6 +10,7 @@ import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.*;
 import org.mockito.*;
 import org.mockito.junit.jupiter.*;
+
 import static org.mockito.Mockito.when;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -40,54 +41,10 @@ public class TestCardProcessor {
     @Test
     void processParlessCard_processAllow() {
         for (ParlessCard card : testBeans.PARLESS_CARDS_LIST) {
-            ParlessCard processedCard = null;
-            if (consentClient.getConsent(card.getTaxCode(), card.getHpan(), null) != null) {
-                processedCard = cardProcessor.process(card);
-                assertEquals(card, processedCard);
-                 System.out.println("CONSENT IS NOT NULL");
-            } else {
-                when(consentClient.getConsent(card.getTaxCode(), card.getHpan(), null) ).thenReturn(testBeans.CARD_CONSENT_RESPONSE_ALLOW);
-                processedCard = cardProcessor.process(card);
-                assertEquals(card, processedCard);
-            }
+            ParlessCard processedCard;
+            processedCard = cardProcessor.process(card);
+            assertEquals(card, processedCard);
         }
-    }
-
-    @Test
-    void processParlessCard_processDeny() {
-        for (ParlessCard card : testBeans.PARLESS_CARDS_LIST) {
-            ParlessCard processedCard = null;
-            if (consentClient.getConsent(card.getTaxCode(), card.getHpan(), null) != null) {
-                processedCard = cardProcessor.process(card);
-                assertEquals(card, processedCard);
-            } else {
-                when(consentClient.getConsent(card.getTaxCode(), card.getHpan(), null) ).thenReturn(testBeans.CARD_CONSENT_RESPONSE_DENY);
-                processedCard = cardProcessor.process(card);
-                assertEquals(null, processedCard);
-            }
-        }
-    }
-
-
-    @Test
-    void processParlessCard_processPartial() {
-        for (ParlessCard card : testBeans.PARLESS_CARDS_LIST) {
-            ParlessCard processedCard = null;
-            if (consentClient.getConsent(card.getTaxCode(), card.getHpan(), null) != null) {
-                processedCard = cardProcessor.process(card);
-                assertEquals(card, processedCard);
-            } else {
-                when(consentClient.getConsent(card.getTaxCode(), card.getHpan(), null) ).thenReturn(testBeans.CARD_CONSENT_RESPONSE_PARTIAL);
-                processedCard = cardProcessor.process(card);
-                assertEquals(card, processedCard);
-            }
-        }
-    }
-
-
-    @Test
-    void badProcessing_throwNullPointerException() {
-        assertThrows(NullPointerException.class, () -> cardProcessor.process(testBeans.PARLESS_CARD_1));
     }
 
 }

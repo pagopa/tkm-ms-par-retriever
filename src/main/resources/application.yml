@@ -71,7 +71,7 @@ keyvault:
   visaServerCertificate: ${${AZURE_KEYVAULT_PROFILE:prod}-visaServerCertificate}
   visaUserId: ${${AZURE_KEYVAULT_PROFILE:prod}-visaUserId}
   mastercardPublicEncryptionKey: ${${AZURE_KEYVAULT_PROFILE:prod}-mastercardPublicEncryptionKey}
-  cryptographicKeyId: ${AZURE_KEYVAULT_PROFILE:prod}-parre-rsa-key}
+  cryptographicKeyId: ${AZURE_KEYVAULT_PROFILE:prod}-cardm-rsa-key
 
 blob-storage:
   mastercardSigningKeyCert: azure-blob://${BLOB_STORAGE_NAME}/Mastercard_Signing_Key_Cert.p12

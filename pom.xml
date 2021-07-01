@@ -24,6 +24,11 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-openfeign</artifactId>
+            <version>3.0.2</version>
+        </dependency>
+        <dependency>
             <groupId>com.squareup.okhttp3</groupId>
             <artifactId>okhttp</artifactId>
             <version>${okhttp-version}</version>
@@ -52,6 +57,11 @@
             <groupId>com.azure.spring</groupId>
             <artifactId>azure-spring-boot-starter-storage</artifactId>
             <version>${spring.azure-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.projectreactor</groupId>
+            <artifactId>reactor-core</artifactId>
+            <version>3.4.6</version>
         </dependency>
         <dependency>
             <groupId>com.nimbusds</groupId>
