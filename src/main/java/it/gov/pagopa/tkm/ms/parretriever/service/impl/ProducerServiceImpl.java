@@ -15,15 +15,15 @@ public final class ProducerServiceImpl implements ProducerService {
     @Autowired
     private KafkaTemplate<String, String> kafkaTemplate;
 
-    @Autowired
-    private PgpUtils pgpUtils;
-
     @Value("${spring.kafka.topics.read-queue}")
     private String readQueueTopic;
 
+    @Value("${keyvault.readQueuePubPgpKey}")
+    private String pgpPublicKey;
+
     @Override
     public void sendMessage(String message) throws PGPException {
-        String encryptedMessage = pgpUtils.encrypt(message);
+        String encryptedMessage = PgpStaticUtils.encrypt(message, pgpPublicKey);
         kafkaTemplate.send(readQueueTopic, encryptedMessage);
     }
 

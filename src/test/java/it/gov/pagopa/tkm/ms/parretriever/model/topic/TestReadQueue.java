@@ -1,5 +1,6 @@
 package it.gov.pagopa.tkm.ms.parretriever.model.topic;
 
+import it.gov.pagopa.tkm.ms.parretriever.client.internal.cardmanager.model.response.ParlessCardToken;
 import it.gov.pagopa.tkm.ms.parretriever.constant.CircuitEnum;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -7,7 +8,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -33,22 +36,19 @@ public class TestReadQueue {
         readQueue.setPar("par");
         assertEquals("par", readQueue.getPar());
 
-        List<Token> tokens = new ArrayList<>();
-        tokens.add(new Token());
+        Set<ParlessCardToken> tokens = new HashSet<>();
+        tokens.add(new ParlessCardToken());
         readQueue.setTokens(tokens);
         assertEquals(tokens, readQueue.getTokens());
-
-        readQueue.setTaxCode("taxCode");
-        assertEquals("taxCode", readQueue.getTaxCode());
     }
 
     @Test
     void createInstance_complete() {
-        List<Token> tokens = new ArrayList<>();
-        tokens.add(new Token());
+        Set<ParlessCardToken> tokens = new HashSet<>();
+        tokens.add(new ParlessCardToken());
 
-        readQueue = new ReadQueue("taxCode", "pan", "hpan", "par", CircuitEnum.AMEX, tokens);
-        ReadQueue queue = new ReadQueue("taxCode", "pan", "hpan", "par", CircuitEnum.AMEX, tokens);
+        readQueue = new ReadQueue("pan", "hpan", "par", CircuitEnum.AMEX, tokens);
+        ReadQueue queue = new ReadQueue("pan", "hpan", "par", CircuitEnum.AMEX, tokens);
 
         boolean equals = readQueue.equals(queue);
         assertTrue(equals);

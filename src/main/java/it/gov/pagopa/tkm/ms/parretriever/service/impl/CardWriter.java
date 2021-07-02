@@ -6,6 +6,7 @@ import it.gov.pagopa.tkm.ms.parretriever.client.external.amex.AmexClient;
 import it.gov.pagopa.tkm.ms.parretriever.client.external.mastercard.MastercardClient;
 import it.gov.pagopa.tkm.ms.parretriever.client.external.visa.VisaClient;
 import it.gov.pagopa.tkm.ms.parretriever.client.internal.cardmanager.model.response.ParlessCard;
+import it.gov.pagopa.tkm.ms.parretriever.client.internal.cardmanager.model.response.ParlessCardToken;
 import it.gov.pagopa.tkm.ms.parretriever.constant.*;
 import it.gov.pagopa.tkm.ms.parretriever.model.topic.*;
 import org.jetbrains.annotations.*;
@@ -92,19 +93,14 @@ public class CardWriter implements ItemWriter<ParlessCard> {
 
             String par = getParFromCircuit(circuit, parlessCard.getPan());
             if (par != null) {
-                ReadQueue readQueue = new ReadQueue(parlessCard.getTaxCode(),
-                        parlessCard.getPan(),
+                ReadQueue readQueue = new ReadQueue(parlessCard.getPan(),
                         parlessCard.getHpan(),
                         par,
                         circuit,
-                        getTokenListFromStringSet(parlessCard.getTokens()));
+                        parlessCard.getTokens());
                 producerService.sendMessage(mapper.writeValueAsString(readQueue));
             }
         }
-    }
-
-    private List<Token> getTokenListFromStringSet(Set<String> tokens) {
-        return tokens.stream().map(z -> new Token(z, null)).collect(Collectors.toList());
     }
 
     private boolean checkParRetrieveEnabledAndRateLimitByCircuit(CircuitEnum circuit) {
