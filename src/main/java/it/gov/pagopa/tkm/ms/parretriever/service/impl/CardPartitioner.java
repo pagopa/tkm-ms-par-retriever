@@ -49,14 +49,14 @@ public class CardPartitioner implements Partitioner {
     @Override
     public Map<String, ExecutionContext> partition(@Value("${batch-execution.max-number-of-threads}") int maxNumberOfThreads) {
 
-        if (maxNumberOfThreads ==0){
+        if (maxNumberOfThreads == 0) {
             return new HashMap<>();
         }
 
         List<ParlessCard> cards = parlessCardsClient.getParlessCards(maxNumberOfCards);
-        int cardsSize = cards == null?0:cards.size();
+        int cardsSize = cards == null ? 0 : cards.size();
 
-        if (cardsSize ==0) {
+        if (cardsSize == 0) {
             return new HashMap<>();
         }
 
@@ -105,7 +105,7 @@ public class CardPartitioner implements Partitioner {
         //creazione degli execution context (thread) per ciascun circuito
         int circuitIndex = 0;
         for (Map.Entry<CircuitEnum, List<ParlessCard>> entry : parlessCardsPerCircuit.entrySet()) {
-             CircuitEnum circuit = entry.getKey();
+            CircuitEnum circuit = entry.getKey();
 
             List<ParlessCard> circuitCards = parlessCardsPerCircuit.get(circuit);
             int cardsSizeByCircuit = circuitCards.size();
@@ -153,12 +153,12 @@ public class CardPartitioner implements Partitioner {
                 return amexMaxApiClientCallRate;
 
             case MASTERCARD:
-                    return mastercardMaxApiClientCallRate;
+                return mastercardMaxApiClientCallRate;
 
-           case VISA:
+            case VISA:
             case VISA_ELECTRON:
             case VPAY:
-               return visaMaxApiClientCallRate;
+                return visaMaxApiClientCallRate;
             default:
                 return 1d;
         }
@@ -176,7 +176,7 @@ public class CardPartitioner implements Partitioner {
 
     //Distribuzione del numero di thread ad ogni circuito
     private Map<CircuitEnum, Integer> normalizeNumberOfThreadsV2(Map<CircuitEnum, Double> elaborationTimes,
-                                                                      Double totalElaborationTime, int maxNumberOfThreads) {
+                                                                 Double totalElaborationTime, int maxNumberOfThreads) {
 
         //Assegnazione del numero di thread a ciascun circuito distribuendo secondo la proporzione
         //numero_di_thread_circuito= (tempo_di_elaborazione_circuito/tempo_totale_elaborazione)*numero_max_thread
@@ -196,7 +196,7 @@ public class CardPartitioner implements Partitioner {
         //Il processo si ripete finchè tutti i thread disponibili sono stati assegnati
         while (numberOfThreads > 0) {
             elaborationTime = elaborationTimeCounter;
-            threadsUsedByCircuits=0;
+            threadsUsedByCircuits = 0;
             for (Map.Entry<CircuitEnum, Double> entry : elaborationTimes.entrySet()) {
 
                 int apiCallMaxRateByCircuit = getApiCallMaxRateByCircuit(entry.getKey()).intValue();
@@ -220,7 +220,7 @@ public class CardPartitioner implements Partitioner {
                 }
                 threadsUsedByCircuits += threadsPerCircuit.get(entry.getKey());
             }
-            numberOfThreads = maxNumberOfThreads -  threadsUsedByCircuits;
+            numberOfThreads = maxNumberOfThreads - threadsUsedByCircuits;
         }
 
         //A causa dell'arrotondamento dei valori <1  ad 1,

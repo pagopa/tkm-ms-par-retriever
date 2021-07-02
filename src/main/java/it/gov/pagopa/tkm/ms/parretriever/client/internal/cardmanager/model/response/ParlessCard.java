@@ -11,14 +11,12 @@ import java.util.*;
 @NoArgsConstructor
 public class ParlessCard implements Serializable {
 
-    private String taxCode;
-
     private String pan;
 
     private String hpan;
 
-    private Set<String> tokens;
-
     private CircuitEnum circuit;
+
+    private Set<ParlessCardToken> tokens;
 
 }
