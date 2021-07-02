@@ -56,6 +56,8 @@ public class CardPartitioner implements Partitioner {
         List<ParlessCard> cards = parlessCardsClient.getParlessCards(maxNumberOfCards);
         int cardsSize = cards == null ? 0 : cards.size();
 
+        log.debug("Number of parless cards: " + cardsSize);
+
         if (cardsSize == 0) {
             return new HashMap<>();
         }

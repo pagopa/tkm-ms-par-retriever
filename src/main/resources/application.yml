@@ -31,10 +31,9 @@ logging:
   pattern:
     level: "${LOGGING_PATTERN:%p [${spring.application.name}][%X{traceId}]}"
 
-core:
-  parRetrieverService:
-    getPar:
-      scheduler: ${PAR_RETRIEVER_GET_PAR_SCHEDULER:0 * * * * *}
+batch:
+  par-retriever:
+    cron: ${PAR_RETRIEVER_GET_PAR_SCHEDULER:0 * * * * *}
 
 azure:
   keyvault:

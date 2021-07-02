@@ -9,6 +9,7 @@ import it.gov.pagopa.tkm.ms.parretriever.client.internal.cardmanager.model.respo
 import it.gov.pagopa.tkm.ms.parretriever.client.internal.cardmanager.model.response.ParlessCardToken;
 import it.gov.pagopa.tkm.ms.parretriever.constant.*;
 import it.gov.pagopa.tkm.ms.parretriever.model.topic.*;
+import lombok.extern.log4j.Log4j2;
 import org.jetbrains.annotations.*;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.item.ItemWriter;
@@ -20,6 +21,7 @@ import java.util.stream.*;
 
 @Component
 @StepScope
+@Log4j2
 public class CardWriter implements ItemWriter<ParlessCard> {
     public CardWriter(List<ParlessCard> list, Double ratelimit) {
         this.rateLimit=ratelimit;
@@ -93,6 +95,7 @@ public class CardWriter implements ItemWriter<ParlessCard> {
 
             String par = getParFromCircuit(circuit, parlessCard.getPan());
             if (par != null) {
+                log.trace("Retrieved PAR. Writing card " + parlessCard.getPan() + " into the queue");
                 ReadQueue readQueue = new ReadQueue(parlessCard.getPan(),
                         parlessCard.getHpan(),
                         par,
