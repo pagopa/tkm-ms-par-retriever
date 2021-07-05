@@ -23,8 +23,7 @@ public final class ProducerServiceImpl implements ProducerService {
 
     @Override
     public void sendMessage(String message) throws PGPException {
-        String encryptedMessage = PgpStaticUtils.encrypt(message, pgpPublicKey);
-        kafkaTemplate.send(readQueueTopic, encryptedMessage);
+        kafkaTemplate.send(readQueueTopic, PgpStaticUtils.encrypt(message, pgpPublicKey));
     }
 
 }

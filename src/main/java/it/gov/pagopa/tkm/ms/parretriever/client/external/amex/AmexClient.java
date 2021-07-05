@@ -3,6 +3,7 @@ package it.gov.pagopa.tkm.ms.parretriever.client.external.amex;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Properties;
+
 import com.fasterxml.jackson.databind.*;
 import it.gov.pagopa.tkm.ms.parretriever.client.external.amex.api.configuration.PropertiesConfigurationProvider;
 import it.gov.pagopa.tkm.ms.parretriever.client.external.amex.api.security.authentication.AuthProvider;
@@ -49,17 +50,15 @@ public class AmexClient {
 
     public String getPar(String pan) throws IOException {
         String amexParRequest = "[\"" + pan + "\"]";
-        Map<String, String> headers = authProvider.generateAuthHeaders(amexParRequest, retrieveParUrl, "POST");
-        RequestBody body = RequestBody.create(amexParRequest, MediaType.parse("application/json; charset=utf-8"));
+        Map<String, String> headers = authProvider.generateAuthHeaders(amexParRequest, retrieveParUrl,
+                "POST");
         Request.Builder builder = new Request.Builder()
                 .url(retrieveParUrl)
-                .post(body);
+                .post(RequestBody.create(amexParRequest, MediaType.parse("application/json; charset=utf-8")));
         for (Map.Entry<String, String> header : headers.entrySet()) {
             builder.addHeader(header.getKey(), header.getValue());
         }
-        Request request = builder.build();
-        Response response = httpClient.newCall(request).execute();
-        ResponseBody responseBody = response.body();
+        ResponseBody responseBody = httpClient.newCall(builder.build()).execute().body();
         if (responseBody != null) {
             return mapper.readValue(responseBody.string(), AmexParResponse[].class)[0].getPar();
         }

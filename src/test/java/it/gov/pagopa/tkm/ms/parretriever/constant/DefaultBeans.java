@@ -111,23 +111,6 @@ public class DefaultBeans {
     public Map<String, ExecutionContext> EXECUTION_CONTEXT_MAP_THREADS_UNBALANCED = createExecutionsContextMapThreadsUnbalanced();
     public Map<String, ExecutionContext> EXECUTION_CONTEXT_MAP_THREADS_SMALL = createExecutionsContextMapThreadSmall();
 
-
-    public ConsentResponse CARD_CONSENT_RESPONSE_ALLOW = new ConsentResponse(ConsentEntityEnum.Allow, Instant.now(),
-            new HashSet<>(Collections.singletonList(new CardServiceConsent("hashpan",
-                    new HashSet<>(Collections.singletonList(new ServiceConsent(ConsentRequestEnum.Allow, ServiceEnum.FA))))))
-             );
-
-    public ConsentResponse CARD_CONSENT_RESPONSE_DENY = new ConsentResponse(ConsentEntityEnum.Deny, Instant.now(),
-            new HashSet<>(Collections.singletonList(new CardServiceConsent("hashpan",
-                    new HashSet<>(Collections.singletonList(new ServiceConsent(ConsentRequestEnum.Allow, ServiceEnum.FA))))))
-    );
-
-    public ConsentResponse CARD_CONSENT_RESPONSE_PARTIAL = new ConsentResponse(ConsentEntityEnum.Partial, Instant.now(),
-            new HashSet<>(Collections.singletonList(new CardServiceConsent("hashpan",
-                    new HashSet<>(Collections.singletonList(new ServiceConsent(ConsentRequestEnum.Allow, ServiceEnum.FA))))))
-    );
-
-
     private List<ParlessCard> createParlessCardList(){
         List<ParlessCard> parlessCards = new ArrayList<>();
         PARLESS_AMEX_CARD_LIST=createAmexParlessCardList(100);

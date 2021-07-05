@@ -44,7 +44,7 @@ public class BatchConfig {
     @Value("${batch-execution.max-number-of-threads}")
     private Integer maxNumberOfThreads;
 
-    @Scheduled(cron = "${core.parRetrieverService.getPar.scheduler}")
+    @Scheduled(cron = "${batch.par-retriever.cron}")
     public void run() throws Exception {
         jobLauncher.run(parFinderJob(), new JobParametersBuilder().toJobParameters());
     }

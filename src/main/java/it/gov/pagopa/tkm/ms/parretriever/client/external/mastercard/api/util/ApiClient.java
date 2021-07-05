@@ -44,8 +44,8 @@ public class ApiClient {
     }
 
     public boolean isJsonMime(String mime) {
-        String jsonMime = "(?i)^(application/json|[^;/ \t]+/[^;/ \t]+[+]json)[ \t]*(;.*)?$";
-        return mime != null && (mime.matches(jsonMime) || mime.equals("*/*"));
+        return mime != null && (mime.matches("(?i)^(application/json|[^;/ \t]+/[^;/ \t]+[+]json)[ \t]*(;.*)?$") ||
+                mime.equals("*/*"));
     }
 
     public String selectHeaderAccept(String[] accepts) {
@@ -121,8 +121,7 @@ public class ApiClient {
 
     public RequestBody serialize(Object obj, String contentType) throws ApiException {
         if (isJsonMime(contentType) && obj != null) {
-            String content = json.serialize(obj);
-            return RequestBody.create(content, MediaType.parse(contentType));
+            return RequestBody.create(json.serialize(obj), MediaType.parse(contentType));
         } else {
             throw new ApiException("Content type \"" + contentType + "\" is not supported");
         }
@@ -131,8 +130,8 @@ public class ApiClient {
     public <T> ApiResponse<T> execute(Call call, Type returnType) throws ApiException {
         try {
             Response response = call.execute();
-            T data = handleResponse(response, returnType);
-            return new ApiResponse<>(response.code(), response.headers().toMultimap(), data);
+            return new ApiResponse<>(response.code(), response.headers().toMultimap(), handleResponse(response,
+                    returnType));
         } catch (IOException e) {
             throw new ApiException(e);
         }
@@ -165,30 +164,32 @@ public class ApiClient {
                     throw new ApiException(response.message(), e, response.code(), response.headers().toMultimap());
                 }
             }
-            throw new ApiException(response.message(), response.code(), response.headers().toMultimap(), respBodyString);
+            throw new ApiException(response.message(), response.code(), response.headers().toMultimap(),
+                    respBodyString);
         }
     }
 
-    public Call buildCall(String parEndpoint, String path, String method, Map<String, String> queryParams, Map<String, String> collectionQueryParams, Object body, Map<String, String> headerParams) throws ApiException {
-        Request request = buildRequest(parEndpoint, path, method, queryParams, collectionQueryParams, body, headerParams);
-
-        return httpClient.newCall(request);
+    public Call buildCall(String parEndpoint, String path, String method, Map<String, String> queryParams,
+                          Map<String, String> collectionQueryParams, Object body, Map<String, String> headerParams)
+            throws ApiException {
+        return httpClient.newCall(buildRequest(parEndpoint, path, method, queryParams, collectionQueryParams, body,
+                headerParams));
     }
 
-    public Request buildRequest(String parEndpoint, String path, String method, Map<String, String> queryParams, Map<String, String> collectionQueryParams, Object body, Map<String, String> headerParams) throws ApiException {
-        final String url = buildUrl(parEndpoint, path, queryParams, collectionQueryParams);
-        final Request.Builder reqBuilder = new Request.Builder().url(url);
-
+    public Request buildRequest(String parEndpoint, String path, String method, Map<String, String> queryParams,
+                                Map<String, String> collectionQueryParams, Object body,
+                                Map<String, String> headerParams) throws ApiException {
         String contentType = headerParams.get("Content-Type");
         // ensuring a default content type
         if (contentType == null) {
             contentType = "application/json";
         }
-        RequestBody reqBody = serialize(body, contentType);
-        return reqBuilder.method(method, reqBody).build();
+        return new Request.Builder().url(buildUrl(parEndpoint, path, queryParams, collectionQueryParams)).method(method,
+                serialize(body, contentType)).build();
     }
 
-    public String buildUrl(String parEndpoint, String path, Map<String, String> queryParams, Map<String, String> collectionQueryParams) {
+    public String buildUrl(String parEndpoint, String path, Map<String, String> queryParams,
+                           Map<String, String> collectionQueryParams) {
         final StringBuilder url = new StringBuilder();
         url.append(parEndpoint).append(path);
 
@@ -203,8 +204,8 @@ public class ApiClient {
                     } else {
                         url.append("&");
                     }
-                    String value = parameterToString(param.getValue());
-                    url.append(escapeString(param.getKey())).append("=").append(escapeString(value));
+                    url.append(escapeString(param.getKey())).append("=").append(escapeString(parameterToString(
+                            param.getValue())));
                 }
             }
         }
@@ -219,8 +220,7 @@ public class ApiClient {
                     } else {
                         url.append("&");
                     }
-                    String value = parameterToString(param.getValue());
-                    url.append(escapeString(param.getKey())).append("=").append(value);
+                    url.append(escapeString(param.getKey())).append("=").append(parameterToString(param.getValue()));
                 }
             }
         }
