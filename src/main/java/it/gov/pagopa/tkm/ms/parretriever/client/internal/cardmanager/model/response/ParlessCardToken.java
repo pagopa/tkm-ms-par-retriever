@@ -2,10 +2,12 @@ package it.gov.pagopa.tkm.ms.parretriever.client.internal.cardmanager.model.resp
 
 import lombok.*;
 
+import java.io.Serializable;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ParlessCardToken {
+public class ParlessCardToken implements Serializable {
 
     private String token;
 
