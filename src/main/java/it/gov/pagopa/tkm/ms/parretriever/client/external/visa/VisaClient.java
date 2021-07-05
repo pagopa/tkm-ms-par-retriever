@@ -70,14 +70,8 @@ public class VisaClient {
     private String retrieveParUrl;
 
     public String getPar(String pan) throws Exception {
-        VisaParRequest visaParRequest = new VisaParRequest(
-                clientId,
-                UUID.randomUUID().toString(),
-                pan);
-        String reqPayload = mapper.writeValueAsString(visaParRequest);
-        String encryptedPayload = getEncryptedPayload(reqPayload);
-        VisaParEncryptedResponse encryptedResponse = invokeAPI(encryptedPayload);
-        VisaParDecryptedResponse decryptedResponse = getDecryptedPayload(encryptedResponse);
+        VisaParDecryptedResponse decryptedResponse = getDecryptedPayload(invokeAPI(getEncryptedPayload(
+                mapper.writeValueAsString(new VisaParRequest(clientId, UUID.randomUUID().toString(), pan)))));
         if (decryptedResponse != null) {
             return decryptedResponse.getPaymentAccountReference();
         }
@@ -99,9 +93,9 @@ public class VisaClient {
         con.setRequestProperty("Content-Type", "application/json");
         con.setRequestProperty("Accept", "application/json");
         con.setRequestProperty("keyId", keyId);
-        byte[] encodedAuth = Base64.getEncoder().encode((userId + ":" + password).getBytes(StandardCharsets.UTF_8));
-        String authHeaderValue = "Basic " + new String(encodedAuth);
-        con.setRequestProperty("Authorization", authHeaderValue);
+        con.setRequestProperty("Authorization",
+                "Basic " + new String(Base64.getEncoder().encode((userId + ":" + password).getBytes(
+                        StandardCharsets.UTF_8))));
         if (payload != null && payload.trim().length() > 0) {
             con.setDoOutput(true);
             con.setDoInput(true);
@@ -110,9 +104,8 @@ public class VisaClient {
                 os.write(input, 0, input.length);
             }
         }
-        int status = con.getResponseCode();
         BufferedReader in;
-        if (status == 200) {
+        if (con.getResponseCode() == 200) {
             in = new BufferedReader(new InputStreamReader(con.getInputStream()));
         } else {
             in = new BufferedReader(new InputStreamReader(con.getErrorStream()));
@@ -125,8 +118,7 @@ public class VisaClient {
         }
         in.close();
         con.disconnect();
-        String responseAsString = content.toString();
-        return mapper.readValue(responseAsString, VisaParEncryptedResponse.class);
+        return mapper.readValue(content.toString(), VisaParEncryptedResponse.class);
     }
 
     private String getEncryptedPayload(String requestPayload) throws CertificateException, JOSEException {
@@ -138,25 +130,23 @@ public class VisaClient {
         return "{\"encData\":\"" + jweObject.serialize() + "\"}";
     }
 
-    private VisaParDecryptedResponse getDecryptedPayload(VisaParEncryptedResponse encryptedPayload) throws ParseException, NoSuchAlgorithmException, IOException, InvalidKeySpecException, JOSEException {
+    private VisaParDecryptedResponse getDecryptedPayload(VisaParEncryptedResponse encryptedPayload)
+            throws ParseException, NoSuchAlgorithmException, IOException, InvalidKeySpecException, JOSEException {
         String response = encryptedPayload.getEncData();
         JWEObject jweObject = JWEObject.parse(response);
-        PrivateKey privateKey = getRSAPrivateKey();
-        jweObject.decrypt(new RSADecrypter(privateKey));
+        jweObject.decrypt(new RSADecrypter(getRSAPrivateKey()));
         response = jweObject.getPayload().toString();
         return mapper.readValue(response, VisaParDecryptedResponse.class);
     }
 
     private RSAPublicKey getRSAPublicKey() throws CertificateException {
-        final com.nimbusds.jose.util.Base64 base64 = new com.nimbusds.jose.util.Base64(serverPublicCertificate.replaceAll("-----BEGIN CERTIFICATE-----", "").replaceAll("-----END CERTIFICATE-----", ""));
-        final Certificate cf = CertificateFactory.getInstance("X.509").generateCertificate(new ByteArrayInputStream(base64.decode()));
-        return (RSAPublicKey) cf.getPublicKey();
+        return (RSAPublicKey) CertificateFactory.getInstance("X.509").generateCertificate(new ByteArrayInputStream(
+                new com.nimbusds.jose.util.Base64(serverPublicCertificate.replaceAll("-----BEGIN CERTIFICATE-----",
+                        "").replaceAll("-----END CERTIFICATE-----", "")).decode())).getPublicKey();
     }
 
     private PrivateKey getRSAPrivateKey() throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
-        final com.nimbusds.jose.util.Base64 base64 = new com.nimbusds.jose.util.Base64(clientPrivateKey.replaceAll("-----BEGIN RSA PRIVATE KEY-----", "").replaceAll("-----END RSA PRIVATE KEY-----", ""));
-        final ASN1Sequence primitive = (ASN1Sequence) ASN1Sequence.fromByteArray(base64.decode());
-        final Enumeration<?> e = primitive.getObjects();
+        final Enumeration<?> e = ((ASN1Sequence) ASN1Sequence.fromByteArray(new com.nimbusds.jose.util.Base64(clientPrivateKey.replaceAll("-----BEGIN RSA PRIVATE KEY-----", "").replaceAll("-----END RSA PRIVATE KEY-----", "")).decode())).getObjects();
         final BigInteger v = ((ASN1Integer) e.nextElement()).getValue();
         int version = v.intValue();
         if (version != 0 && version != 1) {

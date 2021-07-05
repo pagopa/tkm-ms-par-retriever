@@ -20,9 +20,6 @@ public class TestProducerService {
     @InjectMocks
     private ProducerServiceImpl producerService;
 
-    @Mock
-    private KafkaTemplate<String, String> kafkaTemplate;
-
     private final MockedStatic<PgpStaticUtils> pgpStaticUtilsMockedStatic = mockStatic(PgpStaticUtils.class);
 
     @BeforeEach
@@ -35,34 +32,6 @@ public class TestProducerService {
     @AfterAll
     void close() {
         pgpStaticUtilsMockedStatic.close();
-    }
-
-    //TODO FIX TESTS
-
-    // @Test(expected = PGPException.class)
-    public void givenNullMessage_throwsPGPException() throws PGPException {
-        given(PgpStaticUtils.encrypt(null, null)).willThrow(PGPException.class);
-        producerService.sendMessage(null);
-    }
-
-    // @Test(expected = PGPException.class)
-    public void givenMessage_throwsPGPException() throws PGPException {
-        given(PgpStaticUtils.encrypt("message", "")).willThrow(PGPException.class);
-        producerService.sendMessage("message");
-
-    }
-
-    //@Test
-    public void givenMessage_sendMessageInKafka() throws PGPException {
-        producerService.sendMessage("message");
-        verify(kafkaTemplate).send("readQueueTopic", "encryptedString");
-    }
-
-    //@Test
-    public void sendMessage_validMessage() throws PGPException {
-        String encryptedMessage = PgpStaticUtils.encrypt("message", "publicKey");
-        producerService.sendMessage(encryptedMessage);
-        verify(kafkaTemplate).send(anyString(), eq(encryptedMessage));
     }
 
 }

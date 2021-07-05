@@ -53,9 +53,10 @@ public class MastercardClient {
     }
 
     public String getPar(String accountNumber) throws Exception {
-        MastercardParRequest mastercardParRequest = buildRequest(accountNumber, UUID.randomUUID().toString());
-        MastercardParResponse mastercardParResponse = api.getParPost(retrieveParUrl, mastercardParRequest);
-        if (mastercardParResponse != null && mastercardParResponse.getEncryptedPayload() != null && mastercardParResponse.getEncryptedPayload().getEncryptedData() != null) {
+        MastercardParResponse mastercardParResponse = api.getParPost(retrieveParUrl, buildRequest(accountNumber,
+                UUID.randomUUID().toString()));
+        if (mastercardParResponse != null && mastercardParResponse.getEncryptedPayload() != null &&
+                mastercardParResponse.getEncryptedPayload().getEncryptedData() != null) {
             return mastercardParResponse.getEncryptedPayload().getEncryptedData().getPaymentAccountReference();
         }
         return null;
@@ -65,7 +66,8 @@ public class MastercardClient {
         return FieldLevelEncryptionConfigBuilder.aFieldLevelEncryptionConfig()
                 .withEncryptionPath("$.encryptedPayload.encryptedData", "$.encryptedPayload")
                 .withDecryptionPath("$.encryptedPayload", "$.encryptedPayload.encryptedData")
-                .withEncryptionCertificate(loadEncryptionCertificate(new Base64(publicEncryptionKey.replaceAll("-----BEGIN CERTIFICATE-----", "").replaceAll("-----END CERTIFICATE-----", ""))))
+                .withEncryptionCertificate(loadEncryptionCertificate(new Base64(publicEncryptionKey.replaceAll(
+                        "-----BEGIN CERTIFICATE-----", "").replaceAll("-----END CERTIFICATE-----", ""))))
                 .withDecryptionKey(EncryptionUtils.loadDecryptionKey(privateDecryptionKey))
                 .withOaepPaddingDigestAlgorithm("SHA-512")
                 .withEncryptedValueFieldName("encryptedData")
@@ -80,24 +82,21 @@ public class MastercardClient {
     private ApiClient buildApiClient() throws Exception {
         return new ApiClient(
                 new OkHttpFieldLevelEncryptionInterceptor(buildEncryptionConfig()),
-                new OkHttpOAuth1Interceptor(consumerKey, AuthenticationUtils.loadSigningKey(signingKeyCert.getInputStream(), SIGNING_KEY_ALIAS, signingKeyPassword))
+                new OkHttpOAuth1Interceptor(consumerKey,
+                        AuthenticationUtils.loadSigningKey(signingKeyCert.getInputStream(), SIGNING_KEY_ALIAS,
+                                signingKeyPassword))
         );
     }
 
     private MastercardParRequest buildRequest(String accountNumber, String requestId) {
-        String timestamp = ZonedDateTime.now().plus(1, ChronoUnit.DAYS).toString();
-        ParRequestEncryptedData encryptedData = new ParRequestEncryptedData(accountNumber, timestamp);
-        ParRequestEncryptedPayload encryptedPayload = new ParRequestEncryptedPayload(encryptedData);
-        return new MastercardParRequest(requestId, encryptedPayload);
+        return new MastercardParRequest(requestId,
+                new ParRequestEncryptedPayload(new ParRequestEncryptedData(accountNumber, ZonedDateTime.now().plus(1,
+                        ChronoUnit.DAYS).toString())));
     }
 
     private Certificate loadEncryptionCertificate(Base64 certificate) throws CertificateException {
-        CertificateFactory factory = CertificateFactory.getInstance("X.509");
-        return factory.generateCertificate(new ByteArrayInputStream(certificate.decode()));
-    }
-
-    private String resourceAsString(Resource resource) throws IOException {
-        return StreamUtils.copyToString(resource.getInputStream(), Charset.defaultCharset());
+        return CertificateFactory.getInstance("X.509").generateCertificate(new ByteArrayInputStream(
+                certificate.decode()));
     }
 
 }
