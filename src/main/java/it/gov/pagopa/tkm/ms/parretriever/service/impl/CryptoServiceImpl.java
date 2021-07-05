@@ -47,10 +47,9 @@ public class CryptoServiceImpl implements CryptoService {
                 .clientSecret(clientKey)
                 .tenantId(tenantId)
                 .build();
-        KeyClient keyClient = new KeyClientBuilder().vaultUrl(uri).credential(clientSecretCredential).buildClient();
-        KeyVaultKey keyVaultKey = keyClient.getKey(cryptographicKeyId);
         cryptographyClient = new CryptographyClientBuilder()
-                .keyIdentifier(keyVaultKey.getId())
+                .keyIdentifier(new KeyClientBuilder().vaultUrl(uri).credential(clientSecretCredential).buildClient()
+                        .getKey(cryptographicKeyId).getId())
                 .credential(clientSecretCredential)
                 .buildClient();
     }
@@ -62,7 +61,8 @@ public class CryptoServiceImpl implements CryptoService {
             log.trace("\tEmpty string");
             return null;
         }
-        DecryptResult decryptResult = cryptographyClient.decrypt(EncryptionAlgorithm.RSA_OAEP_256, Base64Utils.decodeFromString(toDecrypt));
+        DecryptResult decryptResult = cryptographyClient.decrypt(EncryptionAlgorithm.RSA_OAEP_256,
+                Base64Utils.decodeFromString(toDecrypt));
         if (decryptResult == null || ArrayUtils.isEmpty(decryptResult.getPlainText())) {
             log.trace("\tCan't cryptography the string");
             return null;

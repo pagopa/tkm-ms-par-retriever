@@ -24,7 +24,7 @@ import java.util.stream.*;
 @Log4j2
 public class CardWriter implements ItemWriter<ParlessCard> {
     public CardWriter(List<ParlessCard> list, Double ratelimit) {
-        this.rateLimit=ratelimit;
+        this.rateLimit = ratelimit;
     }
 
     @Autowired
@@ -96,12 +96,8 @@ public class CardWriter implements ItemWriter<ParlessCard> {
             String par = getParFromCircuit(circuit, parlessCard.getPan());
             if (par != null) {
                 log.trace("Retrieved PAR. Writing card " + parlessCard.getPan() + " into the queue");
-                ReadQueue readQueue = new ReadQueue(parlessCard.getPan(),
-                        parlessCard.getHpan(),
-                        par,
-                        circuit,
-                        parlessCard.getTokens());
-                producerService.sendMessage(mapper.writeValueAsString(readQueue));
+                producerService.sendMessage(mapper.writeValueAsString(new ReadQueue(parlessCard.getPan(),
+                        parlessCard.getHpan(), par, circuit, parlessCard.getTokens())));
             }
         }
     }
@@ -119,5 +115,5 @@ public class CardWriter implements ItemWriter<ParlessCard> {
             default:
                 return false;
         }
-   }
+    }
 }
