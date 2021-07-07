@@ -49,14 +49,16 @@ public class CardPartitioner implements Partitioner {
     @Override
     public Map<String, ExecutionContext> partition(@Value("${batch-execution.max-number-of-threads}") int maxNumberOfThreads) {
 
-        if (maxNumberOfThreads ==0){
+        if (maxNumberOfThreads == 0) {
             return new HashMap<>();
         }
 
         List<ParlessCard> cards = parlessCardsClient.getParlessCards(maxNumberOfCards);
-        int cardsSize = cards == null?0:cards.size();
+        int cardsSize = cards == null ? 0 : cards.size();
 
-        if (cardsSize ==0) {
+        log.debug("Number of parless cards: " + cardsSize);
+
+        if (cardsSize == 0) {
             return new HashMap<>();
         }
 
@@ -71,8 +73,7 @@ public class CardPartitioner implements Partitioner {
             CircuitEnum circuit = groupVisaCircuitEnum(cards.get(i).getCircuit());
 
             if (!parlessCardsPerCircuit.containsKey(circuit)) {
-                List<ParlessCard> circuitCards = Stream.of(cards.get(i)).collect(Collectors.toList());
-                parlessCardsPerCircuit.put(circuit, circuitCards);
+                parlessCardsPerCircuit.put(circuit, Stream.of(cards.get(i)).collect(Collectors.toList()));
             } else {
                 parlessCardsPerCircuit.get(circuit).add(cards.get(i));
             }
@@ -95,17 +96,15 @@ public class CardPartitioner implements Partitioner {
                         getApiCallMaxRateByCircuit(c));
             });
 
-            double totalElaborationTime =
-                    singleThreadElaborationTimePerCircuit.values().stream().reduce(0d, Double::sum);
-
             threadsPerCircuit = normalizeNumberOfThreadsV2(singleThreadElaborationTimePerCircuit,
-                    totalElaborationTime, maxNumberOfThreads);
+                    singleThreadElaborationTimePerCircuit.values().stream().reduce(0d, Double::sum),
+                    maxNumberOfThreads);
         }
 
         //creazione degli execution context (thread) per ciascun circuito
         int circuitIndex = 0;
         for (Map.Entry<CircuitEnum, List<ParlessCard>> entry : parlessCardsPerCircuit.entrySet()) {
-             CircuitEnum circuit = entry.getKey();
+            CircuitEnum circuit = entry.getKey();
 
             List<ParlessCard> circuitCards = parlessCardsPerCircuit.get(circuit);
             int cardsSizeByCircuit = circuitCards.size();
@@ -116,11 +115,10 @@ public class CardPartitioner implements Partitioner {
             }
 
             int[] subListIndexes = subListIndexes(cardsSizeByCircuit, maxNumberOfThreadsByCircuit);
-            double apiCallMaxRateByCircuit = getApiCallMaxRateByCircuit(circuit);
 
             //Sempre almeno una chiamata al secondo
             double maxApiRatePerExecutionContext =
-                    Math.max(1, apiCallMaxRateByCircuit / maxNumberOfThreadsByCircuit);
+                    Math.max(1, getApiCallMaxRateByCircuit(circuit) / maxNumberOfThreadsByCircuit);
 
             for (int i = 1; i < subListIndexes.length; i++) {
 
@@ -132,7 +130,8 @@ public class CardPartitioner implements Partitioner {
                 value.putInt("from", fromId);
                 value.putInt("to", toId);
                 value.putString("name", "Thread" + j);
-                value.put("cardList", new ArrayList<>(circuitCards.subList(fromId, Math.min(toId, cardsSizeByCircuit))));
+                value.put("cardList", new ArrayList<>(circuitCards.subList(fromId, Math.min(toId,
+                        cardsSizeByCircuit))));
                 value.put("rateLimit", maxApiRatePerExecutionContext);
                 result.put("partition" + j, value);
 
@@ -153,12 +152,12 @@ public class CardPartitioner implements Partitioner {
                 return amexMaxApiClientCallRate;
 
             case MASTERCARD:
-                    return mastercardMaxApiClientCallRate;
+                return mastercardMaxApiClientCallRate;
 
-           case VISA:
+            case VISA:
             case VISA_ELECTRON:
             case VPAY:
-               return visaMaxApiClientCallRate;
+                return visaMaxApiClientCallRate;
             default:
                 return 1d;
         }
@@ -168,15 +167,14 @@ public class CardPartitioner implements Partitioner {
     private double maxNumberOfThreadsFromCircuitLimits(Set<CircuitEnum> circuits) {
         double total = 0d;
         for (CircuitEnum circuit : circuits) {
-            CircuitEnum actualCircuitEnum = groupVisaCircuitEnum(circuit);
-            total += getApiCallMaxRateByCircuit(actualCircuitEnum);
+            total += getApiCallMaxRateByCircuit(groupVisaCircuitEnum(circuit));
         }
         return total;
     }
 
     //Distribuzione del numero di thread ad ogni circuito
     private Map<CircuitEnum, Integer> normalizeNumberOfThreadsV2(Map<CircuitEnum, Double> elaborationTimes,
-                                                                      Double totalElaborationTime, int maxNumberOfThreads) {
+                                                                 Double totalElaborationTime, int maxNumberOfThreads) {
 
         //Assegnazione del numero di thread a ciascun circuito distribuendo secondo la proporzione
         //numero_di_thread_circuito= (tempo_di_elaborazione_circuito/tempo_totale_elaborazione)*numero_max_thread
@@ -196,31 +194,31 @@ public class CardPartitioner implements Partitioner {
         //Il processo si ripete finchè tutti i thread disponibili sono stati assegnati
         while (numberOfThreads > 0) {
             elaborationTime = elaborationTimeCounter;
-            threadsUsedByCircuits=0;
+            threadsUsedByCircuits = 0;
             for (Map.Entry<CircuitEnum, Double> entry : elaborationTimes.entrySet()) {
 
                 int apiCallMaxRateByCircuit = getApiCallMaxRateByCircuit(entry.getKey()).intValue();
-                double doubleNumberOfThreads = (entry.getValue() / elaborationTime) * numberOfThreads;
 
-                int calculatedValue = Math.max((int) Math.round(doubleNumberOfThreads), 1);
-                int totalValue = (threadsPerCircuit.get(entry.getKey()) == null ?
-                        0 : threadsPerCircuit.get(entry.getKey())) + calculatedValue;
+                int calculatedValue = Math.max((int) Math.round((entry.getValue() / elaborationTime) * numberOfThreads),
+                        1);
 
                 if (!filledCircuits.contains(entry.getKey())) {
-                    if (totalValue >= apiCallMaxRateByCircuit) {
+                    if (((threadsPerCircuit.get(entry.getKey()) == null ?
+                            0 :
+                            threadsPerCircuit.get(entry.getKey())) + calculatedValue) >= apiCallMaxRateByCircuit) {
                         calculatedValue = apiCallMaxRateByCircuit;
                         filledCircuits.add(entry.getKey());
                         threadsPerCircuit.put(entry.getKey(), calculatedValue);
                         elaborationTimeCounter -= entry.getValue();
                     } else {
-                        int currentValue = threadsPerCircuit.get(entry.getKey()) == null ?
-                                0 : threadsPerCircuit.get(entry.getKey());
-                        threadsPerCircuit.put(entry.getKey(), currentValue + calculatedValue);
+                        threadsPerCircuit.put(entry.getKey(), threadsPerCircuit.get(entry.getKey()) == null ?
+                                0 :
+                                threadsPerCircuit.get(entry.getKey()) + calculatedValue);
                     }
                 }
                 threadsUsedByCircuits += threadsPerCircuit.get(entry.getKey());
             }
-            numberOfThreads = maxNumberOfThreads -  threadsUsedByCircuits;
+            numberOfThreads = maxNumberOfThreads - threadsUsedByCircuits;
         }
 
         //A causa dell'arrotondamento dei valori <1  ad 1,
@@ -244,10 +242,9 @@ public class CardPartitioner implements Partitioner {
         }
 
         int ratio = numberOfParlessCards / maxNumberOfThread;
-        int subListCoveredByRatio = ratio * maxNumberOfThread;
         int[] subListIndexes = new int[maxNumberOfThread + 1];
         subListIndexes[0] = 0;
-        int remaining = numberOfParlessCards - subListCoveredByRatio;
+        int remaining = numberOfParlessCards - ratio * maxNumberOfThread;
 
         for (int i = 1; i < remaining + 1; i++) {
             subListIndexes[i] = subListIndexes[i - 1] + ratio + 1;

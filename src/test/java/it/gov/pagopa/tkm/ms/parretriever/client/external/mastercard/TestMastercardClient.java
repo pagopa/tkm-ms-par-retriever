@@ -33,15 +33,8 @@ public class TestMastercardClient {
     @BeforeEach
     void init() throws Exception {
         testBeans = new DefaultBeans();
-        MastercardClient.class.getDeclaredField("privateDecryptionKey").setAccessible(true);
-        MastercardClient.class.getDeclaredField("publicEncryptionKey").setAccessible(true);
-        MastercardClient.class.getDeclaredField("signingKeyCert").setAccessible(true);
-        MastercardClient.class.getDeclaredField("signingKeyPassword").setAccessible(true);
-        MastercardClient.class.getDeclaredField("consumerKey").setAccessible(true);
-        MastercardClient.class.getDeclaredField("retrieveParUrl").setAccessible(true);
-        MastercardClient.class.getDeclaredField("api").setAccessible(true);
         ReflectionTestUtils.setField(mastercardClient, "privateDecryptionKey", FileUtils.readFileToString(new File("src/test/resources/client_private_key_test.key")));
-        ReflectionTestUtils.setField(mastercardClient, "publicEncryptionKey", new ClassPathResource("client_public_cert_test.crt"));
+        ReflectionTestUtils.setField(mastercardClient, "publicEncryptionKey", FileUtils.readFileToString(new File("src/test/resources/client_public_cert_test.crt")));
         ReflectionTestUtils.setField(mastercardClient, "signingKeyCert", new ClassPathResource("public_cert_test.p12"));
         ReflectionTestUtils.setField(mastercardClient, "signingKeyPassword", "password");
         ReflectionTestUtils.setField(mastercardClient, "consumerKey", "TEST_CONSUMER_KEY");

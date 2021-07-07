@@ -38,8 +38,6 @@ public class TestCardPartitioner {
         testBeans = new DefaultBeans();
     }
 
-    //TODO TESTS
-
     @Test
     void givenEmptyList_returnEmptyMap(){
 

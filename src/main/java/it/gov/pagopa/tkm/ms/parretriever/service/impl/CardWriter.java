@@ -6,8 +6,10 @@ import it.gov.pagopa.tkm.ms.parretriever.client.external.amex.AmexClient;
 import it.gov.pagopa.tkm.ms.parretriever.client.external.mastercard.MastercardClient;
 import it.gov.pagopa.tkm.ms.parretriever.client.external.visa.VisaClient;
 import it.gov.pagopa.tkm.ms.parretriever.client.internal.cardmanager.model.response.ParlessCard;
+import it.gov.pagopa.tkm.ms.parretriever.client.internal.cardmanager.model.response.ParlessCardToken;
 import it.gov.pagopa.tkm.ms.parretriever.constant.*;
 import it.gov.pagopa.tkm.ms.parretriever.model.topic.*;
+import lombok.extern.log4j.Log4j2;
 import org.jetbrains.annotations.*;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.item.ItemWriter;
@@ -19,9 +21,10 @@ import java.util.stream.*;
 
 @Component
 @StepScope
+@Log4j2
 public class CardWriter implements ItemWriter<ParlessCard> {
     public CardWriter(List<ParlessCard> list, Double ratelimit) {
-        this.rateLimit=ratelimit;
+        this.rateLimit = ratelimit;
     }
 
     @Autowired
@@ -91,18 +94,12 @@ public class CardWriter implements ItemWriter<ParlessCard> {
             if (!checkParRetrieveEnabledAndRateLimitByCircuit(circuit)) continue;
 
             String par = getParFromCircuit(circuit, parlessCard.getPan());
-            ReadQueue readQueue = new ReadQueue(parlessCard.getTaxCode(),
-                    parlessCard.getPan(),
-                    parlessCard.getHpan(),
-                    par,
-                    circuit,
-                    getTokenListFromStringSet(parlessCard.getTokens()));
-            producerService.sendMessage(mapper.writeValueAsString(readQueue));
+            if (par != null) {
+                log.trace("Retrieved PAR. Writing card " + parlessCard.getPan() + " into the queue");
+                producerService.sendMessage(mapper.writeValueAsString(new ReadQueue(parlessCard.getPan(),
+                        parlessCard.getHpan(), par, circuit, parlessCard.getTokens())));
+            }
         }
-    }
-
-    private List<Token> getTokenListFromStringSet(Set<String> tokens) {
-        return tokens.stream().map(z -> new Token(z, null)).collect(Collectors.toList());
     }
 
     private boolean checkParRetrieveEnabledAndRateLimitByCircuit(CircuitEnum circuit) {
@@ -118,5 +115,5 @@ public class CardWriter implements ItemWriter<ParlessCard> {
             default:
                 return false;
         }
-   }
+    }
 }
