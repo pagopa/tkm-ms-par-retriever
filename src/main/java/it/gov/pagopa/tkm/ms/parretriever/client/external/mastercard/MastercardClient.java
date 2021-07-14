@@ -43,13 +43,18 @@ public class MastercardClient {
     @Value("${circuit-urls.mastercard}")
     private String retrieveParUrl;
 
+    @Value("${circuit-activation.mastercard}")
+    private String isMastercardActive;
+
     private static final String SIGNING_KEY_ALIAS = "keyalias";
 
     private ParApi api;
 
     @PostConstruct
     public void init() throws Exception {
-        api = new ParApi(buildApiClient());
+        if (isMastercardActive.equals("true")) {
+            api = new ParApi(buildApiClient());
+        }
     }
 
     public String getPar(String accountNumber) throws Exception {

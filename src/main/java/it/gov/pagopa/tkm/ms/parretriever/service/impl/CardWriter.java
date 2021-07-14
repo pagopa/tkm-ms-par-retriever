@@ -93,12 +93,14 @@ public class CardWriter implements ItemWriter<ParlessCard> {
             CircuitEnum circuit = parlessCard.getCircuit();
             if (!checkParRetrieveEnabledAndRateLimitByCircuit(circuit)) continue;
 
-            String par = getParFromCircuit(circuit, parlessCard.getPan());
+            String pan = parlessCard.getPan();
+            String par = getParFromCircuit(circuit, pan);
             if (par != null) {
-                log.trace("Retrieved PAR. Writing card " + parlessCard.getPan() + " into the queue");
-                producerService.sendMessage(mapper.writeValueAsString(new ReadQueue(parlessCard.getPan(),
+                log.trace("Retrieved PAR. Writing card " + pan + " into the queue");
+                producerService.sendMessage(mapper.writeValueAsString(new ReadQueue(pan,
                         parlessCard.getHpan(), par, circuit, parlessCard.getTokens())));
             }
+            log.trace("PAR not found for card " + pan);
         }
     }
 
