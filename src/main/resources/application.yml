@@ -94,5 +94,30 @@ batch-execution:
   amex-max-api-client-call-rate: ${AMEX_MAX_RATE:5}
   mastercard-max-api-client-call-rate: ${MASTERCARD_MAX_RATE:5}
   visa-max-api-client-call-rate: ${VISA_MAX_RATE:5}
+  default-max-api-client-call-rate: ${DEFAULT_MAX_RATE:5}
+
+#resilience4j.circuitbreaker:
+ # backends:
+  #  default:
+   #   ringBufferSizeInClosedState: 3
+    #  ringBufferSizeInHalfOpenState: 3
+    #  waitInterval: 1000
+    #  failureRateThreshold: 20
+    #externalCardCircuitClientBreaker:
+    #  ringBufferSizeInClosedState: 2
+    #  ringBufferSizeInHalfOpenState: 2
+    #  waitInterval: 1000
+    #  failureRateThreshold: 50
+resilience4j.circuitbreaker:
+  instances:
+    externalCardCircuitClientBreaker:
+      ringBufferSizeInClosedState: 2
+      ringBufferSizeInHalfOpenState: 2
+      waitInterval: 1000
+      failureRateThreshold: 50
 
 
+resilience4j.bulkhead:
+  instances:
+    externalCardCircuitClientBreaker:
+      maxConcurrentCalls: 5

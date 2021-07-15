@@ -78,8 +78,33 @@ public class CardPartitioner implements Partitioner {
                 parlessCardsPerCircuit.get(circuit).add(cards.get(i));
             }
         }
+        int circuitIndex = 0;
 
-        //Non posso avere un numero di thread superiore alla somma
+        //gestione numero di thread inferiore al numero di circuiti
+        if (parlessCardsPerCircuit.keySet().size()>maxNumberOfThreads){
+            int[] subListIndexes = subListIndexes(cards.size(), maxNumberOfThreads);
+
+          /* for (int i = 1; i < subListIndexes.length; i++) {
+
+                int fromId = subListIndexes[i - 1];
+                int toId = subListIndexes[i];
+                ExecutionContext value = new ExecutionContext();
+
+                value.putInt("from", fromId);
+                value.putInt("to", toId);
+                value.putString("name", "Thread" + i);
+                value.put("cardList", new ArrayList<>(cards.subList(fromId, Math.min(toId,
+                        cardsSize))));
+                value.put("rateLimit", 5);
+                result.put("partition" + i, value);
+            } */
+
+            result = createResult(result,subListIndexes, circuitIndex, cards, cardsSize, 5 );
+
+            return result;
+        }
+
+        //Non posso avere un numero di thread totale superiore alla somma
         //del numero di chiamate al secondo per ciascun circuito
         //Quindi se ho un numero di thread superiore
         //do ad ogni circuito il max numero di thread possibile senza fare calcoli
@@ -102,7 +127,6 @@ public class CardPartitioner implements Partitioner {
         }
 
         //creazione degli execution context (thread) per ciascun circuito
-        int circuitIndex = 0;
         for (Map.Entry<CircuitEnum, List<ParlessCard>> entry : parlessCardsPerCircuit.entrySet()) {
             CircuitEnum circuit = entry.getKey();
 
@@ -120,7 +144,7 @@ public class CardPartitioner implements Partitioner {
             double maxApiRatePerExecutionContext =
                     Math.max(1, getApiCallMaxRateByCircuit(circuit) / maxNumberOfThreadsByCircuit);
 
-            for (int i = 1; i < subListIndexes.length; i++) {
+         /*   for (int i = 1; i < subListIndexes.length; i++) {
 
                 int fromId = subListIndexes[i - 1];
                 int toId = subListIndexes[i];
@@ -135,7 +159,11 @@ public class CardPartitioner implements Partitioner {
                 value.put("rateLimit", maxApiRatePerExecutionContext);
                 result.put("partition" + j, value);
 
-            }
+            } */
+
+         result =
+                 createResult(result,subListIndexes, circuitIndex, circuitCards, cardsSizeByCircuit, maxApiRatePerExecutionContext );
+
             circuitIndex = circuitIndex + subListIndexes.length - 1;
         }
 
@@ -163,6 +191,29 @@ public class CardPartitioner implements Partitioner {
         }
 
     }
+
+    private Map<String, ExecutionContext> createResult(Map<String, ExecutionContext> result,  int[] subListIndexes,
+                                                       int circuitIndex, List<ParlessCard> cards, int cardsSize, double maxRate){
+        for (int i = 1; i < subListIndexes.length; i++) {
+
+            int fromId = subListIndexes[i - 1];
+            int toId = subListIndexes[i];
+            ExecutionContext value = new ExecutionContext();
+            int j = i + circuitIndex;
+
+            value.putInt("from", fromId);
+            value.putInt("to", toId);
+            value.putString("name", "Thread" + j);
+            value.put("cardList", new ArrayList<>(cards.subList(fromId, Math.min(toId,
+                    cardsSize))));
+            value.put("rateLimit", maxRate);
+            result.put("partition" + j, value);
+
+        }
+         return result;
+
+    }
+
 
     private double maxNumberOfThreadsFromCircuitLimits(Set<CircuitEnum> circuits) {
         double total = 0d;
