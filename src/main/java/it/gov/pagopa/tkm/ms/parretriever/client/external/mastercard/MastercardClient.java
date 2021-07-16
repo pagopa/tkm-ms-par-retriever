@@ -59,19 +59,27 @@ public class MastercardClient {
         api = new ParApi(buildApiClient());
     }
 
-    @CircuitBreaker(name = "externalCardCircuitClientBreaker", fallbackMethod = "mastercardClientFallback")
+    @CircuitBreaker(name = "externalCardCircuitClientBreaker", fallbackMethod = "getParFallback")
     public String getPar(String accountNumber) throws Exception {
 
+     //   String fake_url = "https://sandbox.api.mistercard.com/bar/baymentaccountreference/1/0";
         MastercardParResponse mastercardParResponse = api.getParPost(retrieveParUrl, buildRequest(accountNumber,
                 UUID.randomUUID().toString()));
+       // MastercardParResponse mastercardParResponse = api.getParPost(fake_url, buildRequest(accountNumber,
+         //       UUID.randomUUID().toString()));
+
         if (mastercardParResponse != null && mastercardParResponse.getEncryptedPayload() != null &&
                 mastercardParResponse.getEncryptedPayload().getEncryptedData() != null) {
-            return mastercardParResponse.getEncryptedPayload().getEncryptedData().getPaymentAccountReference();
+            String par = mastercardParResponse.getEncryptedPayload().getEncryptedData().getPaymentAccountReference();
+            System.out.println("\n>>>>>>>MASTERCARD PAR:[" + par+ "]");
+            return par;
+                    //mastercardParResponse.getEncryptedPayload().getEncryptedData().getPaymentAccountReference();
         }
         return null;
     }
 
-    public String fallbackForGetPar(String accountNumber, Throwable t ){
+    public String getParFallback(String accountNumber, Throwable t ){
+        System.out.println("\n :::: MASTERCARD FALLBACK ");
         log.debug("MASTERCARD fallback for get par - cause {}", t.toString());
         return "MASTERCARD fallback for get par. Some error occurred while calling get Par for Mastercard client";
     }
