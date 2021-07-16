@@ -90,6 +90,8 @@ public class CardWriter implements ItemWriter<ParlessCard> {
         for (ParlessCard parlessCard : parlessCardResponseList) {
             rateLimiter.acquire(1);
 
+            log.info(parlessCard);
+
             CircuitEnum circuit = parlessCard.getCircuit();
             if (!checkParRetrieveEnabledAndRateLimitByCircuit(circuit)) continue;
 
