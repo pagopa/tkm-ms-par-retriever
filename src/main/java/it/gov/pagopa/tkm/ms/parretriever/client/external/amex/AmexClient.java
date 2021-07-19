@@ -70,8 +70,8 @@ public class AmexClient {
     }
 
 
-    public String getParFallback(String accountNumber, Throwable t ){
-        log.debug("AMEX fallback for get par - cause {}", t.toString());
+    public String getParFallback(String pan, Throwable t ){
+        log.debug(String.format("AMEX fallback for pan %s get par - cause {}", pan), t.toString());
         return "AMEX fallback for get par. Some error occurred while calling get Par for Mastercard client";
     }
 

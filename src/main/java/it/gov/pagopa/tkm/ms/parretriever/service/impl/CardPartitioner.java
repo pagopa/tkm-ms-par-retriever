@@ -167,11 +167,6 @@ public class CardPartitioner implements Partitioner {
             circuitIndex = circuitIndex + subListIndexes.length - 1;
         }
 
-       //result.entrySet().forEach();
-
-
-        System.out.println(" EXECUTED PARTITIONER ");
-
         return result;
     }
 
