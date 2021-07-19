@@ -64,6 +64,7 @@ public class CardWriter implements ItemWriter<ParlessCard> {
 
     @Override
     public void write(@NotNull List<? extends ParlessCard> list) throws Exception {
+        log.info("-------------- WRITE ");
         writeCardsOnKafkaQueue(list);
     }
 
@@ -85,9 +86,9 @@ public class CardWriter implements ItemWriter<ParlessCard> {
     }
 
     private void writeCardsOnKafkaQueue(List<? extends ParlessCard> parlessCardResponseList) throws Exception {
-
-        RateLimiter rateLimiter = RateLimiter.create(rateLimit);
+      RateLimiter rateLimiter = RateLimiter.create(rateLimit);
         for (ParlessCard parlessCard : parlessCardResponseList) {
+
             rateLimiter.acquire(1);
 
             CircuitEnum circuit = parlessCard.getCircuit();

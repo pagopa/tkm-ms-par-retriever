@@ -24,8 +24,12 @@ import java.io.ByteArrayInputStream;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Date;
+import java.util.Locale;
 import java.util.UUID;
 
 @Log4j2
@@ -59,28 +63,52 @@ public class MastercardClient {
         api = new ParApi(buildApiClient());
     }
 
-    @CircuitBreaker(name = "externalCardCircuitClientBreaker", fallbackMethod = "getParFallback")
+    @CircuitBreaker(name = "mastercardClientCircuitBreaker", fallbackMethod = "getParFallback")
     public String getPar(String accountNumber) throws Exception {
+   /*    System.out.println("\n [GET PAR INVOKED]");
 
-     //   String fake_url = "https://sandbox.api.mistercard.com/bar/baymentaccountreference/1/0";
+        Timestamp now =  new Timestamp(System.currentTimeMillis());
+        Timestamp switchToCorrectUrlTimestamp=null;
+        Timestamp switchToFakeUrlTimestamp=null;
+
+        try {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.ITALIAN);
+            Date switchToFakeUrlParsedDate = dateFormat.parse("2021-07-19 14:35:20.000");
+            switchToFakeUrlTimestamp = new java.sql.Timestamp(switchToFakeUrlParsedDate.getTime());
+            Date switchToCorrectUrlParsedDate = dateFormat.parse("2021-07-19 14:37:20.000");
+            switchToCorrectUrlTimestamp = new java.sql.Timestamp(switchToCorrectUrlParsedDate.getTime());
+        } catch(Exception e) { //this generic but you can control another types of exception
+            // look the origin of excption
+        }
+        String fake_url = "https://sandbox.api.mistercard.com/bar/baymentaccountreference/1/0";
+
+        String url= now.before(switchToFakeUrlTimestamp)? fake_url: retrieveParUrl;
+
+       if (now.before(switchToFakeUrlTimestamp)){
+           url = retrieveParUrl;
+       } else if (now.after(switchToFakeUrlTimestamp) && now.before(switchToCorrectUrlTimestamp)){
+           url = fake_url;
+       } else if (now.after(switchToCorrectUrlTimestamp)){
+           url = retrieveParUrl;
+       }
+
+        System.out.println("..............CURRENT URL: " + url );
+
+      //  MastercardParResponse mastercardParResponse = api.getParPost(retrieveParUrl, buildRequest(accountNumber,
+       //         UUID.randomUUID().toString())); */
         MastercardParResponse mastercardParResponse = api.getParPost(retrieveParUrl, buildRequest(accountNumber,
                 UUID.randomUUID().toString()));
-       // MastercardParResponse mastercardParResponse = api.getParPost(fake_url, buildRequest(accountNumber,
-         //       UUID.randomUUID().toString()));
+
 
         if (mastercardParResponse != null && mastercardParResponse.getEncryptedPayload() != null &&
                 mastercardParResponse.getEncryptedPayload().getEncryptedData() != null) {
-            String par = mastercardParResponse.getEncryptedPayload().getEncryptedData().getPaymentAccountReference();
-            System.out.println("\n>>>>>>>MASTERCARD PAR:[" + par+ "]");
-            return par;
-                    //mastercardParResponse.getEncryptedPayload().getEncryptedData().getPaymentAccountReference();
+           return  mastercardParResponse.getEncryptedPayload().getEncryptedData().getPaymentAccountReference();
         }
         return null;
     }
 
     public String getParFallback(String accountNumber, Throwable t ){
-        System.out.println("\n :::: MASTERCARD FALLBACK ");
-        log.debug("MASTERCARD fallback for get par - cause {}", t.toString());
+        log.info("MASTERCARD fallback for get par - cause {}", t.toString());
         return "MASTERCARD fallback for get par. Some error occurred while calling get Par for Mastercard client";
     }
 

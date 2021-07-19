@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.*;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.RSADecrypter;
 import com.nimbusds.jose.crypto.RSAEncrypter;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import it.gov.pagopa.tkm.ms.parretriever.client.external.visa.model.request.*;
 import it.gov.pagopa.tkm.ms.parretriever.client.external.visa.model.response.*;
 import lombok.extern.log4j.*;
@@ -69,6 +70,7 @@ public class VisaClient {
     @Value("${circuit-urls.visa}")
     private String retrieveParUrl;
 
+    @CircuitBreaker(name = "visaClientCircuitBreaker", fallbackMethod = "getParFallback")
     public String getPar(String pan) throws Exception {
         VisaParDecryptedResponse decryptedResponse = getDecryptedPayload(invokeAPI(getEncryptedPayload(
                 mapper.writeValueAsString(new VisaParRequest(clientId, UUID.randomUUID().toString(), pan)))));
@@ -77,6 +79,12 @@ public class VisaClient {
         }
         return null;
     }
+
+    public String getParFallback(String accountNumber, Throwable t ){
+        log.debug("VISA fallback for get par - cause {}", t.toString());
+        return "VISA fallback for get par. Some error occurred while calling get Par for Mastercard client";
+    }
+
 
     private VisaParEncryptedResponse invokeAPI(String payload) throws Exception {
         HttpURLConnection con = (HttpURLConnection) new URL(retrieveParUrl).openConnection();

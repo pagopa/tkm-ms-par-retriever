@@ -56,7 +56,7 @@ public class CardPartitioner implements Partitioner {
         List<ParlessCard> cards = parlessCardsClient.getParlessCards(maxNumberOfCards);
         int cardsSize = cards == null ? 0 : cards.size();
 
-        log.debug("Number of parless cards: " + cardsSize);
+        log.info("Number of parless cards: " + cardsSize);
 
         if (cardsSize == 0) {
             return new HashMap<>();
@@ -166,6 +166,11 @@ public class CardPartitioner implements Partitioner {
 
             circuitIndex = circuitIndex + subListIndexes.length - 1;
         }
+
+       //result.entrySet().forEach();
+
+
+        System.out.println(" EXECUTED PARTITIONER ");
 
         return result;
     }

@@ -33,7 +33,7 @@ logging:
 
 batch:
   par-retriever:
-    cron: ${PAR_RETRIEVER_GET_PAR_SCHEDULER:0 * * * * *}
+    cron: ${PAR_RETRIEVER_GET_PAR_SCHEDULER:0 0/1 * * * *}
 
 azure:
   keyvault:
@@ -110,14 +110,24 @@ batch-execution:
     #  failureRateThreshold: 50
 resilience4j.circuitbreaker:
   instances:
-    externalCardCircuitClientBreaker:
-      ringBufferSizeInClosedState: 2
-      ringBufferSizeInHalfOpenState: 2
-      waitInterval: 1000
+    mastercardClientCircuitBreaker:
+      minimumNumberOfCalls: 20
+      slidingWindowSize: 40
+      ringBufferSizeInClosedState: 20
+      ringBufferSizeInHalfOpenState: 20
       failureRateThreshold: 50
-
-
-resilience4j.bulkhead:
-  instances:
-    externalCardCircuitClientBreaker:
-      maxConcurrentCalls: 5
+      waitDurationInOpenState: 20s
+    visaClientCircuitBreaker:
+      minimumNumberOfCalls: 20
+      slidingWindowSize: 40
+      ringBufferSizeInClosedState: 20
+      ringBufferSizeInHalfOpenState: 20
+      failureRateThreshold: 50
+      waitDurationInOpenState: 20s
+    amexClientCircuitBreaker:
+      minimumNumberOfCalls: 20
+      slidingWindowSize: 40
+      ringBufferSizeInClosedState: 20
+      ringBufferSizeInHalfOpenState: 20
+      failureRateThreshold: 50
+      waitDurationInOpenState: 20s

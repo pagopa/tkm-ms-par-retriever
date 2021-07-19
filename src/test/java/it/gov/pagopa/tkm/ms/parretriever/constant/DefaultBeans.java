@@ -7,6 +7,8 @@ import it.gov.pagopa.tkm.ms.parretriever.client.internal.cardmanager.model.respo
 import it.gov.pagopa.tkm.ms.parretriever.client.internal.consentmanager.model.response.*;
 import org.springframework.batch.item.ExecutionContext;
 
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.time.*;
 import java.util.*;
 
@@ -314,5 +316,6 @@ public class DefaultBeans {
         }
         return executionContextMap;
     }
+
 
 }
