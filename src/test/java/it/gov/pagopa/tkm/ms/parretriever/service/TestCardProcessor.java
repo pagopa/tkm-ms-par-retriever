@@ -10,6 +10,7 @@ import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.*;
 import org.mockito.*;
 import org.mockito.junit.jupiter.*;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import static org.mockito.Mockito.when;
 
@@ -36,14 +37,39 @@ public class TestCardProcessor {
     @BeforeEach
     void init() {
         testBeans = new DefaultBeans();
+        ReflectionTestUtils.setField(cardProcessor, "isAmexActive", "true");
+        ReflectionTestUtils.setField(cardProcessor, "isMastercardActive", "true");
+        ReflectionTestUtils.setField(cardProcessor, "isVisaActive", "true");
     }
 
     @Test
     void processParlessCard_processAllow() {
-        for (ParlessCard card : testBeans.PARLESS_CARDS_LIST) {
+        for (ParlessCard card : testBeans.PARLESS_CARDS_LIST_ALL_CIRCUITS) {
             ParlessCard processedCard;
             processedCard = cardProcessor.process(card);
             assertEquals(card, processedCard);
+        }
+    }
+
+    @Test
+    void processParlessCard_processNotAllow() {
+        ReflectionTestUtils.setField(cardProcessor, "isAmexActive", "false");
+        ReflectionTestUtils.setField(cardProcessor, "isMastercardActive", "false");
+        ReflectionTestUtils.setField(cardProcessor, "isVisaActive", "false");
+        for (ParlessCard card : testBeans.PARLESS_CARDS_LIST_ALL_CIRCUITS) {
+            ParlessCard processedCard;
+            processedCard = cardProcessor.process(card);
+            assertNull(processedCard);
+        }
+    }
+
+    @Test
+    void processParlessCard_processNoCircuit() {
+        for (ParlessCard card : testBeans.PARLESS_CARDS_LIST_ALL_CIRCUITS) {
+            ParlessCard processedCard;
+            card.setCircuit(CircuitEnum.MAESTRO);
+            processedCard = cardProcessor.process(card);
+            assertNull(processedCard);
         }
     }
 
