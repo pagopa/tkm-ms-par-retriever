@@ -38,6 +38,7 @@ public class TestAmexClient {
         ReflectionTestUtils.setField(amexClient, "clientId", "TEST_ID");
         ReflectionTestUtils.setField(amexClient, "clientSecret", "TEST_SECRET");
         ReflectionTestUtils.setField(amexClient, "retrieveParUrl", "http://localhost:" + mockServer.getPort());
+        ReflectionTestUtils.setField(amexClient, "isAmexActive", "true");
         Method postConstruct = AmexClient.class.getDeclaredMethod("init");
         postConstruct.setAccessible(true);
         postConstruct.invoke(amexClient);

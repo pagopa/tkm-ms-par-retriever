@@ -110,6 +110,19 @@ public class DefaultBeans {
     public Map<String, ExecutionContext> EXECUTION_CONTEXT_MAP_12_THREADS = createExecutionsContextMap12Threads();
     public Map<String, ExecutionContext> EXECUTION_CONTEXT_MAP_THREADS_UNBALANCED = createExecutionsContextMapThreadsUnbalanced();
     public Map<String, ExecutionContext> EXECUTION_CONTEXT_MAP_THREADS_SMALL = createExecutionsContextMapThreadSmall();
+    public Map<String, ExecutionContext> EXECUTION_CONTEXT_ALL_CIRCUITS = createExecutionsContextMapAllCiircits();
+
+    private Map<String, ExecutionContext> createExecutionsContextMapAllCiircits() {
+        TreeMap<String, ExecutionContext> treeMap = new TreeMap<>();
+        ExecutionContext executionContext = new ExecutionContext();
+        executionContext.put("cardList", PARLESS_CARDS_LIST_ALL_CIRCUITS);
+        executionContext.putInt("rateLimit", 5);
+        executionContext.putString("name", "Thread1");
+        executionContext.putInt("from", 0);
+        executionContext.putInt("to", 3);
+        treeMap.put("partition1", executionContext);
+        return treeMap;
+    }
 
     private List<ParlessCard> createParlessCardList(){
         List<ParlessCard> parlessCards = new ArrayList<>();

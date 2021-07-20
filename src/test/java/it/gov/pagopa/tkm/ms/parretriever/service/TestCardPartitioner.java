@@ -121,4 +121,17 @@ public class TestCardPartitioner {
     }
 
 
+    @Test
+    void givenMoreCardsOneThread_returnExecutionContext(){
+        ReflectionTestUtils.setField(cardPartitioner, "maxNumberOfCards", 3);
+        ReflectionTestUtils.setField(cardPartitioner, "amexMaxApiClientCallRate", 5d);
+        ReflectionTestUtils.setField(cardPartitioner, "mastercardMaxApiClientCallRate", 5d);
+        ReflectionTestUtils.setField(cardPartitioner, "visaMaxApiClientCallRate", 5d);
+
+        when(parlessCardsClient.getParlessCards(3)).thenReturn(testBeans.PARLESS_CARDS_LIST_ALL_CIRCUITS);
+
+        assertEquals(cardPartitioner.partition(1), testBeans.EXECUTION_CONTEXT_ALL_CIRCUITS);
+
+    }
+
 }
