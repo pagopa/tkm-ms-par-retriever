@@ -84,7 +84,7 @@ public class CardPartitioner implements Partitioner {
         if (parlessCardsPerCircuit.keySet().size()>maxNumberOfThreads){
             int[] subListIndexes = subListIndexes(cards.size(), maxNumberOfThreads);
 
-          /* for (int i = 1; i < subListIndexes.length; i++) {
+           for (int i = 1; i < subListIndexes.length; i++) {
 
                 int fromId = subListIndexes[i - 1];
                 int toId = subListIndexes[i];
@@ -97,9 +97,9 @@ public class CardPartitioner implements Partitioner {
                         cardsSize))));
                 value.put("rateLimit", 5);
                 result.put("partition" + i, value);
-            } */
+            } 
 
-            result = createResult(result,subListIndexes, circuitIndex, cards, cardsSize, 5 );
+        //    result = createResult(result,subListIndexes, circuitIndex, cards, cardsSize, 5 );
 
             return result;
         }
@@ -144,7 +144,7 @@ public class CardPartitioner implements Partitioner {
             double maxApiRatePerExecutionContext =
                     Math.max(1, getApiCallMaxRateByCircuit(circuit) / maxNumberOfThreadsByCircuit);
 
-         /*   for (int i = 1; i < subListIndexes.length; i++) {
+            for (int i = 1; i < subListIndexes.length; i++) {
 
                 int fromId = subListIndexes[i - 1];
                 int toId = subListIndexes[i];
@@ -159,10 +159,10 @@ public class CardPartitioner implements Partitioner {
                 value.put("rateLimit", maxApiRatePerExecutionContext);
                 result.put("partition" + j, value);
 
-            } */
+            }
 
-         result =
-                 createResult(result,subListIndexes, circuitIndex, circuitCards, cardsSizeByCircuit, maxApiRatePerExecutionContext );
+        // result =
+          //       createResult(result,subListIndexes, circuitIndex, circuitCards, cardsSizeByCircuit, maxApiRatePerExecutionContext );
 
             circuitIndex = circuitIndex + subListIndexes.length - 1;
         }
