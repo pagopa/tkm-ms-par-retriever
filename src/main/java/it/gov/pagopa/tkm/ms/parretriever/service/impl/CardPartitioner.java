@@ -97,7 +97,7 @@ public class CardPartitioner implements Partitioner {
                         cardsSize))));
                 value.put("rateLimit", 5);
                 result.put("partition" + i, value);
-            } 
+            }
 
         //    result = createResult(result,subListIndexes, circuitIndex, cards, cardsSize, 5 );
 
