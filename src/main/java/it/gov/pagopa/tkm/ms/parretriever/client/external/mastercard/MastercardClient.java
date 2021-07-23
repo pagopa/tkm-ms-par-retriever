@@ -24,12 +24,8 @@ import java.io.ByteArrayInputStream;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.Date;
-import java.util.Locale;
 import java.util.UUID;
 
 @Log4j2
@@ -67,7 +63,6 @@ public class MastercardClient {
     public String getPar(String accountNumber) throws Exception {
         MastercardParResponse mastercardParResponse = api.getParPost(retrieveParUrl, buildRequest(accountNumber,
                 UUID.randomUUID().toString()));
-
 
         if (mastercardParResponse != null && mastercardParResponse.getEncryptedPayload() != null &&
                 mastercardParResponse.getEncryptedPayload().getEncryptedData() != null) {
