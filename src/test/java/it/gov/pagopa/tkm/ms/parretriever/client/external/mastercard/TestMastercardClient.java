@@ -75,8 +75,9 @@ public class TestMastercardClient {
     }
 
 
-    @Test
-    public void shouldDecorateSupplierAndReturnWithSuccess() throws Exception {
+
+ /*    @Test
+   public void shouldDecorateSupplierAndReturnWithSuccess() throws Exception {
         //CircuitBreaker circuitBreaker = CircuitBreaker.ofDefaults("externalCardCircuitClientBreaker");
         //
         System.out.println("\nBEFORE....... circuitBreaker ");
@@ -110,9 +111,9 @@ public class TestMastercardClient {
         assertEquals(metrics.getNumberOfBufferedCalls(),1);
         assertEquals(metrics.getNumberOfFailedCalls(),0);
         assertEquals(metrics.getNumberOfSuccessfulCalls(),1);
-        assertEquals(metrics.getNumberOfBufferedCalls(),1); */
+        assertEquals(metrics.getNumberOfBufferedCalls(),1);
 
-    }
+    } */
 
     @Test
     public void shouldDecorateSupplierAndReturnWithSuccess2() throws Exception {
