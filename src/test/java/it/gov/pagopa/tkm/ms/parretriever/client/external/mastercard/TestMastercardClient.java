@@ -46,6 +46,7 @@ public class TestMastercardClient {
         ReflectionTestUtils.setField(mastercardClient, "signingKeyPassword", "password");
         ReflectionTestUtils.setField(mastercardClient, "consumerKey", "TEST_CONSUMER_KEY");
         ReflectionTestUtils.setField(mastercardClient, "retrieveParUrl", "http://localhost:" + mockServer.getPort());
+        ReflectionTestUtils.setField(mastercardClient, "isMastercardActive", "true");
         //Skipping circuit-side encryption, cannot mock
         ReflectionTestUtils.setField(mastercardClient, "api", new ParApi(new ApiClient()));
     }

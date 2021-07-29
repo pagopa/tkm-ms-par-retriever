@@ -34,21 +34,26 @@ public class AmexClient {
     @Value("${circuit-urls.amex}")
     private String retrieveParUrl;
 
+    @Value("${circuit-activation.amex}")
+    private String isAmexActive;
+
     private AuthProvider authProvider;
 
     private final OkHttpClient httpClient = new OkHttpClient.Builder().build();
 
     @PostConstruct
     public void init() throws IOException {
-        Properties properties = new Properties();
-        properties.put("CLIENT_KEY", clientId);
-        properties.put("CLIENT_SECRET", clientSecret);
-        properties.put("RETRIEVE_PAR_URL", retrieveParUrl);
-        PropertiesConfigurationProvider configurationProvider = new PropertiesConfigurationProvider();
-        configurationProvider.setProperties(properties);
-        authProvider = HmacAuthBuilder.getBuilder()
-                .setConfiguration(configurationProvider)
-                .build();
+        if (isAmexActive.equals("true")) {
+            Properties properties = new Properties();
+            properties.put("CLIENT_KEY", clientId);
+            properties.put("CLIENT_SECRET", clientSecret);
+            properties.put("RETRIEVE_PAR_URL", retrieveParUrl);
+            PropertiesConfigurationProvider configurationProvider = new PropertiesConfigurationProvider();
+            configurationProvider.setProperties(properties);
+            authProvider = HmacAuthBuilder.getBuilder()
+                    .setConfiguration(configurationProvider)
+                    .build();
+        }
     }
 
     @CircuitBreaker(name = "amexClientCircuitBreaker", fallbackMethod = "getParFallback")

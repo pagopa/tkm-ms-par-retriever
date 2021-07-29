@@ -57,19 +57,19 @@ keyvault:
   readQueuePrvPgpKey: ${${AZURE_KEYVAULT_PROFILE:prod}-readQueuePrvPgpKey}
   readQueuePubPgpKey: ${${AZURE_KEYVAULT_PROFILE:prod}-readQueuePubPgpKey}
   readQueuePrvPgpKeyPassphrase: ${${AZURE_KEYVAULT_PROFILE:prod}-readQueuePrvPgpKeyPassphrase:}
-  mastercardResponsePrivateKey: ${${AZURE_KEYVAULT_PROFILE:prod}-mastercardResponsePrivateKey}
-  mastercardApiKey: ${${AZURE_KEYVAULT_PROFILE:prod}-mastercardApiKey}
-  mastercardKeyStorePwd: ${${AZURE_KEYVAULT_PROFILE:prod}-mastercardKeyStorePwd}
-  amexClientId: ${${AZURE_KEYVAULT_PROFILE:prod}-amexClientId}
-  amexClientSecret: ${${AZURE_KEYVAULT_PROFILE:prod}-amexClientSecret}
-  visaClientId: ${${AZURE_KEYVAULT_PROFILE:prod}-visaClientId}
-  visaKeyId: ${${AZURE_KEYVAULT_PROFILE:prod}-visaKeyId}
-  visaKeyStorePassword: ${${AZURE_KEYVAULT_PROFILE:prod}-visaKeyStorePassword}
-  visaPassword: ${${AZURE_KEYVAULT_PROFILE:prod}-visaPassword}
-  visaPrivateKey: ${${AZURE_KEYVAULT_PROFILE:prod}-visaPrivateKey}
-  visaServerCertificate: ${${AZURE_KEYVAULT_PROFILE:prod}-visaServerCertificate}
-  visaUserId: ${${AZURE_KEYVAULT_PROFILE:prod}-visaUserId}
-  mastercardPublicEncryptionKey: ${${AZURE_KEYVAULT_PROFILE:prod}-mastercardPublicEncryptionKey}
+  mastercardResponsePrivateKey: ${${AZURE_KEYVAULT_PROFILE:prod}-mastercardResponsePrivateKey:}
+  mastercardApiKey: ${${AZURE_KEYVAULT_PROFILE:prod}-mastercardApiKey:}
+  mastercardKeyStorePwd: ${${AZURE_KEYVAULT_PROFILE:prod}-mastercardKeyStorePwd:}
+  mastercardPublicEncryptionKey: ${${AZURE_KEYVAULT_PROFILE:prod}-mastercardPublicEncryptionKey:}
+  amexClientId: ${${AZURE_KEYVAULT_PROFILE:prod}-amexClientId:}
+  amexClientSecret: ${${AZURE_KEYVAULT_PROFILE:prod}-amexClientSecret:}
+  visaClientId: ${${AZURE_KEYVAULT_PROFILE:prod}-visaClientId:}
+  visaKeyId: ${${AZURE_KEYVAULT_PROFILE:prod}-visaKeyId:}
+  visaKeyStorePassword: ${${AZURE_KEYVAULT_PROFILE:prod}-visaKeyStorePassword:}
+  visaPassword: ${${AZURE_KEYVAULT_PROFILE:prod}-visaPassword:}
+  visaPrivateKey: ${${AZURE_KEYVAULT_PROFILE:prod}-visaPrivateKey:}
+  visaServerCertificate: ${${AZURE_KEYVAULT_PROFILE:prod}-visaServerCertificate:}
+  visaUserId: ${${AZURE_KEYVAULT_PROFILE:prod}-visaUserId:}
   cryptographicKeyId: ${AZURE_KEYVAULT_PROFILE:prod}-pan-token-rsa-key
 
 blob-storage:
@@ -131,3 +131,8 @@ resilience4j.circuitbreaker:
       ringBufferSizeInHalfOpenState: ${RING_BUFFER_SIZE_IN_HALFOPEN_SATE:20}
       failureRateThreshold: ${FAILURE_RATE_THRESHOLD:50}
       waitDurationInOpenState: ${WAIT_DURATION_IN_OPENSTATE:20s}
+
+circuit-activation:
+  amex: ${IS_AMEX_ACTIVE:true}
+  mastercard: ${IS_MASTERCARD_ACTIVE:true}
+  visa: ${IS_VISA_ACTIVE:true}

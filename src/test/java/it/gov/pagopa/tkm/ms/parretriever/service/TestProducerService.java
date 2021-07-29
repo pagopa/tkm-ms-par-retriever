@@ -20,18 +20,47 @@ public class TestProducerService {
     @InjectMocks
     private ProducerServiceImpl producerService;
 
+    @Mock
+    private KafkaTemplate<String, String> kafkaTemplate;
+
     private final MockedStatic<PgpStaticUtils> pgpStaticUtilsMockedStatic = mockStatic(PgpStaticUtils.class);
 
     @BeforeEach
     void init() {
         pgpStaticUtilsMockedStatic.when(()-> PgpStaticUtils.encrypt(anyString(), anyString())).thenReturn("encryptedString");
-        ReflectionTestUtils.setField(producerService, "pgpPrivateKey", "TEST_PRIVATE_KEY");
-        ReflectionTestUtils.setField(producerService, "pgpPassphrase", "TEST_PASSPHRASE");
+        ReflectionTestUtils.setField(producerService, "readQueueTopic", "readQueueTopic");
+        ReflectionTestUtils.setField(producerService, "pgpPublicKey", "TEST_PUBLIC_KEY");
     }
 
     @AfterAll
     void close() {
         pgpStaticUtilsMockedStatic.close();
+    }
+
+    @Test
+    public void givenNullMessage_throwsPGPException() throws PGPException {
+        given(PgpStaticUtils.encrypt(null, null)).willThrow(PGPException.class);
+        producerService.sendMessage(null);
+    }
+
+    @Test
+    public void givenMessage_throwsPGPException() throws PGPException {
+        given(PgpStaticUtils.encrypt("message", "")).willThrow(PGPException.class);
+        producerService.sendMessage("message");
+
+    }
+
+    @Test
+    public void givenMessage_sendMessageInKafka() throws PGPException {
+        producerService.sendMessage("message");
+        verify(kafkaTemplate).send("readQueueTopic", "encryptedString");
+    }
+
+    @Test
+    public void sendMessage_validMessage() throws PGPException {
+        String encryptedMessage = PgpStaticUtils.encrypt("message", "publicKey");
+        producerService.sendMessage(encryptedMessage);
+        verify(kafkaTemplate).send(anyString(), eq(encryptedMessage));
     }
 
 }
