@@ -74,6 +74,7 @@ public class DefaultBeans {
 
     public final List<ParlessCard> PARLESS_CARDS_LIST = Arrays.asList(PARLESS_CARD_1, PARLESS_CARD_2);
     public final List<ParlessCard> PARLESS_CARDS_LIST_ALL_CIRCUITS = Arrays.asList(PARLESS_CARD_1, PARLESS_CARD_2, PARLESS_CARD_3);
+    public final List<ParlessCard> PARLESS_CARDS_LIST_SINGLE_MASTERCARD = Arrays.asList(PARLESS_CARD_3);
 
 
     public final String MASTERCARD_RESPONSE_PRIVATE_KEY = "-----BEGIN RSA PRIVATE KEY-----\n" +
@@ -112,6 +113,7 @@ public class DefaultBeans {
     public Map<String, ExecutionContext> EXECUTION_CONTEXT_MAP_12_THREADS = createExecutionsContextMap12Threads();
     public Map<String, ExecutionContext> EXECUTION_CONTEXT_MAP_THREADS_UNBALANCED = createExecutionsContextMapThreadsUnbalanced();
     public Map<String, ExecutionContext> EXECUTION_CONTEXT_MAP_THREADS_SMALL = createExecutionsContextMapThreadSmall();
+    public Map<String, ExecutionContext> EXECUTION_CONTEXT_MAP_SINGLE_THREAD = createExecutionContextsMapSingleThread();
 
     private List<ParlessCard> createParlessCardList(){
         List<ParlessCard> parlessCards = new ArrayList<>();
@@ -187,7 +189,7 @@ public class DefaultBeans {
         return parlessCards;
     }
 
-    public final Map<String, ExecutionContext> createExecutionsContextMap15Threads(){
+    private final Map<String, ExecutionContext> createExecutionsContextMap15Threads(){
         Map<String, ExecutionContext> executionContextMap = new TreeMap<>();
         createVisaExecutionContextsMap(executionContextMap, 0, 20, 5, 1);
         createMastercardExecutionContextsMap(executionContextMap, 5, 20, 5, 1);
@@ -197,7 +199,7 @@ public class DefaultBeans {
 
     };
 
-    public final Map<String, ExecutionContext> createExecutionsContextMap12Threads(){
+    private final Map<String, ExecutionContext> createExecutionsContextMap12Threads(){
         Map<String, ExecutionContext> executionContextMap = new TreeMap<>();
         createVisaExecutionContextsMap(executionContextMap, 0, 25, 4, 1);
         createMastercardExecutionContextsMap(executionContextMap, 4, 25, 4, 1);
@@ -208,7 +210,7 @@ public class DefaultBeans {
     };
 
 
-    public final Map<String, ExecutionContext> createExecutionsContextMapThreadsUnbalanced(){
+    private final Map<String, ExecutionContext> createExecutionsContextMapThreadsUnbalanced(){
         Map<String, ExecutionContext> executionContextMap = new TreeMap<>();
         createVisaExecutionContextsMap(executionContextMap, 0, 5, 2, 2);
         createMastercardExecutionContextsMap(executionContextMap, 2, 14, 5, 2);
@@ -219,7 +221,7 @@ public class DefaultBeans {
     };
 
 
-    public final Map<String, ExecutionContext> createExecutionsContextMapThreadSmall(){
+    private final Map<String, ExecutionContext> createExecutionsContextMapThreadSmall(){
         Map<String, ExecutionContext> executionContextMap = new TreeMap<>();
         createVisaExecutionContextsMap(executionContextMap, 0, 1, 2, 3);
         createMastercardExecutionContextsMap(executionContextMap, 2, 1, 4, 3);
@@ -228,6 +230,26 @@ public class DefaultBeans {
         return executionContextMap;
 
     };
+
+    private Map<String, ExecutionContext> createExecutionContextsMapSingleThread (){
+
+        Map<String, ExecutionContext> executionContextMap = new TreeMap<>();
+
+        List<ParlessCard> cardsList =createAmexParlessCardList(4);
+        cardsList.addAll(createVisaParlessCardList(2,0,0));
+        cardsList.addAll(createMastercardParlessCardList(4));
+
+        ExecutionContext value = new ExecutionContext();
+
+        value.putInt("from", 0);
+        value.putInt("to", 10);
+        value.putString("name", "Thread1");
+        value.put("cardList", cardsList);
+        value.put("rateLimit", 5);
+        executionContextMap.put("partition1", value);
+
+        return executionContextMap;
+    }
 
 
     private Map<String, ExecutionContext> createAmexExecutionContextsMap(Map<String, ExecutionContext> executionContextMap,
@@ -316,6 +338,9 @@ public class DefaultBeans {
         }
         return executionContextMap;
     }
+
+
+
 
 
 }

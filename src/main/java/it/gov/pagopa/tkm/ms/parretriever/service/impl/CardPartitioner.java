@@ -192,7 +192,7 @@ public class CardPartitioner implements Partitioner {
 
     }
 
-    private Map<String, ExecutionContext> createResult(Map<String, ExecutionContext> result,  int[] subListIndexes,
+  /*  private Map<String, ExecutionContext> createResult(Map<String, ExecutionContext> result,  int[] subListIndexes,
                                                        int circuitIndex, List<ParlessCard> cards, int cardsSize, double maxRate){
         for (int i = 1; i < subListIndexes.length; i++) {
 
@@ -212,7 +212,7 @@ public class CardPartitioner implements Partitioner {
         }
          return result;
 
-    }
+    } */
 
 
     private double maxNumberOfThreadsFromCircuitLimits(Set<CircuitEnum> circuits) {
