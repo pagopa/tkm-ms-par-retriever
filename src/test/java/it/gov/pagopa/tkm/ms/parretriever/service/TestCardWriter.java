@@ -16,6 +16,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.mockito.Mockito.when;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ExtendWith(MockitoExtension.class)
@@ -72,6 +73,16 @@ public class TestCardWriter {
     @Test
     void writeOnQueue_exceptionCheck() {
         List<ParlessCard> parlessCards = testBeans.PARLESS_CARDS_LIST_ALL_CIRCUITS;
+        assertDoesNotThrow(() -> cardWriter.write(parlessCards));
+    }
+
+
+    @Test
+    void writeOnQueue_excepctionCheck() throws Exception {
+        List<ParlessCard> parlessCards = testBeans.PARLESS_CARDS_LIST_SINGLE_MASTERCARD;
+        ParlessCard masterCardCard= parlessCards.get(0);
+
+        when(mastercardClient.getPar(masterCardCard.getPan())).thenReturn(testBeans.PAR_1);
         assertDoesNotThrow(() -> cardWriter.write(parlessCards));
     }
 

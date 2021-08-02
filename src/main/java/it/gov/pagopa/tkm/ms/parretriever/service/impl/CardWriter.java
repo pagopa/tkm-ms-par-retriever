@@ -64,6 +64,7 @@ public class CardWriter implements ItemWriter<ParlessCard> {
 
     @Override
     public void write(@NotNull List<? extends ParlessCard> list) throws Exception {
+        log.info("-------------- WRITE ");
         writeCardsOnKafkaQueue(list);
     }
 
@@ -85,9 +86,9 @@ public class CardWriter implements ItemWriter<ParlessCard> {
     }
 
     private void writeCardsOnKafkaQueue(List<? extends ParlessCard> parlessCardResponseList) throws Exception {
-
-        RateLimiter rateLimiter = RateLimiter.create(rateLimit);
+      RateLimiter rateLimiter = RateLimiter.create(rateLimit);
         for (ParlessCard parlessCard : parlessCardResponseList) {
+
             rateLimiter.acquire(1);
 
             log.info(parlessCard);
@@ -98,11 +99,11 @@ public class CardWriter implements ItemWriter<ParlessCard> {
             String pan = parlessCard.getPan();
             String par = getParFromCircuit(circuit, pan);
             if (par != null) {
-                log.trace("Retrieved PAR. Writing card " + pan + " into the queue");
+                log.info("Retrieved PAR. Writing card " + pan + " into the queue");
                 producerService.sendMessage(mapper.writeValueAsString(new ReadQueue(pan,
                         parlessCard.getHpan(), par, circuit, parlessCard.getTokens())));
             }
-            log.trace("PAR not found for card " + pan);
+            log.info("PAR not found for card " + pan);
         }
     }
 
