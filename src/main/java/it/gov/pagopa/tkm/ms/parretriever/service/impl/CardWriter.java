@@ -99,11 +99,11 @@ public class CardWriter implements ItemWriter<ParlessCard> {
             String pan = parlessCard.getPan();
             String par = getParFromCircuit(circuit, pan);
             if (par != null) {
-                log.trace("Retrieved PAR. Writing card " + pan + " into the queue");
+                log.info("Retrieved PAR. Writing card " + pan + " into the queue");
                 producerService.sendMessage(mapper.writeValueAsString(new ReadQueue(pan,
                         parlessCard.getHpan(), par, circuit, parlessCard.getTokens())));
             }
-            log.trace("PAR not found for card " + pan);
+            log.info("PAR not found for card " + pan);
         }
     }
 
