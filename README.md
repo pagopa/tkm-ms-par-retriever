@@ -1,8 +1,8 @@
 # Par Retriever
-The batch retrieves the pans for all the parless cards saved in S2 DB, calling the service relative to its circuit
+This microservice retrieves all parless cards' PANs from Card Manager and calls the respective circuits to assign them their PAR.
 
 ## Configuration
-The follow ENVIRONMENT variables need to deploy and run the application.
+The following ENVIRONMENT variables are needed to deploy and run the application.
 
 - **SERVER_PORT** *The spring boot port. Default value 8080*
 - **AZURE_KEYVAULT_PROFILE** *The prefix used to search for keys in the key vault (local/sit/uat/prod)*
@@ -10,7 +10,6 @@ The follow ENVIRONMENT variables need to deploy and run the application.
 - **AZURE_KEYVAULT_CLIENT_KEY** *Azure Kevault authentication client key*
 - **AZURE_KEYVAULT_TENANT_ID** *Azure Kevault authentication tenant id*
 - **AZURE_KEYVAULT_URI** *Azure Kevault address*
-- **KAFKA_MAX_NUMBER_OF_THREADS** *Number of threads in which parless cards will be distributed*
 - **AZURE_STORAGE_ENDPOINT** *Endpoint where blob storage connects*
 - **BLOB_STORAGE_NAME** *Name of blob storage where resources are located*
 - **MAX_NUMBER_OF_THREADS** *Number of threads in which parless cards are divided*
@@ -20,6 +19,7 @@ The follow ENVIRONMENT variables need to deploy and run the application.
 - **AMEX_URL** *URL of Amex circuit service*
 - **VISA_URL** *URL of Visa circuit service*
 - **MASTERCARD_URL** *URL of Mastercard circuit service*
+- **KAFKA_MAX_NUMBER_OF_THREADS** *Number of threads in which parless cards will be distributed*
 - **KAFKA_READ_QUEUE_TOPIC** *Topic name of read queue*
 - **KAFKA_SECURITY_PROTOCOL** *Way to manage queue informations*
 
