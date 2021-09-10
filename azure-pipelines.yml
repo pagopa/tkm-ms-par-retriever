@@ -29,18 +29,20 @@ variables:
     dockerRegistryServiceConnection: 'tkm-cstaruatregistry-connector'
     containerRegistry: 'cstaruatregistry.azurecr.io'
     deployment: deployment-sit
-    environment: sit
+    enviroment: sit
     imagePullSecret: 'tkmsitregistry-auth'
   ${{ if or(eq(variables['Build.SourceBranch'], 'refs/heads/release/uat'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix')) }}:
     containerRegistry: 'cstaruatregistry.azurecr.io'
     deployment: deployment-uat
     imagePullSecret: 'tkmuatregistry-auth'
-    environment: uat
+    enviroment: uat
+    dockerRegistryServiceConnection: 'tkm-cstaruatregistry-connector'
   ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/master') }}:
     dockerRegistryServiceConnection: 'tkm-cstaruatregistry-connector'
     containerRegistry: ''
     deployment: ''
     imagePullSecret: ''
+    enviroment: prod
   ${{ if and(not(startsWith(variables['Build.SourceBranch'], 'refs/heads/release')), ne(variables['Build.SourceBranch'], 'refs/heads/master'), not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix'))) }}:
     dockerRegistryServiceConnection: ''
 
@@ -176,7 +178,7 @@ stages:
                     kubernetesServiceConnection: 'ddsakstest-self-connection-tkm-sit'
                     manifests: |
                       $(Pipeline.Workspace)/manifests/$(deployment).yml
-                      $(Pipeline.Workspace)/manifests/service-$(environment).yml
+                      $(Pipeline.Workspace)/manifests/service-$(enviroment).yml
                     imagePullSecrets: |
                       $(imagePullSecret)
                     containers: |
@@ -194,41 +196,9 @@ stages:
         pool:
           vmImage: $(vmImageNameDefault)
         steps:
-
-          - task: DownloadSecureFile@1
-            displayName: 'download settings.xml for Maven'
-            name: settingsxml
-            inputs:
-              secureFile: 'settings.xml'
-              retryCount: '2'
-          - task: Maven@3
-            inputs:
-              mavenPomFile: 'pom.xml'
-              goals: 'package'
-              options: '-B -s $(settingsxml.secureFilePath) -DskipTests=false'
-              javaHomeOption: 'JDKVersion'
-              jdkVersionOption: '1.8'
-              mavenVersionOption: 'Default'
-              mavenOptions: '-Xmx3072m'
-              mavenAuthenticateFeed: false
-              effectivePomSkip: true
-              sonarQubeRunAnalysis: false
-          - task: Docker@2
-            displayName: Build and push an image to container registry
-            condition: succeeded()
-            inputs:
-              containerRegistry: '$(dockerRegistryServiceConnection)'
-              repository: '$(imageRepository)'
-              command: 'buildAndPush'
-              Dockerfile: '$(Build.Repository.LocalPath)/$(dockerfileRelativePath)'
-              buildContext: '$(Build.Repository.LocalPath)'
-              tags: |
-                $(Build.BuildId)
-                latest
-                $(pomversion)
           - task: PublishPipelineArtifact@1
             displayName: 'Publish Atrifact manifests'
-            condition: and(succeeded(), eq(variables.isToDeploy, true))
+            condition: eq(variables.isToDeploy, true)
             inputs:
               targetPath: '$(Build.Repository.LocalPath)/manifests'
               artifact: 'manifests'
@@ -236,8 +206,9 @@ stages:
 
 
       - deployment: Deploy
-        displayName: Deploy
         dependsOn: Build
+        displayName: Deploy
+        condition: and(succeeded(), eq(variables.isToDeploy, true), eq(variables.isUAT, true))
         pool:
           name: uat_agent_pool
         environment: 'uat'
@@ -254,14 +225,16 @@ stages:
                 - task: KubernetesManifest@0
                   displayName: Deploy to Kubernetes cluster
                   inputs:
+                    namespace: tkm-uat
                     action: deploy
                     kubernetesServiceConnection: 'ddsakstest-self-connection-tkm-uat'
-                    namespace: tkm-uat
                     manifests: |
                       $(Pipeline.Workspace)/manifests/$(deployment).yml
                       $(Pipeline.Workspace)/manifests/service-$(environment).yml
-                    containers: '$(containerRegistry)/$(imageRepository):$(pomversion)'
-                    imagePullSecrets: '$(imagePullSecret)'
+                    imagePullSecrets:
+                      $(imagePullSecret)
+                    containers:
+                      $(containerRegistry)/$(imageRepository):$(pomversion)
 
   # - stage: PROD
   #   displayName: PROD
@@ -338,6 +311,6 @@ stages:
   #                   namespace: ''
   #                   manifests: |
   #                     $(Pipeline.Workspace)/manifests/$(deployment).yml
-  #                     $(Pipeline.Workspace)/manifests/service-sit.yml
+  #                     $(Pipeline.Workspace)/manifests/service-$(enviroment).yml
   #                   containers: '$(containerRegistry)/$(imageRepository):$(pomversion)'
   #                   imagePullSecrets: '$(imagePullSecret)'
