@@ -29,11 +29,13 @@ variables:
     dockerRegistryServiceConnection: 'tkm-cstaruatregistry-connector'
     containerRegistry: 'cstaruatregistry.azurecr.io'
     deployment: deployment-sit
+    environment: sit
     imagePullSecret: 'tkmsitregistry-auth'
   ${{ if or(eq(variables['Build.SourceBranch'], 'refs/heads/release/uat'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix')) }}:
     containerRegistry: 'cstaruatregistry.azurecr.io'
     deployment: deployment-uat
-    imagePullSecret: ''
+    imagePullSecret: 'tkmuatregistry-auth'
+    environment: uat
   ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/master') }}:
     dockerRegistryServiceConnection: 'tkm-cstaruatregistry-connector'
     containerRegistry: ''
@@ -252,9 +254,9 @@ stages:
                 - task: KubernetesManifest@0
                   displayName: Deploy to Kubernetes cluster
                   inputs:
-                    action: 'deploy'
-                    kubernetesServiceConnection: ''
-                    namespace: ''
+                    action: deploy
+                    kubernetesServiceConnection: 'ddsakstest-self-connection-tkm-uat'
+                    namespace: tkm-uat
                     manifests: |
                       $(Pipeline.Workspace)/manifests/$(deployment).yml
                       $(Pipeline.Workspace)/manifests/service-$(environment).yml
