@@ -52,11 +52,8 @@ azure:
 keyvault:
   blobAccountName: ${${AZURE_KEYVAULT_PROFILE:prod}-blobAccountName}
   blobAccountKey: ${${AZURE_KEYVAULT_PROFILE:prod}-blobAccountKey}
-  eventhubLogSaslJaasConfig: ${${AZURE_KEYVAULT_PROFILE:prod}-eventhubLogSaslJaasConfig:}
   tkmReadTokenParPanProducerSaslJaasConfig: ${${AZURE_KEYVAULT_PROFILE:prod}-tkmReadTokenParPanProducerSaslJaasConfig:}
-  readQueuePrvPgpKey: ${${AZURE_KEYVAULT_PROFILE:prod}-readQueuePrvPgpKey}
   readQueuePubPgpKey: ${${AZURE_KEYVAULT_PROFILE:prod}-readQueuePubPgpKey}
-  readQueuePrvPgpKeyPassphrase: ${${AZURE_KEYVAULT_PROFILE:prod}-readQueuePrvPgpKeyPassphrase:}
   mastercardResponsePrivateKey: ${${AZURE_KEYVAULT_PROFILE:prod}-mastercardResponsePrivateKey:}
   mastercardApiKey: ${${AZURE_KEYVAULT_PROFILE:prod}-mastercardApiKey:}
   mastercardKeyStorePwd: ${${AZURE_KEYVAULT_PROFILE:prod}-mastercardKeyStorePwd:}
