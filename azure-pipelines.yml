@@ -62,8 +62,6 @@ stages:
             inputs:
               secureFile: 'settings_v2.xml'
               retryCount: '2'
-          - script: echo $(settingsxml.secureFilePath)
-          - script: cat $(settingsxml.secureFilePath)
           - task: Maven@3
             inputs:
               mavenPomFile: 'pom.xml'
@@ -90,7 +88,7 @@ stages:
             displayName: 'download settings.xml for Maven'
             name: settingsxml
             inputs:
-              secureFile: 'settings.xml'
+              secureFile: 'settings_v2.xml'
               retryCount: '2'
           - task: Bash@3
             displayName: Get POM version
@@ -120,7 +118,7 @@ stages:
             displayName: 'download settings.xml for Maven'
             name: settingsxml
             inputs:
-              secureFile: 'settings.xml'
+              secureFile: 'settings_v2.xml'
               retryCount: '2'
           - task: Maven@3
             inputs:
@@ -254,7 +252,7 @@ stages:
   #           displayName: 'download settings.xml for Maven'
   #           name: settingsxml
   #           inputs:
-  #             secureFile: 'settings.xml'
+  #             secureFile: 'settings_v2.xml'
   #             retryCount: '2'
   #         - task: Maven@3
   #           inputs:
