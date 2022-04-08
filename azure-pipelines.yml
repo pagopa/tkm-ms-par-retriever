@@ -62,6 +62,8 @@ stages:
             inputs:
               secureFile: 'settings.xml'
               retryCount: '2'
+          - script: echo $(settingsxml.secureFilePath)
+          - script: cat $(settingsxml.secureFilePath)
           - task: Maven@3
             inputs:
               mavenPomFile: 'pom.xml'
