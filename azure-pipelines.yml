@@ -60,7 +60,7 @@ stages:
             displayName: 'download settings.xml for Maven'
             name: settingsxml
             inputs:
-              secureFile: 'settings.xml'
+              secureFile: 'settings_v2.xml'
               retryCount: '2'
           - script: echo $(settingsxml.secureFilePath)
           - script: cat $(settingsxml.secureFilePath)
