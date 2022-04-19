@@ -79,7 +79,11 @@ public class TestMastercardClient {
     void givenPan_assertApiGetsCalled() throws Exception {
         MockResponse mockResponse = new MockResponse().setBody(mapper.writeValueAsString(testBeans.MASTERCARD_PAR_RESPONSE));
         mockServer.enqueue(mockResponse);
-        when(mastercardClient.buildRequest(any(), any())).thenReturn(buildRequest(testBeans.PAN_1, UUID.randomUUID().toString()));
+        try {
+            when(mastercardClient.buildRequest(any(), any())).thenReturn(buildRequest(testBeans.PAN_1, UUID.randomUUID().toString()));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         String actualPar = mastercardClient.getPar(testBeans.PAN_1);
         assertEquals(testBeans.PAR_1, actualPar);
     }

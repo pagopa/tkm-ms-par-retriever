@@ -3,16 +3,14 @@ package it.gov.pagopa.tkm.ms.parretriever.client.external.mastercard.api.model;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
-import io.github.resilience4j.circuitbreaker.internal.InMemoryCircuitBreakerRegistry;
 import io.vavr.CheckedFunction0;
+import io.vavr.control.Try;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
-import io.vavr.control.Try;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import static org.assertj.core.api.Assertions.*;
+
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
@@ -66,7 +64,12 @@ public class TestMastercardParRequest {
         // tag::shouldInvokeRecoverFunction[]
         //CircuitBreaker circuitBreaker = CircuitBreaker.ofDefaults("testName");
         CircuitBreakerRegistry circuitBreakerRegistry = CircuitBreakerRegistry.ofDefaults();
-        CircuitBreaker spyCircuitBreaker = spy(circuitBreakerRegistry.circuitBreaker("testName", CircuitBreakerConfig.ofDefaults()));
+        CircuitBreaker spyCircuitBreaker = null;
+        try {
+            spyCircuitBreaker = spy(circuitBreakerRegistry.circuitBreaker("testName", CircuitBreakerConfig.ofDefaults()));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         when(spyCircuitBreaker.getCurrentTimestamp()).thenReturn(1L);
         // When I decorate my function and invoke the decorated function
         CheckedFunction0<String> checkedSupplier = spyCircuitBreaker.decorateCheckedSupplier(() -> {
