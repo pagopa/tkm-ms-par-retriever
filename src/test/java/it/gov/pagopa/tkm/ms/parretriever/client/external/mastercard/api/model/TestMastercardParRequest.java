@@ -13,6 +13,8 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ExtendWith(MockitoExtension.class)
@@ -62,10 +64,11 @@ public class TestMastercardParRequest {
     public void shouldInvokeRecoverFunction() {
         // tag::shouldInvokeRecoverFunction[]
         //CircuitBreaker circuitBreaker = CircuitBreaker.ofDefaults("testName");
-        CircuitBreakerRegistry circuitBreakerRegistry = new InMemoryCircuitBreakerRegistry();
-        CircuitBreaker circuitBreaker = circuitBreakerRegistry.circuitBreaker("testName");
+        CircuitBreakerRegistry circuitBreakerRegistry = CircuitBreakerRegistry.ofDefaults();
+        CircuitBreaker spyCircuitBreaker = spy(circuitBreakerRegistry.circuitBreaker("testName"));
+        when(spyCircuitBreaker.getCurrentTimestamp()).thenReturn(1L);
         // When I decorate my function and invoke the decorated function
-        CheckedFunction0<String> checkedSupplier = circuitBreaker.decorateCheckedSupplier(() -> {
+        CheckedFunction0<String> checkedSupplier = spyCircuitBreaker.decorateCheckedSupplier(() -> {
             throw new RuntimeException("BAM!");
         });
 
