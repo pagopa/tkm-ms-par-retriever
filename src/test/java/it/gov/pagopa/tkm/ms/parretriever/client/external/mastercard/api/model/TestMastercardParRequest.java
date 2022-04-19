@@ -1,6 +1,7 @@
 package it.gov.pagopa.tkm.ms.parretriever.client.external.mastercard.api.model;
 
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
+import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
 import io.github.resilience4j.circuitbreaker.internal.InMemoryCircuitBreakerRegistry;
 import io.vavr.CheckedFunction0;
@@ -65,7 +66,7 @@ public class TestMastercardParRequest {
         // tag::shouldInvokeRecoverFunction[]
         //CircuitBreaker circuitBreaker = CircuitBreaker.ofDefaults("testName");
         CircuitBreakerRegistry circuitBreakerRegistry = CircuitBreakerRegistry.ofDefaults();
-        CircuitBreaker spyCircuitBreaker = spy(circuitBreakerRegistry.circuitBreaker("testName"));
+        CircuitBreaker spyCircuitBreaker = spy(circuitBreakerRegistry.circuitBreaker("testName", CircuitBreakerConfig.ofDefaults()));
         when(spyCircuitBreaker.getCurrentTimestamp()).thenReturn(1L);
         // When I decorate my function and invoke the decorated function
         CheckedFunction0<String> checkedSupplier = spyCircuitBreaker.decorateCheckedSupplier(() -> {
