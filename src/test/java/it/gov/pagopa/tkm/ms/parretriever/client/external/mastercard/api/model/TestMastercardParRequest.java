@@ -1,21 +1,11 @@
 package it.gov.pagopa.tkm.ms.parretriever.client.external.mastercard.api.model;
 
-import io.github.resilience4j.circuitbreaker.CircuitBreaker;
-import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
-import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
-import io.vavr.CheckedFunction0;
-import io.vavr.control.Try;
-import org.junit.Ignore;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.context.annotation.Profile;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.when;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ExtendWith(MockitoExtension.class)
@@ -52,7 +42,7 @@ public class TestMastercardParRequest {
         boolean equals = request.equals(mastercardParRequest);
         assertTrue(equals);
 
-        assertTrue(request.hashCode()!=0);
+        assertTrue(request.hashCode() != 0);
 
         assertNotNull(request.toString());
 
@@ -60,9 +50,7 @@ public class TestMastercardParRequest {
     }
 
 
-
-    @Test
-    @Ignore
+/*  @Test
     public void shouldInvokeRecoverFunction() {
         // tag::shouldInvokeRecoverFunction[]
         //CircuitBreaker circuitBreaker = CircuitBreaker.ofDefaults("testName");
@@ -83,7 +71,7 @@ public class TestMastercardParRequest {
         assertThat(result.get()).isEqualTo("Hello Recovery");
         // end::shouldInvokeRecoverFunction[]
     }
-
+*/
 
 
   /*  @Test
