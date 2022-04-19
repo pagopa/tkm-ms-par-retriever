@@ -14,6 +14,7 @@ import org.mockito.*;
 import org.mockito.junit.jupiter.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.*;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.util.*;
 
 import java.io.*;
@@ -22,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ExtendWith(MockitoExtension.class)
+@ActiveProfiles("test")
 public class TestMastercardClient {
 
     @InjectMocks
