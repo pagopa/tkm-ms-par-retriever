@@ -26,6 +26,7 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -80,7 +81,7 @@ public class TestMastercardClient {
         MockResponse mockResponse = new MockResponse().setBody(mapper.writeValueAsString(testBeans.MASTERCARD_PAR_RESPONSE));
         mockServer.enqueue(mockResponse);
         try {
-            when(mastercardClient.buildRequest(any(), any())).thenReturn(buildRequest(testBeans.PAN_1, UUID.randomUUID().toString()));
+            doReturn(buildRequest(testBeans.PAN_1, UUID.randomUUID().toString())).when(mastercardClient).buildRequest(any(), any());
         } catch (Exception e) {
             e.printStackTrace();
         }

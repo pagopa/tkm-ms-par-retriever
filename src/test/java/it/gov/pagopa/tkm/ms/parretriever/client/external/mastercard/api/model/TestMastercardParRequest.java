@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.annotation.Profile;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -60,16 +61,12 @@ public class TestMastercardParRequest {
 
 
     @Test
+    @Profile("local")
     public void shouldInvokeRecoverFunction() {
         // tag::shouldInvokeRecoverFunction[]
         //CircuitBreaker circuitBreaker = CircuitBreaker.ofDefaults("testName");
         CircuitBreakerRegistry circuitBreakerRegistry = CircuitBreakerRegistry.ofDefaults();
-        CircuitBreaker spyCircuitBreaker = null;
-        try {
-            spyCircuitBreaker = spy(circuitBreakerRegistry.circuitBreaker("testName", CircuitBreakerConfig.ofDefaults()));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        CircuitBreaker spyCircuitBreaker = spy(circuitBreakerRegistry.circuitBreaker("testName", CircuitBreakerConfig.ofDefaults()));
         when(spyCircuitBreaker.getCurrentTimestamp()).thenReturn(1L);
         // When I decorate my function and invoke the decorated function
         CheckedFunction0<String> checkedSupplier = spyCircuitBreaker.decorateCheckedSupplier(() -> {
