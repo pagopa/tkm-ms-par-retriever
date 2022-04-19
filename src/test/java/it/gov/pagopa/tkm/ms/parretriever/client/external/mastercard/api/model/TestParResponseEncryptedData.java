@@ -17,7 +17,7 @@ public class TestParResponseEncryptedData {
 
     @Test
     void createInstance_complete() {
-        String now = LocalDateTime.now().toString();
+        String now = "2022-04-19";
 
         parResponseEncryptedData = new ParResponseEncryptedData();
         parResponseEncryptedData.setPaymentAccountReference("111111111111111");

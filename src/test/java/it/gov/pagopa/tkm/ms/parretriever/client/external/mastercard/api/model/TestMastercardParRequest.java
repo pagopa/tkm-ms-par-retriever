@@ -2,6 +2,7 @@ package it.gov.pagopa.tkm.ms.parretriever.client.external.mastercard.api.model;
 
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
+import io.github.resilience4j.circuitbreaker.internal.InMemoryCircuitBreakerRegistry;
 import io.vavr.CheckedFunction0;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -30,7 +31,7 @@ public class TestMastercardParRequest {
         assertEquals(newRequestId, request.getRequestId());
 
         ParRequestEncryptedData parRequestEncryptedData = new ParRequestEncryptedData("3215589648565967",
-                LocalDateTime.now().toString());
+                "2022-04-19");
         ParRequestEncryptedPayload parRequestEncryptedPayload = new ParRequestEncryptedPayload(parRequestEncryptedData);
         request.setEncryptedPayload(parRequestEncryptedPayload);
         assertEquals(parRequestEncryptedPayload, request.getEncryptedPayload());
@@ -61,7 +62,7 @@ public class TestMastercardParRequest {
     public void shouldInvokeRecoverFunction() {
         // tag::shouldInvokeRecoverFunction[]
         //CircuitBreaker circuitBreaker = CircuitBreaker.ofDefaults("testName");
-        CircuitBreakerRegistry circuitBreakerRegistry = CircuitBreakerRegistry.ofDefaults();
+        CircuitBreakerRegistry circuitBreakerRegistry = new InMemoryCircuitBreakerRegistry();
         CircuitBreaker circuitBreaker = circuitBreakerRegistry.circuitBreaker("testName");
         // When I decorate my function and invoke the decorated function
         CheckedFunction0<String> checkedSupplier = circuitBreaker.decorateCheckedSupplier(() -> {
