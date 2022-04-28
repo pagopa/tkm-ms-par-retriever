@@ -107,7 +107,7 @@ public class MastercardClient {
         );
     }
 
-    private MastercardParRequest buildRequest(String accountNumber, String requestId) {
+    MastercardParRequest buildRequest(String accountNumber, String requestId) {
         return new MastercardParRequest(requestId,
                 new ParRequestEncryptedPayload(new ParRequestEncryptedData(accountNumber, ZonedDateTime.now().plus(1,
                         ChronoUnit.DAYS).toString())));
