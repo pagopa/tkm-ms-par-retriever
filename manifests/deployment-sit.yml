@@ -1,23 +1,30 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: tkmmsparretriever
+  name: tkmmsparretrieversit
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: tkmmsparretriever
+      app: tkmmsparretrieversit
   template:
     metadata:
       labels:
-        app: tkmmsparretriever
+        app: tkmmsparretrieversit
       annotations:
         prometheus.io/path: /actuator/prometheus
         prometheus.io/port: '8080'
         prometheus.io/scrape: 'true'
     spec:
+      hostAliases:
+      - ip: "10.70.67.9"
+        hostnames:
+        - "tkmpgsqlt01.postgres.database.azure.com"
+      - ip: "10.70.67.8"
+        hostnames:
+        - "ddstkmhub.servicebus.windows.net"
       containers:
-        - name: tkmmsparretriever
+        - name: tkmmsparretrieversit
           image: cstaruatregistry.azurecr.io/tkmmsparretriever
           ports:
             - containerPort: 8080
@@ -32,11 +39,11 @@ spec:
                 name: jvm
           resources:
             requests:
-              memory: 2Gi
+              memory: 4Gi
               cpu: 500m
             limits:
-              memory: 4Gi
-              cpu: 700m
+              memory: 8Gi
+              cpu: 1000m
           livenessProbe:
             httpGet:
               path: /actuator/health
