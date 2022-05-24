@@ -229,7 +229,7 @@
 
     <scm>
         <developerConnection>scm:git:https://github.com/pagopa/tkm-ms-par-retriever.git</developerConnection>
-        <tag>par-retriever-1.27</tag>
+        <tag>par-retriever-1.28</tag>
     </scm>
 
 </project>
