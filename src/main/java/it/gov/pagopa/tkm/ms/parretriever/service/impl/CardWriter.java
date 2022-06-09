@@ -64,7 +64,7 @@ public class CardWriter implements ItemWriter<ParlessCard> {
 
     @Override
     public void write(@NotNull List<? extends ParlessCard> list) throws Exception {
-        log.info("-------------- WRITE ");
+        log.info("---------------- WRITE ");
         writeCardsOnKafkaQueue(list);
     }
 
