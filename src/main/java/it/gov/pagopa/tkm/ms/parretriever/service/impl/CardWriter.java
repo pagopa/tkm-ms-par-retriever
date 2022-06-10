@@ -1,23 +1,26 @@
 package it.gov.pagopa.tkm.ms.parretriever.service.impl;
 
-import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.util.concurrent.RateLimiter;
 import it.gov.pagopa.tkm.ms.parretriever.client.external.amex.AmexClient;
 import it.gov.pagopa.tkm.ms.parretriever.client.external.mastercard.MastercardClient;
 import it.gov.pagopa.tkm.ms.parretriever.client.external.visa.VisaClient;
 import it.gov.pagopa.tkm.ms.parretriever.client.internal.cardmanager.model.response.ParlessCard;
 import it.gov.pagopa.tkm.ms.parretriever.client.internal.cardmanager.model.response.ParlessCardToken;
-import it.gov.pagopa.tkm.ms.parretriever.constant.*;
-import it.gov.pagopa.tkm.ms.parretriever.model.topic.*;
+import it.gov.pagopa.tkm.ms.parretriever.constant.CircuitEnum;
+import it.gov.pagopa.tkm.ms.parretriever.model.topic.ReadQueue;
 import lombok.extern.log4j.Log4j2;
-import org.jetbrains.annotations.*;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.item.ItemWriter;
-import org.springframework.beans.factory.annotation.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
-import java.util.stream.*;
+import java.util.List;
+import java.util.Set;
 
 @Component
 @StepScope
@@ -64,7 +67,7 @@ public class CardWriter implements ItemWriter<ParlessCard> {
 
     @Override
     public void write(@NotNull List<? extends ParlessCard> list) throws Exception {
-        log.info("-------------- WRITE ");
+        log.info("START write - number of parless cards " + list.size());
         writeCardsOnKafkaQueue(list);
     }
 
@@ -85,6 +88,15 @@ public class CardWriter implements ItemWriter<ParlessCard> {
         }
     }
 
+    private String getParFromCircuitLog(CircuitEnum circuit, String pan, String hpan, boolean isToken) throws Exception {
+        String hpanLabel = isToken ? "htoken" : "hpan";
+        log.info("START Retrieve PAR for " + hpanLabel + " " + hpan + " from " + circuit);
+        String par = getParFromCircuit(circuit,pan);
+        log.info("END Retrieve PAR for " + hpanLabel + " " + hpan + " from " + circuit + " - " + par);
+        return par;
+    }
+
+
     private void writeCardsOnKafkaQueue(List<? extends ParlessCard> parlessCardResponseList) throws Exception {
       RateLimiter rateLimiter = RateLimiter.create(rateLimit);
         for (ParlessCard parlessCard : parlessCardResponseList) {
@@ -95,13 +107,31 @@ public class CardWriter implements ItemWriter<ParlessCard> {
             if (!checkParRetrieveEnabledAndRateLimitByCircuit(circuit)) continue;
 
             String pan = parlessCard.getPan();
-            String par = getParFromCircuit(circuit, pan);
-            if (par != null) {
-                log.trace("Retrieved PAR. Writing card " + pan + " into the queue");
-                producerService.sendMessage(mapper.writeValueAsString(new ReadQueue(pan,
-                        parlessCard.getHpan(), par, circuit, parlessCard.getTokens())));
+            String par = null;
+            String hpan = parlessCard.getHpan();
+            Set<ParlessCardToken> tokens = parlessCard.getTokens();
+            boolean isToken = false;
+
+            if (StringUtils.isEmpty(pan) && CollectionUtils.isNotEmpty(tokens)) {
+                // to retrieve par for a token linked only to a "fake" card
+                ParlessCardToken cardToken = parlessCard.getTokens().stream().findFirst().get();
+                pan = cardToken.getToken();
+                hpan = cardToken.getHtoken();
+                isToken = true;
+            }
+
+            if (StringUtils.isNotEmpty(pan)) {
+                par = getParFromCircuitLog(circuit, pan, hpan, isToken);
             } else {
-                log.trace("PAR not found for card " + pan);
+                log.info("Pan is null and tokens is empty, not retrieving PAR");
+            }
+
+            if (par != null) {
+                log.trace("Retrieved PAR. Writing card into the queue");
+                producerService.sendMessage(mapper.writeValueAsString(new ReadQueue(pan,
+                        hpan, par, circuit, tokens)));
+            } else {
+                log.trace("PAR not found for card");
             }
         }
     }
