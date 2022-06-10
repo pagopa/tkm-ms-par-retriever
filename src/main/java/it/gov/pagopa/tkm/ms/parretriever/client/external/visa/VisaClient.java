@@ -81,8 +81,8 @@ public class VisaClient {
     }
 
     public String getParFallback(String pan, Throwable t ){
-        log.debug(String.format("VISA fallback for pan %s get par - cause {}", pan), t.toString());
-        return "VISA fallback for get par. Some error occurred while calling get Par for Mastercard client";
+        log.info(String.format("VISA fallback for pan %s get par - cause {}", pan), t.toString(),t);
+        return null;
     }
 
 
