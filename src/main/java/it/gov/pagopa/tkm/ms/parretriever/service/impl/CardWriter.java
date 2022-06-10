@@ -110,18 +110,15 @@ public class CardWriter implements ItemWriter<ParlessCard> {
             String par = null;
             String hpan = parlessCard.getHpan();
             Set<ParlessCardToken> tokens = parlessCard.getTokens();
-            boolean isToken = false;
-
-            if (StringUtils.isEmpty(pan) && CollectionUtils.isNotEmpty(tokens)) {
-                // to retrieve par for a token linked only to a "fake" card
-                ParlessCardToken cardToken = parlessCard.getTokens().stream().findFirst().get();
-                pan = cardToken.getToken();
-                hpan = cardToken.getHtoken();
-                isToken = true;
-            }
 
             if (StringUtils.isNotEmpty(pan)) {
-                par = getParFromCircuitLog(circuit, pan, hpan, isToken);
+                par = getParFromCircuitLog(circuit, pan, hpan, false);
+            } else if (CollectionUtils.isNotEmpty(tokens)) {
+                // to retrieve par for a token linked only to a "fake" card
+                ParlessCardToken cardToken = parlessCard.getTokens().stream().findFirst().get();
+                String tokenPan = cardToken.getToken();
+                String htoken = cardToken.getHtoken();
+                par = getParFromCircuitLog(circuit, tokenPan, htoken, true);
             } else {
                 log.info("Pan is null and tokens is empty, not retrieving PAR");
             }
