@@ -77,8 +77,8 @@ public class MastercardClient {
     }
 
     public String getParFallback(String accountNumber, Throwable t ){
-        log.info(String.format("MASTERCARD fallback for get par of account number %s- cause {}", accountNumber), t.toString());
-        return "MASTERCARD fallback for get par. Some error occurred while calling get Par for Mastercard client";
+        log.info(String.format("MASTERCARD fallback for get par of account number %s- cause {}", accountNumber), t.toString(),t);
+        return null;
     }
 
     private FieldLevelEncryptionConfig buildEncryptionConfig() throws Exception {
@@ -107,7 +107,7 @@ public class MastercardClient {
         );
     }
 
-    private MastercardParRequest buildRequest(String accountNumber, String requestId) {
+    MastercardParRequest buildRequest(String accountNumber, String requestId) {
         return new MastercardParRequest(requestId,
                 new ParRequestEncryptedPayload(new ParRequestEncryptedData(accountNumber, ZonedDateTime.now().plus(1,
                         ChronoUnit.DAYS).toString())));

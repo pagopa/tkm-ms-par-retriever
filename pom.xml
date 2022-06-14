@@ -3,12 +3,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>par-retriever</artifactId>
-    <version>1.25</version>
+    <version>1.34</version>
 
     <parent>
         <groupId>it.gov.pagopa.tkm.ms</groupId>
         <artifactId>starter-parent</artifactId>
-        <version>3.1.3</version>
+        <version>4.2.0</version>
     </parent>
 
     <properties>
@@ -228,8 +228,8 @@
     </distributionManagement>
 
     <scm>
-        <developerConnection>scm:git:https://github.com/pagopa/tkm-ms-par-retriever.git</developerConnection>
-        <tag>par-retriever-1.25</tag>
+        <developerConnection>scm:git:git@github.com:pagopa/tkm-ms-par-retriever.git</developerConnection>
+        <tag>par-retriever-1.34</tag>
     </scm>
 
 </project>

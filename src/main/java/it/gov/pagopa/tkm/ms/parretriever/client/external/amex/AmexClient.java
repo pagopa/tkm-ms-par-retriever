@@ -13,6 +13,7 @@ import it.gov.pagopa.tkm.ms.parretriever.client.external.amex.api.security.authe
 import it.gov.pagopa.tkm.ms.parretriever.client.external.amex.model.response.*;
 import lombok.extern.log4j.Log4j2;
 import okhttp3.*;
+import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.stereotype.*;
 
@@ -69,15 +70,18 @@ public class AmexClient {
         }
         ResponseBody responseBody = httpClient.newCall(builder.build()).execute().body();
         if (responseBody != null) {
-            return mapper.readValue(responseBody.string(), AmexParResponse[].class)[0].getPar();
+            AmexParResponse[] parResponseArray = mapper.readValue(responseBody.string(), AmexParResponse[].class);
+            if (ArrayUtils.isNotEmpty(parResponseArray)) {
+                return parResponseArray[0].getPar();
+            }
         }
         return null;
     }
 
 
     public String getParFallback(String pan, Throwable t ){
-        log.debug(String.format("AMEX fallback for pan %s get par - cause {}", pan), t.toString());
-        return "AMEX fallback for get par. Some error occurred while calling get Par for Mastercard client";
+        log.info(String.format("AMEX fallback for pan %s get par - cause {}", pan), t.toString(),t);
+        return null;
     }
 
 

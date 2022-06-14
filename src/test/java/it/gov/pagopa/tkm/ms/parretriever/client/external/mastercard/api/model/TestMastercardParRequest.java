@@ -1,16 +1,10 @@
 package it.gov.pagopa.tkm.ms.parretriever.client.external.mastercard.api.model;
 
-import io.github.resilience4j.circuitbreaker.CircuitBreaker;
-import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
-import io.vavr.CheckedFunction0;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
-import io.vavr.control.Try;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import static org.assertj.core.api.Assertions.*;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -30,7 +24,7 @@ public class TestMastercardParRequest {
         assertEquals(newRequestId, request.getRequestId());
 
         ParRequestEncryptedData parRequestEncryptedData = new ParRequestEncryptedData("3215589648565967",
-                LocalDateTime.now().toString());
+                "2022-04-19");
         ParRequestEncryptedPayload parRequestEncryptedPayload = new ParRequestEncryptedPayload(parRequestEncryptedData);
         request.setEncryptedPayload(parRequestEncryptedPayload);
         assertEquals(parRequestEncryptedPayload, request.getEncryptedPayload());
@@ -48,7 +42,7 @@ public class TestMastercardParRequest {
         boolean equals = request.equals(mastercardParRequest);
         assertTrue(equals);
 
-        assertTrue(request.hashCode()!=0);
+        assertTrue(request.hashCode() != 0);
 
         assertNotNull(request.toString());
 
@@ -56,15 +50,15 @@ public class TestMastercardParRequest {
     }
 
 
-
-    @Test
+/*  @Test
     public void shouldInvokeRecoverFunction() {
         // tag::shouldInvokeRecoverFunction[]
         //CircuitBreaker circuitBreaker = CircuitBreaker.ofDefaults("testName");
         CircuitBreakerRegistry circuitBreakerRegistry = CircuitBreakerRegistry.ofDefaults();
-        CircuitBreaker circuitBreaker = circuitBreakerRegistry.circuitBreaker("testName");
+        CircuitBreaker spyCircuitBreaker = spy(circuitBreakerRegistry.circuitBreaker("testName", CircuitBreakerConfig.ofDefaults()));
+        when(spyCircuitBreaker.getCurrentTimestamp()).thenReturn(1L);
         // When I decorate my function and invoke the decorated function
-        CheckedFunction0<String> checkedSupplier = circuitBreaker.decorateCheckedSupplier(() -> {
+        CheckedFunction0<String> checkedSupplier = spyCircuitBreaker.decorateCheckedSupplier(() -> {
             throw new RuntimeException("BAM!");
         });
 
@@ -77,7 +71,7 @@ public class TestMastercardParRequest {
         assertThat(result.get()).isEqualTo("Hello Recovery");
         // end::shouldInvokeRecoverFunction[]
     }
-
+*/
 
 
   /*  @Test
