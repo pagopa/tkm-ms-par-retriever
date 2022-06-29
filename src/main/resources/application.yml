@@ -80,7 +80,7 @@ client-urls:
 circuit-urls:
   amex: ${AMEX_URL}
   mastercard: ${MASTERCARD_URL}
-  visa: ${VISA_URL}
+  visa: ${VISA_URL_PAR}
 
 batch-execution:
   max-number-of-threads: ${MAX_NUMBER_OF_THREADS:1}

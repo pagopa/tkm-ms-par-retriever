@@ -18,7 +18,7 @@ The follow ENVIRONMENT variables need to deploy and run the application.
 - **CONSENT_MANAGER_URL** *Consent manager url localhost:8080*
 - **CARD_MANAGER_URL** *Card manager url localhost:8080*
 - **AMEX_URL** *URL of Amex circuit service*
-- **VISA_URL** *URL of Visa circuit service*
+- **VISA_URL_PAR** *URL of Visa circuit service*
 - **MASTERCARD_URL** *URL of Mastercard circuit service*
 - **KAFKA_READ_QUEUE_TOPIC** *Topic name of read queue*
 - **KAFKA_SECURITY_PROTOCOL** *Way to manage queue informations*

@@ -136,7 +136,7 @@ steps:
                   objectType: secret
                   objectVersion: ""
                 - |
-                  objectName: ${{ parameters.env }}-visa-url
+                  objectName: ${{ parameters.env }}-visa-url-par
                   objectType: secret
                   objectVersion: ""
                 - |
@@ -198,7 +198,7 @@ steps:
                   objectName: ${{ parameters.env }}-mastercard-url
                 - key: MAX_NUMBER_OF_CARDS
                   objectName: ${{ parameters.env }}-max-number-of-cards
-                - key: VISA_URL
-                  objectName: ${{ parameters.env }}-visa-url
+                - key: VISA_URL_PAR
+                  objectName: ${{ parameters.env }}-visa-url-par
                 - key: PAR_RETRIEVER_GET_PAR_SCHEDULER
                   objectName: ${{ parameters.env }}-par-retriever-get-par-scheduler

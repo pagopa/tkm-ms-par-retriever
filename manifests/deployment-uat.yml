@@ -168,10 +168,10 @@ spec:
                 secretKeyRef:
                   key: MAX_NUMBER_OF_CARDS
                   name: tkmmsparretriever
-            - name: VISA_URL
+            - name: VISA_URL_PAR
               valueFrom:
                 secretKeyRef:
-                  key: VISA_URL
+                  key: VISA_URL_PAR
                   name: tkmmsparretriever
             - name: PAR_RETRIEVER_GET_PAR_SCHEDULER
               valueFrom:
