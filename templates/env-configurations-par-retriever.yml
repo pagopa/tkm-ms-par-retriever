@@ -1,0 +1,204 @@
+parameters:
+  - name: azureSubscription
+    default: ''
+  - name: KeyVaultName
+    default: ''
+  - name: secretName
+    default: ''
+  - name: spcClassName
+    default: ''
+  - name: env
+    default: ''
+  - name: kubernetesServiceConnection
+    default: ''
+
+steps:
+  - task: AzureKeyVault@2
+    inputs:
+      azureSubscription: ${{ parameters.azureSubscription }}
+      KeyVaultName: ${{ parameters.KeyVaultName }}
+      SecretsFilter: '*'
+      RunAsPreJob: false
+  - task: KubernetesManifest@0
+    displayName: Create secret ${{ parameters.secretName }}
+    inputs:
+      action: createSecret
+      secretType: generic
+      secretName: ${{ parameters.secretName }}
+      secretArguments: --from-literal=clientid=$(${{ parameters.env }}-clientid) --from-literal=clientsecret=$(${{ parameters.env }}-clientsecret)
+      kubernetesServiceConnection: ${{ parameters.kubernetesServiceConnection }}
+      namespace: tkm-${{ parameters.env }}
+  - task: Kubernetes@1
+    displayName: Create spc ${{ parameters.spcClassName }}
+    inputs:
+      connectionType: Kubernetes Service Connection
+      kubernetesServiceEndpoint: ${{ parameters.kubernetesServiceConnection }}
+      namespace: tkm-${{ parameters.env }}
+      command: apply
+      useConfigurationFile: true
+      inline: |
+        apiVersion: secrets-store.csi.x-k8s.io/v1
+        kind: SecretProviderClass
+        metadata:
+          name: ${{ parameters.spcClassName }}
+        spec:
+          provider: azure
+          parameters:
+            usePodIdentity: "false"
+            useVMManagedIdentity: "false"
+            userAssignedIdentityID: ""
+            keyvaultName: ${{ parameters.keyvaultName }}
+            tenantId: $(${{ parameters.env }}-tenantid)
+            objects: |
+              array:
+                - |
+                  objectName: ${{ parameters.env }}-tz
+                  objectType: secret
+                  objectVersion: ""
+                - |
+                  objectName: ${{ parameters.env }}-kafka-appender-bootstrap-servers
+                  objectType: secret
+                  objectVersion: ""
+                - |
+                  objectName: ${{ parameters.env }}-enable-file-appender
+                  objectType: secret
+                  objectVersion: ""
+                - |
+                  objectName: ${{ parameters.env }}-enable-kafka-appender
+                  objectType: secret
+                  objectVersion: ""
+                - |
+                  objectName: ${{ parameters.env }}-log-file
+                  objectType: secret
+                  objectVersion: ""
+                - |
+                  objectName: ${{ parameters.env }}-kafka-appender-topic
+                  objectType: secret
+                  objectVersion: ""
+                - |
+                  objectName: ${{ parameters.env }}-azure-keyvault-profile
+                  objectType: secret
+                  objectVersion: ""
+                - |
+                  objectName: ${{ parameters.env }}-azure-keyvault-client-id
+                  objectType: secret
+                  objectVersion: ""
+                - |
+                  objectName: ${{ parameters.env }}-azure-keyvault-client-key
+                  objectType: secret
+                  objectVersion: ""
+                - |
+                  objectName: ${{ parameters.env }}-azure-keyvault-tenant-id
+                  objectType: secret
+                  objectVersion: ""
+                - |
+                  objectName: ${{ parameters.env }}-azure-keyvault-uri
+                  objectType: secret
+                  objectVersion: ""
+                - |
+                  objectName: ${{ parameters.env }}-amex-url
+                  objectType: secret
+                  objectVersion: ""
+                - |
+                  objectName: ${{ parameters.env }}-azure-storage-endpoint
+                  objectType: secret
+                  objectVersion: ""
+                - |
+                  objectName: ${{ parameters.env }}-blob-storage-name
+                  objectType: secret
+                  objectVersion: ""
+                - |
+                  objectName: ${{ parameters.env }}-card-manager-url
+                  objectType: secret
+                  objectVersion: ""
+                - |
+                  objectName: ${{ parameters.env }}-consent-manager-url
+                  objectType: secret
+                  objectVersion: ""
+                - |
+                  objectName: ${{ parameters.env }}-kafka-group-id
+                  objectType: secret
+                  objectVersion: ""
+                - |
+                  objectName: ${{ parameters.env }}-kafka-read-queue-topic
+                  objectType: secret
+                  objectVersion: ""
+                - |
+                  objectName: ${{ parameters.env }}-kafka-servers
+                  objectType: secret
+                  objectVersion: ""
+                - |
+                  objectName: ${{ parameters.env }}-mastercard-url
+                  objectType: secret
+                  objectVersion: ""
+                - |
+                  objectName: ${{ parameters.env }}-max-number-of-cards
+                  objectType: secret
+                  objectVersion: ""
+                - |
+                  objectName: ${{ parameters.env }}-visa-url-par
+                  objectType: secret
+                  objectVersion: ""
+                - |
+                  objectName: ${{ parameters.env }}-par-retriever-get-par-scheduler
+                  objectType: secret
+                  objectVersion: ""
+          secretObjects:
+            - secretName: jvm
+              type: Opaque
+              data:
+                - key: TZ
+                  objectName: ${{ parameters.env }}-tz
+            - secretName: kafka-log-configuration
+              type: Opaque
+              data:
+                - key: KAFKA_APPENDER_BOOTSTRAP_SERVERS
+                  objectName: ${{ parameters.env }}-kafka-appender-bootstrap-servers
+                - key: ENABLE_FILE_APPENDER
+                  objectName: ${{ parameters.env }}-enable-file-appender
+                - key: ENABLE_KAFKA_APPENDER
+                  objectName: ${{ parameters.env }}-enable-kafka-appender
+                - key: LOG_FILE
+                  objectName: ${{ parameters.env }}-log-file
+                - key: KAFKA_APPENDER_TOPIC
+                  objectName: ${{ parameters.env }}-kafka-appender-topic
+            - secretName: keyvault-connection-informations
+              type: Opaque
+              data:
+                - key: AZURE_KEYVAULT_PROFILE
+                  objectName: ${{ parameters.env }}-azure-keyvault-profile
+                - key: AZURE_KEYVAULT_CLIENT_ID
+                  objectName: ${{ parameters.env }}-azure-keyvault-client-id
+                - key: AZURE_KEYVAULT_CLIENT_KEY
+                  objectName: ${{ parameters.env }}-azure-keyvault-client-key
+                - key: AZURE_KEYVAULT_TENANT_ID
+                  objectName: ${{ parameters.env }}-azure-keyvault-tenant-id
+                - key: AZURE_KEYVAULT_URI
+                  objectName: ${{ parameters.env }}-azure-keyvault-uri
+            - secretName: tkmmsparretriever
+              type: Opaque
+              data:
+                - key: AMEX_URL
+                  objectName: ${{ parameters.env }}-amex-url
+                - key: AZURE_STORAGE_ENDPOINT
+                  objectName: ${{ parameters.env }}-azure-storage-endpoint
+                - key: BLOB_STORAGE_NAME
+                  objectName: ${{ parameters.env }}-blob-storage-name
+                - key: CARD_MANAGER_URL
+                  objectName: ${{ parameters.env }}-card-manager-url
+                - key: CONSENT_MANAGER_URL
+                  objectName: ${{ parameters.env }}-consent-manager-url
+                - key: KAFKA_GROUP_ID
+                  objectName: ${{ parameters.env }}-kafka-group-id
+                - key: KAFKA_READ_QUEUE_TOPIC
+                  objectName: ${{ parameters.env }}-kafka-read-queue-topic
+                - key: KAFKA_SERVERS
+                  objectName: ${{ parameters.env }}-kafka-servers
+                - key: MASTERCARD_URL
+                  objectName: ${{ parameters.env }}-mastercard-url
+                - key: MAX_NUMBER_OF_CARDS
+                  objectName: ${{ parameters.env }}-max-number-of-cards
+                - key: VISA_URL_PAR
+                  objectName: ${{ parameters.env }}-visa-url-par
+                - key: PAR_RETRIEVER_GET_PAR_SCHEDULER
+                  objectName: ${{ parameters.env }}-par-retriever-get-par-scheduler
