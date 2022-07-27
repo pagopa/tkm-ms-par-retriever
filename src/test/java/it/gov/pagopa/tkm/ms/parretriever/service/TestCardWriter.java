@@ -4,23 +4,23 @@ import com.fasterxml.jackson.databind.*;
 import it.gov.pagopa.tkm.ms.parretriever.client.external.amex.*;
 import it.gov.pagopa.tkm.ms.parretriever.client.external.mastercard.*;
 import it.gov.pagopa.tkm.ms.parretriever.client.external.visa.*;
-import it.gov.pagopa.tkm.ms.parretriever.client.internal.cardmanager.model.response.ParlessCard;
+import it.gov.pagopa.tkm.ms.parretriever.client.internal.cardmanager.model.response.*;
 import it.gov.pagopa.tkm.ms.parretriever.constant.*;
 import it.gov.pagopa.tkm.ms.parretriever.service.impl.*;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.*;
 import org.mockito.*;
 import org.mockito.junit.jupiter.*;
-import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.test.util.*;
 
-import java.util.List;
+import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ExtendWith(MockitoExtension.class)
-public class TestCardWriter {
+class TestCardWriter {
 
     @InjectMocks
     private CardWriter cardWriter;
@@ -37,7 +37,7 @@ public class TestCardWriter {
     @Mock
     private AmexClient amexClient;
 
-    private ObjectMapper mapper = new ObjectMapper();
+    private final ObjectMapper mapper = new ObjectMapper();
 
     private DefaultBeans testBeans;
 

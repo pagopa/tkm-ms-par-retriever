@@ -112,10 +112,6 @@ steps:
                   objectType: secret
                   objectVersion: ""
                 - |
-                  objectName: ${{ parameters.env }}-consent-manager-url
-                  objectType: secret
-                  objectVersion: ""
-                - |
                   objectName: ${{ parameters.env }}-kafka-group-id
                   objectType: secret
                   objectVersion: ""
@@ -186,8 +182,6 @@ steps:
                   objectName: ${{ parameters.env }}-blob-storage-name
                 - key: CARD_MANAGER_URL
                   objectName: ${{ parameters.env }}-card-manager-url
-                - key: CONSENT_MANAGER_URL
-                  objectName: ${{ parameters.env }}-consent-manager-url
                 - key: KAFKA_GROUP_ID
                   objectName: ${{ parameters.env }}-kafka-group-id
                 - key: KAFKA_READ_QUEUE_TOPIC

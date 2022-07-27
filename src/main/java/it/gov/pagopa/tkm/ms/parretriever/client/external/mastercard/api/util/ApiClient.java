@@ -3,10 +3,9 @@ package it.gov.pagopa.tkm.ms.parretriever.client.external.mastercard.api.util;
 import lombok.*;
 import okhttp3.*;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Type;
-import java.net.URLEncoder;
+import java.io.*;
+import java.lang.reflect.*;
+import java.net.*;
 import java.util.*;
 
 public class ApiClient {

@@ -1,7 +1,7 @@
 package it.gov.pagopa.tkm.ms.parretriever.client.external.amex.api.security;
 
-import it.gov.pagopa.tkm.ms.parretriever.client.external.amex.api.configuration.ConfigurationProvider;
-import it.gov.pagopa.tkm.ms.parretriever.client.external.amex.api.security.authentication.AuthProvider;
+import it.gov.pagopa.tkm.ms.parretriever.client.external.amex.api.configuration.*;
+import it.gov.pagopa.tkm.ms.parretriever.client.external.amex.api.security.authentication.*;
 
 public interface AuthProviderBuilder {
 

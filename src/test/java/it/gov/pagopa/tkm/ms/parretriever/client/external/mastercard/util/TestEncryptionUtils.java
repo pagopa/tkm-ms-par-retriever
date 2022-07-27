@@ -1,21 +1,15 @@
 package it.gov.pagopa.tkm.ms.parretriever.client.external.mastercard.util;
 
-import it.gov.pagopa.tkm.ms.parretriever.constant.DefaultBeans;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.junit.jupiter.MockitoExtension;
+import it.gov.pagopa.tkm.ms.parretriever.constant.*;
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.*;
+import org.mockito.junit.jupiter.*;
 
-import java.security.GeneralSecurityException;
-import java.security.PrivateKey;
-import java.security.spec.InvalidKeySpecException;
+import java.security.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ExtendWith(MockitoExtension.class)
-public class TestEncryptionUtils {
+class TestEncryptionUtils {
 
     private DefaultBeans testBeans;
 

@@ -15,12 +15,12 @@ import java.io.*;
 import java.time.*;
 import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.mockStatic;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ExtendWith(MockitoExtension.class)
-public class TestVisaClient {
+class TestVisaClient {
 
     @InjectMocks
     private VisaClient visaClient;

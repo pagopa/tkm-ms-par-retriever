@@ -1,8 +1,6 @@
 package it.gov.pagopa.tkm.ms.parretriever.model.topic;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Data
 @AllArgsConstructor

@@ -4,11 +4,8 @@ import it.gov.pagopa.tkm.ms.parretriever.client.external.amex.model.response.*;
 import it.gov.pagopa.tkm.ms.parretriever.client.external.mastercard.api.model.*;
 import it.gov.pagopa.tkm.ms.parretriever.client.external.visa.model.response.*;
 import it.gov.pagopa.tkm.ms.parretriever.client.internal.cardmanager.model.response.*;
-import it.gov.pagopa.tkm.ms.parretriever.client.internal.consentmanager.model.response.*;
-import org.springframework.batch.item.ExecutionContext;
+import org.springframework.batch.item.*;
 
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
 import java.time.*;
 import java.util.*;
 
@@ -21,8 +18,6 @@ public class DefaultBeans {
     public final String PAN_VISA = "4024007111341771";
 
     public final String PAR_1 = "abc11111111111";
-    public final String PAR_2 = "xyz11111111111";
-    public final String TAX_CODE = "PCCRLE04M24L219D";
     public final String HPAN_1 = "92fc472e8709cf61aa2b6f8bb9cf61aa2b6f8bd8267f9c14f58f59cf61aa2b6f";
     public final String HPAN_2 = "15fc472e8709cf61aa2b6f8bb9cf61aa2b6f8bd8267f9c14f58f59cf61aa2b6a";
     public final String HPAN_3 = "00fc472e8709cf61aa2b6f8bb9cf61aa2b6f8bd8267f9c14f58f59cf61aa2b00";
@@ -32,7 +27,6 @@ public class DefaultBeans {
     public final AmexParResponse[] AMEX_PAR_RESPONSE = new AmexParResponse[]{new AmexParResponse(PAN_1, PAR_1, true)};
 
     public final VisaParEncryptedResponse VISA_PAR_ENC_RESPONSE = new VisaParEncryptedResponse("eyJlbmMiOiJBMTI4R0NNIiwiaWF0IjowLCJhbGciOiJSU0EtT0FFUC0yNTYiLCJraWQiOiJURVNUX0tFWV9JRCJ9.UdBI3Dy8AFg3PDPRjI453g7CK5Nq5YWnsaSOj199O9YhWRDd9Rf55b4ytF9pJ9jz_4MdhzzHSvVCbsTkQ5QAYir6tr9IbTtkn8eozGecUfKRowpztsFoWdN8mcr5bpot1bK5OVI2xQFmNixrj_ZPxkDk9FS1cxHIcMHiPm3K_YiaS_K8tMLng1oTH-XQkFE0AEM6P2HFyzun0SwkQP4nkYMI3wYgDPTEAos4orG2vgmFBR3CEXkQkkgodQu0YuOqwD8lhmp8fFTdHe-3nQ9u8k12z5whcOmcyFo7g8fDiGggTXZFbc_a5Unt9yvrzGiS4IHQk01RkK1eykh-rRCAuQ.eLGi-GPm_OJBv3jR.gjixjPlSXJhgjHm8OwxPPGfx343sy18NesE6ECtMKgtKUD7hEckmwHdYhPj_5DJ8srk1r3rgs35CWK_vX95fi2UrejQRG3vJZoKfqaeUCLfZwnI8xOQIGIO-J93WlXEkEcPl9jauF35aPWZx1ucGXxrheGnTnlJGWuHCYiUYQa8KD9x6TOpUzqk.TRwZRUVpEQW78ux2BnnA9g");
-    public final VisaParDecryptedResponse VISA_PAR_DEC_RESPONSE = new VisaParDecryptedResponse(PAR_1, INSTANT.toString(), PAN_1);
 
     public final MastercardParResponse MASTERCARD_PAR_RESPONSE = new MastercardParResponse("RESPONSE_ID_TEST", new ParResponseEncryptedPayload(new ParResponseEncryptedData(PAR_1, INSTANT.toString())));
 
@@ -116,19 +110,6 @@ public class DefaultBeans {
     public Map<String, ExecutionContext> EXECUTION_CONTEXT_MAP_THREADS_UNBALANCED = createExecutionsContextMapThreadsUnbalanced();
     public Map<String, ExecutionContext> EXECUTION_CONTEXT_MAP_THREADS_SMALL = createExecutionsContextMapThreadSmall();
     public Map<String, ExecutionContext> EXECUTION_CONTEXT_MAP_SINGLE_THREAD = createExecutionContextsMapSingleThread();
-    public Map<String, ExecutionContext> EXECUTION_CONTEXT_ALL_CIRCUITS = createExecutionsContextMapAllCiircits();
-
-    private Map<String, ExecutionContext> createExecutionsContextMapAllCiircits() {
-        TreeMap<String, ExecutionContext> treeMap = new TreeMap<>();
-        ExecutionContext executionContext = new ExecutionContext();
-        executionContext.put("cardList", PARLESS_CARDS_LIST_ALL_CIRCUITS);
-        executionContext.putInt("rateLimit", 5);
-        executionContext.putString("name", "Thread1");
-        executionContext.putInt("from", 0);
-        executionContext.putInt("to", 3);
-        treeMap.put("partition1", executionContext);
-        return treeMap;
-    }
 
     private List<ParlessCard> createParlessCardList(){
         List<ParlessCard> parlessCards = new ArrayList<>();
@@ -204,7 +185,7 @@ public class DefaultBeans {
         return parlessCards;
     }
 
-    private final Map<String, ExecutionContext> createExecutionsContextMap15Threads(){
+    private Map<String, ExecutionContext> createExecutionsContextMap15Threads(){
         Map<String, ExecutionContext> executionContextMap = new TreeMap<>();
         createVisaExecutionContextsMap(executionContextMap, 0, 20, 5, 1);
         createMastercardExecutionContextsMap(executionContextMap, 5, 20, 5, 1);
@@ -214,7 +195,7 @@ public class DefaultBeans {
 
     };
 
-    private final Map<String, ExecutionContext> createExecutionsContextMap12Threads(){
+    private Map<String, ExecutionContext> createExecutionsContextMap12Threads(){
         Map<String, ExecutionContext> executionContextMap = new TreeMap<>();
         createVisaExecutionContextsMap(executionContextMap, 0, 25, 4, 1);
         createMastercardExecutionContextsMap(executionContextMap, 4, 25, 4, 1);
@@ -225,7 +206,7 @@ public class DefaultBeans {
     };
 
 
-    private final Map<String, ExecutionContext> createExecutionsContextMapThreadsUnbalanced(){
+    private Map<String, ExecutionContext> createExecutionsContextMapThreadsUnbalanced(){
         Map<String, ExecutionContext> executionContextMap = new TreeMap<>();
         createVisaExecutionContextsMap(executionContextMap, 0, 5, 2, 2);
         createMastercardExecutionContextsMap(executionContextMap, 2, 14, 5, 2);
@@ -236,7 +217,7 @@ public class DefaultBeans {
     };
 
 
-    private final Map<String, ExecutionContext> createExecutionsContextMapThreadSmall(){
+    private Map<String, ExecutionContext> createExecutionsContextMapThreadSmall(){
         Map<String, ExecutionContext> executionContextMap = new TreeMap<>();
         createVisaExecutionContextsMap(executionContextMap, 0, 1, 2, 3);
         createMastercardExecutionContextsMap(executionContextMap, 2, 1, 4, 3);
@@ -267,9 +248,9 @@ public class DefaultBeans {
     }
 
 
-    private Map<String, ExecutionContext> createAmexExecutionContextsMap(Map<String, ExecutionContext> executionContextMap,
-                                                                         int circuitIndex, int step, int numberOfThreads,
-                                                                         int listNumber){
+    private void createAmexExecutionContextsMap(Map<String, ExecutionContext> executionContextMap,
+                                                int circuitIndex, int step, int numberOfThreads,
+                                                int listNumber){
         List<ParlessCard> amexCircuitCards=null;
        switch (listNumber){
            case 1:amexCircuitCards = PARLESS_AMEX_CARD_LIST; break;
@@ -292,13 +273,12 @@ public class DefaultBeans {
             executionContextMap.put("partition" + j, value);
 
         }
-        return executionContextMap;
     }
 
 
-    private Map<String, ExecutionContext> createVisaExecutionContextsMap(Map<String, ExecutionContext> executionContextMap,
-                                                                         int circuitIndex, int step, int numberOfThreads,
-                                                                         int listNumber){
+    private void createVisaExecutionContextsMap(Map<String, ExecutionContext> executionContextMap,
+                                                int circuitIndex, int step, int numberOfThreads,
+                                                int listNumber){
 
         List<ParlessCard>  visaCircuitCards=null;
         switch (listNumber){
@@ -322,12 +302,11 @@ public class DefaultBeans {
             executionContextMap.put("partition" + j, value);
 
         }
-        return executionContextMap;
     }
 
-    private Map<String, ExecutionContext> createMastercardExecutionContextsMap(Map<String, ExecutionContext> executionContextMap,
-                                                                               int circuitIndex, int step, int numberOfThreads,
-                                                                               int listNumber){
+    private void createMastercardExecutionContextsMap(Map<String, ExecutionContext> executionContextMap,
+                                                      int circuitIndex, int step, int numberOfThreads,
+                                                      int listNumber){
 
         List<ParlessCard>  mastercardCircuitCards=null;
         switch (listNumber){
@@ -351,11 +330,6 @@ public class DefaultBeans {
             executionContextMap.put("partition" + j, value);
 
         }
-        return executionContextMap;
     }
-
-
-
-
 
 }

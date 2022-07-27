@@ -1,8 +1,8 @@
 package it.gov.pagopa.tkm.ms.parretriever.client.external.amex.api.security.authentication;
 
-import it.gov.pagopa.tkm.ms.parretriever.client.external.amex.api.configuration.ConfigurationProvider;
+import it.gov.pagopa.tkm.ms.parretriever.client.external.amex.api.configuration.*;
 
-import java.util.UUID;
+import java.util.*;
 
 public abstract class BaseAuthProvider implements AuthProvider {
 

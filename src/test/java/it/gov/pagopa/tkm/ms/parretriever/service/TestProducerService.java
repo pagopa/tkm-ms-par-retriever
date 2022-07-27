@@ -1,21 +1,21 @@
 package it.gov.pagopa.tkm.ms.parretriever.service;
 
-import it.gov.pagopa.tkm.ms.parretriever.service.impl.ProducerServiceImpl;
+import it.gov.pagopa.tkm.ms.parretriever.service.impl.*;
 import it.gov.pagopa.tkm.service.*;
-import org.bouncycastle.openpgp.PGPException;
+import org.bouncycastle.openpgp.*;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.*;
 import org.mockito.*;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.test.util.ReflectionTestUtils;
+import org.mockito.junit.jupiter.*;
+import org.springframework.kafka.core.*;
+import org.springframework.test.util.*;
 
-import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.*;
 import static org.mockito.Mockito.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ExtendWith(MockitoExtension.class)
-public class TestProducerService {
+class TestProducerService {
 
     @InjectMocks
     private ProducerServiceImpl producerService;

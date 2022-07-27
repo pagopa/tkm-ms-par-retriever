@@ -1,26 +1,21 @@
 package it.gov.pagopa.tkm.ms.parretriever.service.impl;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.util.concurrent.RateLimiter;
-import it.gov.pagopa.tkm.ms.parretriever.client.external.amex.AmexClient;
-import it.gov.pagopa.tkm.ms.parretriever.client.external.mastercard.MastercardClient;
-import it.gov.pagopa.tkm.ms.parretriever.client.external.visa.VisaClient;
-import it.gov.pagopa.tkm.ms.parretriever.client.internal.cardmanager.model.response.ParlessCard;
-import it.gov.pagopa.tkm.ms.parretriever.client.internal.cardmanager.model.response.ParlessCardToken;
-import it.gov.pagopa.tkm.ms.parretriever.constant.CircuitEnum;
-import it.gov.pagopa.tkm.ms.parretriever.model.topic.ReadQueue;
-import lombok.extern.log4j.Log4j2;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
-import org.springframework.batch.core.configuration.annotation.StepScope;
-import org.springframework.batch.item.ItemWriter;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
+import com.fasterxml.jackson.databind.*;
+import com.google.common.util.concurrent.*;
+import it.gov.pagopa.tkm.ms.parretriever.client.external.amex.*;
+import it.gov.pagopa.tkm.ms.parretriever.client.external.mastercard.*;
+import it.gov.pagopa.tkm.ms.parretriever.client.external.visa.*;
+import it.gov.pagopa.tkm.ms.parretriever.client.internal.cardmanager.model.response.*;
+import it.gov.pagopa.tkm.ms.parretriever.constant.*;
+import it.gov.pagopa.tkm.ms.parretriever.model.topic.*;
+import lombok.extern.log4j.*;
+import org.jetbrains.annotations.*;
+import org.springframework.batch.core.configuration.annotation.*;
+import org.springframework.batch.item.*;
+import org.springframework.beans.factory.annotation.*;
+import org.springframework.stereotype.*;
 
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Component
 @StepScope

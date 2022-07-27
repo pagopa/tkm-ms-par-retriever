@@ -1,33 +1,26 @@
 package it.gov.pagopa.tkm.ms.parretriever.service;
 
 import it.gov.pagopa.tkm.ms.parretriever.client.internal.cardmanager.*;
-import it.gov.pagopa.tkm.ms.parretriever.client.internal.cardmanager.model.response.ParlessCard;
-import it.gov.pagopa.tkm.ms.parretriever.client.internal.consentmanager.*;
-import it.gov.pagopa.tkm.ms.parretriever.client.internal.consentmanager.model.response.ConsentResponse;
+import it.gov.pagopa.tkm.ms.parretriever.client.internal.cardmanager.model.response.*;
 import it.gov.pagopa.tkm.ms.parretriever.constant.*;
 import it.gov.pagopa.tkm.ms.parretriever.service.impl.*;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.*;
 import org.mockito.*;
 import org.mockito.junit.jupiter.*;
-import org.springframework.test.util.ReflectionTestUtils;
-
-import static org.mockito.Mockito.when;
+import org.springframework.test.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ExtendWith(MockitoExtension.class)
-public class TestCardProcessor {
+class TestCardProcessor {
 
     @InjectMocks
     private CardProcessor cardProcessor;
 
     @Mock
     private ParlessCardsClient parlessCardsClient;
-
-    @Mock
-    private ConsentClient consentClient;
 
     @Mock
     private CryptoService cryptoService;

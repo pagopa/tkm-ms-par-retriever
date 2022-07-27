@@ -2,23 +2,14 @@ package it.gov.pagopa.tkm.ms.parretriever.service.impl;
 
 import it.gov.pagopa.tkm.ms.parretriever.client.internal.cardmanager.*;
 import it.gov.pagopa.tkm.ms.parretriever.client.internal.cardmanager.model.response.*;
-import it.gov.pagopa.tkm.ms.parretriever.client.internal.consentmanager.*;
-import it.gov.pagopa.tkm.ms.parretriever.client.internal.consentmanager.model.response.*;
-import it.gov.pagopa.tkm.ms.parretriever.constant.CircuitEnum;
-import it.gov.pagopa.tkm.ms.parretriever.service.CryptoService;
-import lombok.extern.log4j.Log4j2;
+import it.gov.pagopa.tkm.ms.parretriever.constant.*;
+import it.gov.pagopa.tkm.ms.parretriever.service.*;
+import lombok.extern.log4j.*;
 import org.jetbrains.annotations.*;
-import org.springframework.batch.core.configuration.annotation.StepScope;
-import org.springframework.batch.item.ItemProcessor;
+import org.springframework.batch.core.configuration.annotation.*;
+import org.springframework.batch.item.*;
 import org.springframework.beans.factory.annotation.*;
-import org.springframework.stereotype.Component;
-import org.springframework.util.*;
-
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import static it.gov.pagopa.tkm.ms.parretriever.client.internal.consentmanager.model.response.ConsentRequestEnum.Allow;
+import org.springframework.stereotype.*;
 
 @Component
 @StepScope
@@ -36,9 +27,6 @@ public class CardProcessor implements ItemProcessor<ParlessCard, ParlessCard> {
 
     @Autowired
     private ParlessCardsClient parlessCardsClient;
-
-    @Autowired
-    private ConsentClient consentClient;
 
     @Autowired
     private CryptoService cryptoService;
