@@ -1,6 +1,5 @@
 package it.gov.pagopa.tkm.ms.parretriever.service;
 
-import com.fasterxml.jackson.databind.*;
 import it.gov.pagopa.tkm.ms.parretriever.client.internal.cardmanager.*;
 import it.gov.pagopa.tkm.ms.parretriever.constant.*;
 import it.gov.pagopa.tkm.ms.parretriever.service.impl.*;
@@ -8,20 +7,17 @@ import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.*;
 import org.mockito.*;
 import org.mockito.junit.jupiter.*;
-import org.springframework.batch.item.ExecutionContext;
-import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.batch.item.*;
+import org.springframework.test.util.*;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import java.util.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ExtendWith(MockitoExtension.class)
-public class TestCardPartitioner {
+class TestCardPartitioner {
 
     @InjectMocks
     private CardPartitioner cardPartitioner;
@@ -30,8 +26,6 @@ public class TestCardPartitioner {
     private ParlessCardsClient parlessCardsClient;
 
     private DefaultBeans testBeans;
-
-    private final ObjectMapper mapper = new ObjectMapper();
 
     @BeforeEach
     void init() {

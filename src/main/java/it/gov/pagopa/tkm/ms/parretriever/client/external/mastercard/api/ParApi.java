@@ -1,19 +1,12 @@
 package it.gov.pagopa.tkm.ms.parretriever.client.external.mastercard.api;
 
-import it.gov.pagopa.tkm.ms.parretriever.client.external.mastercard.api.util.ApiClient;
-import it.gov.pagopa.tkm.ms.parretriever.client.external.mastercard.api.util.ApiException;
-import it.gov.pagopa.tkm.ms.parretriever.client.external.mastercard.api.util.ApiResponse;
-
-import com.google.gson.reflect.TypeToken;
-
-import it.gov.pagopa.tkm.ms.parretriever.client.external.mastercard.api.model.MastercardParRequest;
-import it.gov.pagopa.tkm.ms.parretriever.client.external.mastercard.api.model.MastercardParResponse;
+import com.google.gson.reflect.*;
+import it.gov.pagopa.tkm.ms.parretriever.client.external.mastercard.api.model.*;
+import it.gov.pagopa.tkm.ms.parretriever.client.external.mastercard.api.util.*;
 import lombok.*;
 import okhttp3.*;
 
-import java.lang.reflect.Type;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @AllArgsConstructor
 public class ParApi {

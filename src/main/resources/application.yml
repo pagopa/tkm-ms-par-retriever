@@ -74,7 +74,6 @@ blob-storage:
   visaPublicCert: azure-blob://${BLOB_STORAGE_NAME}/Visa_Public_Cert.p12
 
 client-urls:
-  consent-manager: ${CONSENT_MANAGER_URL}
   card-manager: ${CARD_MANAGER_URL}
 
 circuit-urls:

@@ -145,11 +145,9 @@
                 <version>0.8.7</version>
                 <configuration>
                     <excludes>
-                        <exclude>it/gov/pagopa/tkm/ms/parretriever/config/**/*.class</exclude>
                         <exclude>it/gov/pagopa/tkm/ms/parretriever/repository/**/*.class</exclude>
-                        <exclude>it/gov/pagopa/tkm/ms/parretriever/model/**/*.class</exclude>
-                        <exclude>it/gov/pagopa/tkm/ms/parretriever/constant/**/*.class</exclude>
                         <exclude>it/gov/pagopa/tkm/ms/parretriever/ParRetrieverApplication.class</exclude>
+                        <exclude>it/gov/pagopa/tkm/ms/parretriever/config/*.class</exclude>
                     </excludes>
                 </configuration>
                 <executions>

@@ -2,12 +2,11 @@ package it.gov.pagopa.tkm.ms.parretriever.service.impl;
 
 import it.gov.pagopa.tkm.ms.parretriever.client.internal.cardmanager.model.response.*;
 import org.apache.commons.collections.*;
-import org.springframework.batch.core.configuration.annotation.StepScope;
-import org.springframework.batch.item.ItemReader;
-import org.springframework.stereotype.Component;
+import org.springframework.batch.core.configuration.annotation.*;
+import org.springframework.batch.item.*;
+import org.springframework.stereotype.*;
 
-import java.util.ArrayDeque;
-import java.util.List;
+import java.util.*;
 
 @Component
 @StepScope

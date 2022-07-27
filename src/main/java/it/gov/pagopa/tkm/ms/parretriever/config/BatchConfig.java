@@ -3,26 +3,17 @@ package it.gov.pagopa.tkm.ms.parretriever.config;
 import it.gov.pagopa.tkm.ms.parretriever.client.internal.cardmanager.model.response.*;
 import it.gov.pagopa.tkm.ms.parretriever.service.impl.*;
 import org.springframework.batch.core.*;
-import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
-import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
-import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
-import org.springframework.batch.core.configuration.annotation.StepScope;
-import org.springframework.batch.core.explore.JobExplorer;
-import org.springframework.batch.core.launch.JobLauncher;
-import org.springframework.batch.core.listener.ExecutionContextPromotionListener;
-import org.springframework.batch.core.partition.support.Partitioner;
-import org.springframework.batch.item.ItemProcessor;
-import org.springframework.batch.item.ItemReader;
-import org.springframework.batch.item.ItemWriter;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.core.task.SimpleAsyncTaskExecutor;
-import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.batch.core.configuration.annotation.*;
+import org.springframework.batch.core.explore.*;
+import org.springframework.batch.core.launch.*;
+import org.springframework.batch.core.partition.support.*;
+import org.springframework.batch.item.*;
+import org.springframework.beans.factory.annotation.*;
+import org.springframework.context.annotation.*;
+import org.springframework.core.task.*;
+import org.springframework.scheduling.annotation.*;
 
-import java.util.List;
+import java.util.*;
 
 @Configuration
 @EnableBatchProcessing

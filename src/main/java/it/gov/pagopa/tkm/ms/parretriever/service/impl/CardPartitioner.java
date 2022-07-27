@@ -2,18 +2,16 @@ package it.gov.pagopa.tkm.ms.parretriever.service.impl;
 
 import it.gov.pagopa.tkm.ms.parretriever.client.internal.cardmanager.*;
 import it.gov.pagopa.tkm.ms.parretriever.client.internal.cardmanager.model.response.*;
-import it.gov.pagopa.tkm.ms.parretriever.constant.CircuitEnum;
+import it.gov.pagopa.tkm.ms.parretriever.constant.*;
 import lombok.extern.log4j.*;
 import org.jetbrains.annotations.*;
-import org.springframework.batch.core.partition.support.Partitioner;
-import org.springframework.batch.item.ExecutionContext;
+import org.springframework.batch.core.partition.support.*;
+import org.springframework.batch.item.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.stereotype.*;
 
-import javax.persistence.criteria.CriteriaBuilder;
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.stream.*;
 
 @Component
 @Log4j2
@@ -98,9 +96,6 @@ public class CardPartitioner implements Partitioner {
                 value.put("rateLimit", 5);
                 result.put("partition" + i, value);
             }
-
-        //    result = createResult(result,subListIndexes, circuitIndex, cards, cardsSize, 5 );
-
             return result;
         }
 
@@ -116,10 +111,10 @@ public class CardPartitioner implements Partitioner {
             //tempo di elaborazione previsto per ogni circuito con thread singolo
             Map<CircuitEnum, Double> singleThreadElaborationTimePerCircuit = new HashMap<>();
 
-            parlessCardsPerCircuit.keySet().forEach(c -> {
+            parlessCardsPerCircuit.keySet().forEach(c ->
                 singleThreadElaborationTimePerCircuit.put(c, parlessCardsPerCircuit.get(c).size() /
-                        getApiCallMaxRateByCircuit(c));
-            });
+                        getApiCallMaxRateByCircuit(c))
+            );
 
             threadsPerCircuit = normalizeNumberOfThreadsV2(singleThreadElaborationTimePerCircuit,
                     singleThreadElaborationTimePerCircuit.values().stream().reduce(0d, Double::sum),
@@ -160,10 +155,6 @@ public class CardPartitioner implements Partitioner {
                 result.put("partition" + j, value);
 
             }
-
-        // result =
-          //       createResult(result,subListIndexes, circuitIndex, circuitCards, cardsSizeByCircuit, maxApiRatePerExecutionContext );
-
             circuitIndex = circuitIndex + subListIndexes.length - 1;
         }
 
@@ -191,29 +182,6 @@ public class CardPartitioner implements Partitioner {
         }
 
     }
-
-  /*  private Map<String, ExecutionContext> createResult(Map<String, ExecutionContext> result,  int[] subListIndexes,
-                                                       int circuitIndex, List<ParlessCard> cards, int cardsSize, double maxRate){
-        for (int i = 1; i < subListIndexes.length; i++) {
-
-            int fromId = subListIndexes[i - 1];
-            int toId = subListIndexes[i];
-            ExecutionContext value = new ExecutionContext();
-            int j = i + circuitIndex;
-
-            value.putInt("from", fromId);
-            value.putInt("to", toId);
-            value.putString("name", "Thread" + j);
-            value.put("cardList", new ArrayList<>(cards.subList(fromId, Math.min(toId,
-                    cardsSize))));
-            value.put("rateLimit", maxRate);
-            result.put("partition" + j, value);
-
-        }
-         return result;
-
-    } */
-
 
     private double maxNumberOfThreadsFromCircuitLimits(Set<CircuitEnum> circuits) {
         double total = 0d;

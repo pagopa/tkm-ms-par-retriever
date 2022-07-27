@@ -1,17 +1,16 @@
 package it.gov.pagopa.tkm.ms.parretriever.client.external.mastercard.api.model;
 
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.*;
+import org.mockito.junit.jupiter.*;
 
-import java.time.Instant;
+import java.time.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ExtendWith(MockitoExtension.class)
-public class TestParRequestEncryptedData {
+class TestParRequestEncryptedData {
 
     private ParRequestEncryptedData parRequestEncryptedData;
 

@@ -1,13 +1,10 @@
 package it.gov.pagopa.tkm.ms.parretriever.model.topic;
 
-import it.gov.pagopa.tkm.ms.parretriever.client.internal.cardmanager.model.response.ParlessCardToken;
-import it.gov.pagopa.tkm.ms.parretriever.constant.CircuitEnum;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import it.gov.pagopa.tkm.ms.parretriever.client.internal.cardmanager.model.response.*;
+import it.gov.pagopa.tkm.ms.parretriever.constant.*;
+import lombok.*;
 
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Data
 @AllArgsConstructor

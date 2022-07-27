@@ -1,17 +1,13 @@
 package it.gov.pagopa.tkm.ms.parretriever.client.external.amex.api.security.authentication;
 
-import it.gov.pagopa.tkm.ms.parretriever.client.external.amex.api.configuration.ConfigurationKeys;
+import it.gov.pagopa.tkm.ms.parretriever.client.external.amex.api.configuration.*;
 import it.gov.pagopa.tkm.ms.parretriever.client.external.amex.api.security.Base64;
 
-import java.net.URL;
+import javax.crypto.*;
+import javax.crypto.spec.*;
+import java.net.*;
 import java.nio.charset.*;
-import java.util.Collections;
-import java.util.Hashtable;
-import java.util.Map;
-import java.util.UUID;
-
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
+import java.util.*;
 
 /**
  * Provides the implementation of the Amex specific HMAC algorithm.

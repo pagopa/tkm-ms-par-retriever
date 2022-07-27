@@ -1,32 +1,25 @@
 package it.gov.pagopa.tkm.ms.parretriever.client.external.mastercard;
 
-import com.mastercard.developer.encryption.FieldLevelEncryptionConfig;
-import com.mastercard.developer.encryption.FieldLevelEncryptionConfigBuilder;
-import com.mastercard.developer.interceptors.OkHttpFieldLevelEncryptionInterceptor;
-import com.mastercard.developer.interceptors.OkHttpOAuth1Interceptor;
-import com.mastercard.developer.utils.AuthenticationUtils;
+import com.mastercard.developer.encryption.*;
+import com.mastercard.developer.interceptors.*;
+import com.mastercard.developer.utils.*;
 import com.nimbusds.jose.util.Base64;
-import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
-import it.gov.pagopa.tkm.ms.parretriever.client.external.mastercard.api.ParApi;
-import it.gov.pagopa.tkm.ms.parretriever.client.external.mastercard.api.model.MastercardParRequest;
-import it.gov.pagopa.tkm.ms.parretriever.client.external.mastercard.api.model.MastercardParResponse;
-import it.gov.pagopa.tkm.ms.parretriever.client.external.mastercard.api.model.ParRequestEncryptedData;
-import it.gov.pagopa.tkm.ms.parretriever.client.external.mastercard.api.model.ParRequestEncryptedPayload;
-import it.gov.pagopa.tkm.ms.parretriever.client.external.mastercard.api.util.ApiClient;
+import io.github.resilience4j.circuitbreaker.annotation.*;
+import it.gov.pagopa.tkm.ms.parretriever.client.external.mastercard.api.*;
+import it.gov.pagopa.tkm.ms.parretriever.client.external.mastercard.api.model.*;
+import it.gov.pagopa.tkm.ms.parretriever.client.external.mastercard.api.util.*;
 import it.gov.pagopa.tkm.ms.parretriever.client.external.mastercard.util.EncryptionUtils;
-import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Value;
+import lombok.extern.log4j.*;
+import org.springframework.beans.factory.annotation.*;
 import org.springframework.core.io.Resource;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.*;
 
-import javax.annotation.PostConstruct;
-import java.io.ByteArrayInputStream;
-import java.security.cert.Certificate;
-import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
-import java.time.ZonedDateTime;
-import java.time.temporal.ChronoUnit;
-import java.util.UUID;
+import javax.annotation.*;
+import java.io.*;
+import java.security.cert.*;
+import java.time.*;
+import java.time.temporal.*;
+import java.util.*;
 
 @Log4j2
 @Service

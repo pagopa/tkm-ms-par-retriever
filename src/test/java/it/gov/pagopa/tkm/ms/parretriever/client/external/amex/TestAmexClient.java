@@ -13,12 +13,12 @@ import org.springframework.test.util.*;
 import java.io.*;
 import java.lang.reflect.*;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ExtendWith(MockitoExtension.class)
-public class TestAmexClient {
+class TestAmexClient {
 
     @InjectMocks
     private AmexClient amexClient;

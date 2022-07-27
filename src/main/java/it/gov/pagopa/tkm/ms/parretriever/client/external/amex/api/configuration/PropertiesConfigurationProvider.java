@@ -1,6 +1,6 @@
 package it.gov.pagopa.tkm.ms.parretriever.client.external.amex.api.configuration;
 
-import java.util.Properties;
+import java.util.*;
 
 public class PropertiesConfigurationProvider implements ConfigurationProvider {
 
