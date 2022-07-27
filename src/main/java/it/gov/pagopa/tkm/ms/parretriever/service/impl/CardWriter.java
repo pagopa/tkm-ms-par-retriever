@@ -9,6 +9,8 @@ import it.gov.pagopa.tkm.ms.parretriever.client.internal.cardmanager.model.respo
 import it.gov.pagopa.tkm.ms.parretriever.constant.*;
 import it.gov.pagopa.tkm.ms.parretriever.model.topic.*;
 import lombok.extern.log4j.*;
+import org.apache.commons.collections.*;
+import org.apache.commons.lang3.*;
 import org.jetbrains.annotations.*;
 import org.springframework.batch.core.configuration.annotation.*;
 import org.springframework.batch.item.*;
