@@ -78,7 +78,7 @@ class TestCardWriter {
 
 
     @Test
-    void writeOnQueue_excepctionCheck() throws Exception {
+    void writeOnQueue_exceptionCheck_singleCard() throws Exception {
         List<ParlessCard> parlessCards = testBeans.PARLESS_CARDS_LIST_SINGLE_MASTERCARD;
         ParlessCard masterCardCard= parlessCards.get(0);
 
@@ -86,4 +86,10 @@ class TestCardWriter {
         assertDoesNotThrow(() -> cardWriter.write(parlessCards));
     }
 
+    @Test
+    void writeOnQueue_exceptionCheck_token() throws Exception {
+        List<ParlessCard> parlessCards = testBeans.PARLESS_CARDS_TOKEN_LIST_SINGLE_MASTERCARD;
+        when(mastercardClient.getPar(testBeans.TOKEN_1.getToken())).thenReturn(testBeans.PAR_1);
+        assertDoesNotThrow(() -> cardWriter.write(parlessCards));
+    }
 }

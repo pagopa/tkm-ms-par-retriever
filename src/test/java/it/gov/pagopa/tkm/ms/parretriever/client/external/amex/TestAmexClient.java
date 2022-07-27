@@ -65,4 +65,13 @@ class TestAmexClient {
         assertEquals(testBeans.PAR_1, actualPar);
     }
 
+    @Test
+    void givenPan_assertApiGetsCalled_emptyResponse() throws IOException {
+        String responseAsString = mapper.writeValueAsString(new AmexParResponse[]{});
+        MockResponse mockResponse = new MockResponse().setBody(responseAsString);
+        mockServer.enqueue(mockResponse);
+        when(mockMapper.readValue(responseAsString, AmexParResponse[].class)).thenReturn(mapper.readValue(responseAsString, AmexParResponse[].class));
+        String actualPar = amexClient.getPar(testBeans.PAN_1);
+        assertEquals(null, actualPar);
+    }
 }

@@ -43,11 +43,13 @@ public class DefaultBeans {
     public final ParlessCard PARLESS_CARD_2 = new ParlessCard(
             PAN_2, HPAN_2, CircuitEnum.VISA, TOKEN_SET_2
     );
-
     public final ParlessCard PARLESS_CARD_3 = new ParlessCard(
             PAN_2, HPAN_2, CircuitEnum.MASTERCARD, TOKEN_SET_2
     );
 
+    public final ParlessCard PARLESS_CARD_TOKEN_MASTERCARD = new ParlessCard(
+            null, null, CircuitEnum.MASTERCARD, new HashSet<>(Arrays.asList(TOKEN_1))
+    );
 
     public final ParlessCard PARLESS_AMEX_CARD = new ParlessCard(
             PAN_AMEX, HPAN_1, CircuitEnum.AMEX, TOKEN_SET_1
@@ -61,7 +63,6 @@ public class DefaultBeans {
     public final ParlessCard PARLESS_VPAY_CARD = new ParlessCard(
             PAN_VISA, HPAN_2, CircuitEnum.VPAY, TOKEN_SET_2
     );
-
     public final ParlessCard PARLESS_MASTERCARD_CARD = new ParlessCard(
             PAN_MASTERCARD, HPAN_3, CircuitEnum.MASTERCARD, TOKEN_SET_2
     );
@@ -70,6 +71,7 @@ public class DefaultBeans {
     public final List<ParlessCard> PARLESS_CARDS_LIST_ALL_CIRCUITS = Arrays.asList(PARLESS_CARD_1, PARLESS_CARD_2, PARLESS_CARD_3);
     public final List<ParlessCard> PARLESS_CARDS_LIST_SINGLE_MASTERCARD = Arrays.asList(PARLESS_CARD_3);
 
+    public final List<ParlessCard> PARLESS_CARDS_TOKEN_LIST_SINGLE_MASTERCARD = Arrays.asList(PARLESS_CARD_TOKEN_MASTERCARD);
 
     public final String MASTERCARD_RESPONSE_PRIVATE_KEY = "-----BEGIN RSA PRIVATE KEY-----\n" +
             "MIICXAIBAAKBgQCMhM/5iBYjLJFKM5sZRXJvGu/K5nLDf1v4oaTM+DxZaH9q1gwZ\n" +

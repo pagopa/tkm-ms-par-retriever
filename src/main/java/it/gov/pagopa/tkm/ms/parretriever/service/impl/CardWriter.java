@@ -62,7 +62,7 @@ public class CardWriter implements ItemWriter<ParlessCard> {
 
     @Override
     public void write(@NotNull List<? extends ParlessCard> list) throws Exception {
-        log.info("-------------- WRITE ");
+        log.info("START write - number of parless cards " + list.size());
         writeCardsOnKafkaQueue(list);
     }
 
@@ -83,6 +83,15 @@ public class CardWriter implements ItemWriter<ParlessCard> {
         }
     }
 
+    private String getParFromCircuitLog(CircuitEnum circuit, String pan, String hpan, boolean isToken) throws Exception {
+        String hpanLabel = isToken ? "htoken" : "hpan";
+        log.info("START Retrieve PAR for " + hpanLabel + " " + hpan + " from " + circuit);
+        String par = getParFromCircuit(circuit,pan);
+        log.info("END Retrieve PAR for " + hpanLabel + " " + hpan + " from " + circuit + " - " + par);
+        return par;
+    }
+
+
     private void writeCardsOnKafkaQueue(List<? extends ParlessCard> parlessCardResponseList) throws Exception {
       RateLimiter rateLimiter = RateLimiter.create(rateLimit);
         for (ParlessCard parlessCard : parlessCardResponseList) {
@@ -93,13 +102,28 @@ public class CardWriter implements ItemWriter<ParlessCard> {
             if (!checkParRetrieveEnabledAndRateLimitByCircuit(circuit)) continue;
 
             String pan = parlessCard.getPan();
-            String par = getParFromCircuit(circuit, pan);
-            if (par != null) {
-                log.trace("Retrieved PAR. Writing card " + pan + " into the queue");
-                producerService.sendMessage(mapper.writeValueAsString(new ReadQueue(pan,
-                        parlessCard.getHpan(), par, circuit, parlessCard.getTokens())));
+            String par = null;
+            String hpan = parlessCard.getHpan();
+            Set<ParlessCardToken> tokens = parlessCard.getTokens();
+
+            if (StringUtils.isNotEmpty(pan)) {
+                par = getParFromCircuitLog(circuit, pan, hpan, false);
+            } else if (CollectionUtils.isNotEmpty(tokens)) {
+                // to retrieve par for a token linked only to a "fake" card
+                ParlessCardToken cardToken = parlessCard.getTokens().stream().findFirst().get();
+                String tokenPan = cardToken.getToken();
+                String htoken = cardToken.getHtoken();
+                par = getParFromCircuitLog(circuit, tokenPan, htoken, true);
             } else {
-                log.trace("PAR not found for card " + pan);
+                log.info("Pan is null and tokens is empty, not retrieving PAR");
+            }
+
+            if (par != null) {
+                log.trace("Retrieved PAR. Writing card into the queue");
+                producerService.sendMessage(mapper.writeValueAsString(new ReadQueue(pan,
+                        hpan, par, circuit, tokens)));
+            } else {
+                log.trace("PAR not found for card");
             }
         }
     }
