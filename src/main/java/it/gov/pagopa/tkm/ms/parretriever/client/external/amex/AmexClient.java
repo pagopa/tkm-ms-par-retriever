@@ -1,23 +1,19 @@
 package it.gov.pagopa.tkm.ms.parretriever.client.external.amex;
 
-import java.io.IOException;
-import java.util.Map;
-import java.util.Properties;
-
 import com.fasterxml.jackson.databind.*;
-import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
-import it.gov.pagopa.tkm.ms.parretriever.client.external.amex.api.configuration.PropertiesConfigurationProvider;
-import it.gov.pagopa.tkm.ms.parretriever.client.external.amex.api.security.authentication.AuthProvider;
-import it.gov.pagopa.tkm.ms.parretriever.client.external.amex.api.security.authentication.HmacAuthBuilder;
-
+import io.github.resilience4j.circuitbreaker.annotation.*;
+import it.gov.pagopa.tkm.ms.parretriever.client.external.amex.api.configuration.*;
+import it.gov.pagopa.tkm.ms.parretriever.client.external.amex.api.security.authentication.*;
 import it.gov.pagopa.tkm.ms.parretriever.client.external.amex.model.response.*;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.log4j.*;
 import okhttp3.*;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.stereotype.*;
 
 import javax.annotation.*;
+import java.io.*;
+import java.util.*;
 
 @Log4j2
 @Component

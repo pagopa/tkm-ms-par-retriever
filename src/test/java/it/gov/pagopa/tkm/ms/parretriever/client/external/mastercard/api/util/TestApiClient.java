@@ -1,30 +1,24 @@
 package it.gov.pagopa.tkm.ms.parretriever.client.external.mastercard.api.util;
 
-import com.mastercard.developer.interceptors.OkHttpOAuth1Interceptor;
-import io.netty.internal.tcnative.SSLSession;
-import it.gov.pagopa.tkm.ms.parretriever.constant.DefaultBeans;
+import com.mastercard.developer.interceptors.*;
+import it.gov.pagopa.tkm.ms.parretriever.constant.*;
 import okhttp3.*;
-import okhttp3.internal.connection.RealCall;
-import org.jetbrains.annotations.NotNull;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
-import sun.security.pkcs.PKCS8Key;
+import org.jetbrains.annotations.*;
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.*;
+import org.mockito.junit.jupiter.*;
+import sun.security.pkcs.*;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
+import java.io.*;
+import java.net.*;
+import java.nio.charset.*;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ExtendWith(MockitoExtension.class)
-public class TestApiClient {
+class TestApiClient {
 
     private ApiClient apiClient;
 

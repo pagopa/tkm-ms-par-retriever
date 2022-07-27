@@ -2,7 +2,7 @@ package it.gov.pagopa.tkm.ms.parretriever.client.internal.cardmanager.model.resp
 
 import lombok.*;
 
-import java.io.Serializable;
+import java.io.*;
 
 @Data
 @AllArgsConstructor

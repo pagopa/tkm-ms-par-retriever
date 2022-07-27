@@ -15,7 +15,6 @@ The follow ENVIRONMENT variables need to deploy and run the application.
 - **BLOB_STORAGE_NAME** *Name of blob storage where resources are located*
 - **MAX_NUMBER_OF_THREADS** *Number of threads in which parless cards are divided*
 - **MAX_NUMBER_OF_CARDS** *Number of parless cards got from S2 service*
-- **CONSENT_MANAGER_URL** *Consent manager url localhost:8080*
 - **CARD_MANAGER_URL** *Card manager url localhost:8080*
 - **AMEX_URL** *URL of Amex circuit service*
 - **VISA_URL_PAR** *URL of Visa circuit service*
