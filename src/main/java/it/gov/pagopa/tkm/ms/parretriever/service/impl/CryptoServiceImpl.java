@@ -1,23 +1,18 @@
 package it.gov.pagopa.tkm.ms.parretriever.service.impl;
 
-import com.azure.identity.ClientSecretCredential;
-import com.azure.identity.ClientSecretCredentialBuilder;
-import com.azure.security.keyvault.keys.KeyClient;
-import com.azure.security.keyvault.keys.KeyClientBuilder;
-import com.azure.security.keyvault.keys.cryptography.CryptographyClient;
-import com.azure.security.keyvault.keys.cryptography.CryptographyClientBuilder;
-import com.azure.security.keyvault.keys.cryptography.models.DecryptResult;
-import com.azure.security.keyvault.keys.cryptography.models.EncryptionAlgorithm;
-import com.azure.security.keyvault.keys.models.KeyVaultKey;
-import it.gov.pagopa.tkm.ms.parretriever.service.CryptoService;
-import lombok.extern.log4j.Log4j2;
-import org.apache.commons.lang3.ArrayUtils;
+import com.azure.identity.*;
+import com.azure.security.keyvault.keys.*;
+import com.azure.security.keyvault.keys.cryptography.*;
+import com.azure.security.keyvault.keys.cryptography.models.*;
+import it.gov.pagopa.tkm.ms.parretriever.service.*;
+import lombok.extern.log4j.*;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-import org.springframework.util.Base64Utils;
+import org.apache.commons.lang3.*;
+import org.springframework.beans.factory.annotation.*;
+import org.springframework.stereotype.*;
+import org.springframework.util.*;
 
-import javax.annotation.PostConstruct;
+import javax.annotation.*;
 
 @Service
 @Log4j2

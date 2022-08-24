@@ -57,7 +57,7 @@ spec:
               mountPath: /mnt/secrets-store
               readOnly: true
           securityContext:
-            readOnlyRootFilesystem: true
+            readOnlyRootFilesystem: false
             allowPrivilegeEscalation: false
             capabilities:
               drop:
@@ -137,11 +137,6 @@ spec:
               valueFrom:
                 secretKeyRef:
                   key: CARD_MANAGER_URL
-                  name: tkmmsparretriever
-            - name: CONSENT_MANAGER_URL
-              valueFrom:
-                secretKeyRef:
-                  key: CONSENT_MANAGER_URL
                   name: tkmmsparretriever
             - name: KAFKA_GROUP_ID
               valueFrom:

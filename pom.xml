@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>par-retriever</artifactId>
-    <version>1.41</version>
+    <version>1.43</version>
 
     <parent>
         <groupId>it.gov.pagopa.tkm.ms</groupId>
@@ -145,11 +145,9 @@
                 <version>0.8.7</version>
                 <configuration>
                     <excludes>
-                        <exclude>it/gov/pagopa/tkm/ms/parretriever/config/**/*.class</exclude>
                         <exclude>it/gov/pagopa/tkm/ms/parretriever/repository/**/*.class</exclude>
-                        <exclude>it/gov/pagopa/tkm/ms/parretriever/model/**/*.class</exclude>
-                        <exclude>it/gov/pagopa/tkm/ms/parretriever/constant/**/*.class</exclude>
                         <exclude>it/gov/pagopa/tkm/ms/parretriever/ParRetrieverApplication.class</exclude>
+                        <exclude>it/gov/pagopa/tkm/ms/parretriever/config/*.class</exclude>
                     </excludes>
                 </configuration>
                 <executions>
@@ -239,7 +237,7 @@
     <scm>
         <!--<developerConnection>scm:git:git@github.com:pagopa/tkm-ms-par-retriever.git</developerConnection>-->
         <developerConnection>scm:git:https://github.com/pagopa/tkm-ms-par-retriever.git</developerConnection>
-        <tag>par-retriever-1.41</tag>
+        <tag>par-retriever-1.43</tag>
     </scm>
 
 </project>

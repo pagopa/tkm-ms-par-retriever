@@ -1,22 +1,18 @@
 package it.gov.pagopa.tkm.ms.parretriever.model.topic;
 
-import it.gov.pagopa.tkm.ms.parretriever.client.internal.cardmanager.model.response.ParlessCardToken;
-import it.gov.pagopa.tkm.ms.parretriever.constant.CircuitEnum;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
+import it.gov.pagopa.tkm.ms.parretriever.client.internal.cardmanager.model.response.*;
+import it.gov.pagopa.tkm.ms.parretriever.constant.*;
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.*;
+import org.mockito.junit.jupiter.*;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ExtendWith(MockitoExtension.class)
-public class TestReadQueue {
+class TestReadQueue {
 
     private ReadQueue readQueue;
 

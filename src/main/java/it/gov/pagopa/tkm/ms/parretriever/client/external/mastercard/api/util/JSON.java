@@ -1,12 +1,11 @@
 package it.gov.pagopa.tkm.ms.parretriever.client.external.mastercard.api.util;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonParseException;
+import com.google.gson.*;
 import com.google.gson.stream.*;
 import lombok.*;
 
-import java.io.StringReader;
-import java.lang.reflect.Type;
+import java.io.*;
+import java.lang.reflect.*;
 
 @Data
 @NoArgsConstructor
