@@ -8,7 +8,7 @@
     <parent>
         <groupId>it.gov.pagopa.tkm.ms</groupId>
         <artifactId>starter-parent</artifactId>
-        <version>4.2.0</version>
+        <version>4.2.1</version>
     </parent>
 
     <properties>
@@ -133,7 +133,10 @@
             <artifactId>resilience4j-metrics</artifactId>
             <version>${resilience4j.version}</version>
         </dependency>
-
+        <dependency>
+            <groupId>com.microsoft.azure</groupId>
+            <artifactId>applicationinsights-agent</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
