@@ -173,6 +173,13 @@ spec:
                 secretKeyRef:
                   key: PAR_RETRIEVER_GET_PAR_SCHEDULER
                   name: tkmmsparretriever
+            - name: APPLICATIONINSIGHTS_CONNECTION_STRING
+              valueFrom:
+                secretKeyRef:
+                  key: APPLICATIONINSIGHTS_CONNECTION_STRING
+                  name: applicationinsights
+            - name: APPLICATIONINSIGHTS_ROLE_NAME
+              value: tkmmsparretrieveruat
           livenessProbe:
             httpGet:
               path: /actuator/health
