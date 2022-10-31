@@ -75,8 +75,8 @@ public class AmexClient {
     }
 
 
-    public String getParFallback(String pan, Throwable t ){
-        log.info(String.format("AMEX fallback for pan %s get par - cause {}", pan), t.toString(),t);
+    public String getParFallback(Throwable t ){
+        log.error("AMEX fallback", t);
         return null;
     }
 
