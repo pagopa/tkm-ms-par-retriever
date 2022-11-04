@@ -51,15 +51,10 @@ public class CryptoServiceImpl implements CryptoService {
 
     @Override
     public String decrypt(String toDecrypt) {
-        log.trace(toDecrypt + ":");
-        if (StringUtils.isBlank(toDecrypt)) {
-            log.trace("\tEmpty string");
-            return null;
-        }
         DecryptResult decryptResult = cryptographyClient.decrypt(EncryptionAlgorithm.RSA_OAEP_256,
                 Base64Utils.decodeFromString(toDecrypt));
         if (decryptResult == null || ArrayUtils.isEmpty(decryptResult.getPlainText())) {
-            log.trace("\tCan't cryptography the string");
+            log.error("Can't decrypt the string");
             return null;
         }
         return new String(decryptResult.getPlainText());
