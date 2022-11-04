@@ -69,8 +69,8 @@ public class MastercardClient {
         return null;
     }
 
-    public String getParFallback(String accountNumber, Throwable t ){
-        log.info(String.format("MASTERCARD fallback for get par of account number %s- cause {}", accountNumber), t.toString(),t);
+    public String getParFallback(Throwable t ){
+        log.error("MASTERCARD fallback", t);
         return null;
     }
 

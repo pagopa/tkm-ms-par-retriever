@@ -8,6 +8,7 @@ import it.gov.pagopa.tkm.ms.parretriever.client.external.visa.*;
 import it.gov.pagopa.tkm.ms.parretriever.client.internal.cardmanager.model.response.*;
 import it.gov.pagopa.tkm.ms.parretriever.constant.*;
 import it.gov.pagopa.tkm.ms.parretriever.model.topic.*;
+import it.gov.pagopa.tkm.util.*;
 import lombok.extern.log4j.*;
 import org.apache.commons.collections.*;
 import org.apache.commons.lang3.*;
@@ -87,9 +88,9 @@ public class CardWriter implements ItemWriter<ParlessCard> {
 
     private String getParFromCircuitLog(CircuitEnum circuit, String pan, String hpan, boolean isToken) throws Exception {
         String hpanLabel = isToken ? "htoken" : "hpan";
-        log.info("START Retrieve PAR for " + hpanLabel + " " + hpan + " from " + circuit);
+        log.info("START Retrieve PAR for " + hpanLabel + " " + ObfuscationUtils.obfuscateHpan(hpan) + " from " + circuit);
         String par = getParFromCircuit(circuit,pan);
-        log.info("END Retrieve PAR for " + hpanLabel + " " + hpan + " from " + circuit + " - " + par);
+        log.info("END Retrieve PAR for " + hpanLabel + " " + ObfuscationUtils.obfuscateHpan(hpan) + " from " + circuit);
         return par;
     }
 
@@ -144,4 +145,5 @@ public class CardWriter implements ItemWriter<ParlessCard> {
                 return false;
         }
     }
+
 }

@@ -69,8 +69,8 @@ public class VisaClient {
         return null;
     }
 
-    public String getParFallback(String pan, Throwable t ){
-        log.info(String.format("VISA fallback for pan %s get par - cause {}", pan), t.toString(),t);
+    public String getParFallback(Throwable t ){
+        log.error("VISA fallback", t);
         return null;
     }
 

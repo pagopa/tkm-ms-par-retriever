@@ -33,7 +33,6 @@ public class CardProcessor implements ItemProcessor<ParlessCard, ParlessCard> {
 
     @Override
     public ParlessCard process(@NotNull ParlessCard parlessCard) {
-        log.trace(parlessCard);
         CircuitEnum circuit = parlessCard.getCircuit();
         return circuit != null && isCircuitActive(circuit) ? decrypt(parlessCard) : null;
     }
