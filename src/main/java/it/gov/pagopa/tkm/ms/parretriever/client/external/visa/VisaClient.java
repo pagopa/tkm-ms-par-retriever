@@ -138,12 +138,12 @@ public class VisaClient {
 
     private RSAPublicKey getRSAPublicKey() throws CertificateException {
         return (RSAPublicKey) CertificateFactory.getInstance("X.509").generateCertificate(new ByteArrayInputStream(
-                new com.nimbusds.jose.util.Base64(serverPublicCertificate.replaceAll("-----BEGIN CERTIFICATE-----",
-                        "").replaceAll("-----END CERTIFICATE-----", "")).decode())).getPublicKey();
+                new com.nimbusds.jose.util.Base64(serverPublicCertificate.replace("-----BEGIN CERTIFICATE-----",
+                        "").replace("-----END CERTIFICATE-----", "").trim()).decode())).getPublicKey();
     }
 
     private PrivateKey getRSAPrivateKey() throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
-        final Enumeration<?> e = ((ASN1Sequence) ASN1Sequence.fromByteArray(new com.nimbusds.jose.util.Base64(clientPrivateKey.replaceAll("-----BEGIN RSA PRIVATE KEY-----", "").replaceAll("-----END RSA PRIVATE KEY-----", "")).decode())).getObjects();
+        final Enumeration<?> e = ((ASN1Sequence) ASN1Primitive.fromByteArray(new com.nimbusds.jose.util.Base64(clientPrivateKey.replace("-----BEGIN RSA PRIVATE KEY-----", "").replace("-----END RSA PRIVATE KEY-----", "").trim()).decode())).getObjects();
         final BigInteger v = ((ASN1Integer) e.nextElement()).getValue();
         int version = v.intValue();
         if (version != 0 && version != 1) {
