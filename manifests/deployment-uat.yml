@@ -183,6 +183,96 @@ spec:
                   name: tkmmsparretriever
             - name: APPLICATIONINSIGHTS_ROLE_NAME
               value: tkmmsparretrieveruat
+            - name: KAFKA_SECURITY_PROTOCOL
+              valueFrom:
+                secretKeyRef:
+                  key: KAFKA_SECURITY_PROTOCOL
+                  name: tkmmsparretriever
+            - name: KAFKA_SASL_MECHANISM
+              valueFrom:
+                secretKeyRef:
+                  key: KAFKA_SASL_MECHANISM
+                  name: tkmmsparretriever
+            - name: LOGGING_LEVEL
+              valueFrom:
+                secretKeyRef:
+                  key: LOGGING_LEVEL
+                  name: tkmmsparretriever
+            - name: LOGGING_PATTERN
+              valueFrom:
+                secretKeyRef:
+                  key: LOGGING_PATTERN
+                  name: tkmmsparretriever
+            - name: MAX_NUMBER_OF_THREADS
+              valueFrom:
+                secretKeyRef:
+                  key: MAX_NUMBER_OF_THREADS
+                  name: tkmmsparretriever
+            - name: AMEX_MAX_RATE
+              valueFrom:
+                secretKeyRef:
+                  key: AMEX_MAX_RATE
+                  name: tkmmsparretriever
+            - name: MASTERCARD_MAX_RATE
+              valueFrom:
+                secretKeyRef:
+                  key: MASTERCARD_MAX_RATE
+                  name: tkmmsparretriever
+            - name: VISA_MAX_RATE
+              valueFrom:
+                secretKeyRef:
+                  key: VISA_MAX_RATE
+                  name: tkmmsparretriever
+            - name: DEFAULT_MAX_RATE
+              valueFrom:
+                secretKeyRef:
+                  key: DEFAULT_MAX_RATE
+                  name: tkmmsparretriever
+            - name: MINIMUM_NUMBER_OF_CALLS
+              valueFrom:
+                secretKeyRef:
+                  key: MINIMUM_NUMBER_OF_CALLS
+                  name: tkmmsparretriever
+            - name: SLIDING_WINDOW_SIZE
+              valueFrom:
+                secretKeyRef:
+                  key: SLIDING_WINDOW_SIZE
+                  name: tkmmsparretriever
+            - name: RING_BUFFER_SIZE_IN_CLOSED_SATE
+              valueFrom:
+                secretKeyRef:
+                  key: RING_BUFFER_SIZE_IN_CLOSED_SATE
+                  name: tkmmsparretriever
+            - name: RING_BUFFER_SIZE_IN_HALFOPEN_SATE
+              valueFrom:
+                secretKeyRef:
+                  key: RING_BUFFER_SIZE_IN_HALFOPEN_SATE
+                  name: tkmmsparretriever
+            - name: FAILURE_RATE_THRESHOLD
+              valueFrom:
+                secretKeyRef:
+                  key: FAILURE_RATE_THRESHOLD
+                  name: tkmmsparretriever
+            - name: WAIT_DURATION_IN_OPENSTATE
+              valueFrom:
+                secretKeyRef:
+                  key: WAIT_DURATION_IN_OPENSTATE
+                  name: tkmmsparretriever
+            - name: IS_AMEX_ACTIVE
+              valueFrom:
+                secretKeyRef:
+                  key: IS_AMEX_ACTIVE
+                  name: tkmmsparretriever
+            - name: IS_MASTERCARD_ACTIVE
+              valueFrom:
+                secretKeyRef:
+                  key: IS_MASTERCARD_ACTIVE
+                  name: tkmmsparretriever
+            - name: IS_VISA_ACTIVE
+              valueFrom:
+                secretKeyRef:
+                  key: IS_VISA_ACTIVE
+                  name: tkmmsparretriever
           livenessProbe:
             httpGet:
               path: /actuator/health
