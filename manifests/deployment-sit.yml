@@ -175,6 +175,8 @@ spec:
                   name: tkmmsparretriever
             - name: APPLICATIONINSIGHTS_ROLE_NAME
               value: tkmmsparretrieversit
+            - name: APPLICATIONINSIGHTS_SAMPLING_PERCENTAGE
+              value: "100"
             - name: KAFKA_SECURITY_PROTOCOL
               valueFrom:
                 secretKeyRef:
