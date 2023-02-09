@@ -365,7 +365,9 @@ stages:
 
   - stage: UAT_Build
     displayName: UAT Build
-    dependsOn: POM
+    dependsOn:
+      - POM
+      - SIT_Build
     condition: and(succeeded('POM'), eq(variables.isToDeploy, true), eq(variables.isUAT, true), or(ne(variables.isHOTFIX, true), and(eq(variables.isHOTFIX, true), succeeded('SIT_Build'))))
     variables:
       pomversion: $[ stageDependencies.POM.POM.outputs['getpomversion.outputpomversion'] ]
@@ -381,13 +383,6 @@ stages:
             inputs:
               targetPath: '$(Build.Repository.LocalPath)/manifests'
               artifact: 'manifests'
-              publishLocation: 'pipeline'
-          - task: PublishPipelineArtifact@1
-            displayName: 'Publish Atrifact target'
-            condition: and(succeeded(), eq(variables.isToDeploy, true))
-            inputs:
-              targetPath: '$(Build.Repository.LocalPath)/target'
-              artifact: 'target'
               publishLocation: 'pipeline'
 
   - stage: UAT_Deploy
