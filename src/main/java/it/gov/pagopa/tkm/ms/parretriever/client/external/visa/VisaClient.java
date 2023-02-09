@@ -69,8 +69,8 @@ public class VisaClient {
         return null;
     }
 
-    public String getParFallback(String pan, Throwable t ){
-        log.info(String.format("VISA fallback for pan %s get par - cause {}", pan), t.toString(),t);
+    public String getParFallback(Throwable t ){
+        log.error("VISA fallback", t);
         return null;
     }
 
@@ -138,25 +138,25 @@ public class VisaClient {
 
     private RSAPublicKey getRSAPublicKey() throws CertificateException {
         return (RSAPublicKey) CertificateFactory.getInstance("X.509").generateCertificate(new ByteArrayInputStream(
-                new com.nimbusds.jose.util.Base64(serverPublicCertificate.replaceAll("-----BEGIN CERTIFICATE-----",
-                        "").replaceAll("-----END CERTIFICATE-----", "")).decode())).getPublicKey();
+                new com.nimbusds.jose.util.Base64(serverPublicCertificate.replace("-----BEGIN CERTIFICATE-----",
+                        "").replace("-----END CERTIFICATE-----", "").trim()).decode())).getPublicKey();
     }
 
     private PrivateKey getRSAPrivateKey() throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
-        final Enumeration<?> e = ((ASN1Sequence) ASN1Sequence.fromByteArray(new com.nimbusds.jose.util.Base64(clientPrivateKey.replaceAll("-----BEGIN RSA PRIVATE KEY-----", "").replaceAll("-----END RSA PRIVATE KEY-----", "")).decode())).getObjects();
-        final BigInteger v = ((ASN1Integer) e.nextElement()).getValue();
+        final Enumeration<?> e = ((ASN1Sequence) ASN1Primitive.fromByteArray(new com.nimbusds.jose.util.Base64(clientPrivateKey.replace("-----BEGIN RSA PRIVATE KEY-----", "").replace("-----END RSA PRIVATE KEY-----", "").trim()).decode())).getObjects();
+        final BigInteger v = ((ASN1Integer) e.nextElement()).getPositiveValue();
         int version = v.intValue();
         if (version != 0 && version != 1) {
             throw new IllegalArgumentException("wrong version for RSA private key");
         }
-        final BigInteger modulus = ((ASN1Integer) e.nextElement()).getValue();
-        ((ASN1Integer) e.nextElement()).getValue();
-        BigInteger privateExponent = ((ASN1Integer) e.nextElement()).getValue();
-        ((ASN1Integer) e.nextElement()).getValue();
-        ((ASN1Integer) e.nextElement()).getValue();
-        ((ASN1Integer) e.nextElement()).getValue();
-        ((ASN1Integer) e.nextElement()).getValue();
-        ((ASN1Integer) e.nextElement()).getValue();
+        final BigInteger modulus = ((ASN1Integer) e.nextElement()).getPositiveValue();
+        ((ASN1Integer) e.nextElement()).getPositiveValue();
+        BigInteger privateExponent = ((ASN1Integer) e.nextElement()).getPositiveValue();
+        ((ASN1Integer) e.nextElement()).getPositiveValue();
+        ((ASN1Integer) e.nextElement()).getPositiveValue();
+        ((ASN1Integer) e.nextElement()).getPositiveValue();
+        ((ASN1Integer) e.nextElement()).getPositiveValue();
+        ((ASN1Integer) e.nextElement()).getPositiveValue();
         RSAPrivateKeySpec privateKeySpec = new RSAPrivateKeySpec(modulus, privateExponent);
         KeyFactory keyFactory = KeyFactory.getInstance("RSA");
         return keyFactory.generatePrivate(privateKeySpec);

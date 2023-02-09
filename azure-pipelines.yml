@@ -307,9 +307,9 @@ stages:
   - stage: SIT_Deploy
     displayName: SIT Deploy
     dependsOn:
-      - POM
-      - SIT_Build
-    condition: and(eq(variables.isToDeploy, true), eq(variables.isSIT, true))
+    - POM
+    - SIT_Build
+    condition: and(succeeded('SIT_Build'), eq(variables.isToDeploy, true), eq(variables.isSIT, true))
     variables:
       pomversion: $[ stageDependencies.POM.POM.outputs['getpomversion.outputpomversion'] ]
     jobs:
@@ -328,6 +328,7 @@ stages:
                     buildType: 'current'
                     artifactName: 'manifests'
                     targetPath: '$(Pipeline.Workspace)/manifests'
+
                 - task: KubernetesManifest@0
                   displayName: 'Create Namespace'
                   inputs:
@@ -336,6 +337,7 @@ stages:
                     kubernetesServiceConnection: 'ddsakstest-self-connection-tkm-sit'
                     manifests: |
                       $(Pipeline.Workspace)/manifests/namespace-$(enviroment).yml
+
                 - template: 'templates/env-configurations-par-retriever.yml'
                   parameters:
                     azureSubscription: 'TKM-Subscription-sit'
@@ -344,20 +346,13 @@ stages:
                     spcClassName: 'tkm-par-retriever-spc-sit'
                     env: 'sit'
                     kubernetesServiceConnection: 'ddsakstest-self-connection-tkm-sit'
-                - task: KubernetesManifest@0
-                  displayName: Deploy to Kubernetes cluster
-                  inputs:
-                    namespace: tkm-sit
-                    action: deploy
+
+                - template: 'templates/deploy-par-retriever.yml'
+                  parameters:
+                    env: 'sit'
                     kubernetesServiceConnection: 'ddsakstest-self-connection-tkm-sit'
-                    manifests: |
-                      $(Pipeline.Workspace)/manifests/deployment-$(enviroment).yml
-                      $(Pipeline.Workspace)/manifests/service-$(enviroment).yml
-                      $(Pipeline.Workspace)/manifests/ingress-$(enviroment).yml
-                    imagePullSecrets: |
-                      $(imagePullSecret)
-                    containers: |
-                      $(containerRegistry)/$(imageRepository):$(pomversion)
+                    imagePullSecret: $(imagePullSecret)
+                    container: $(containerRegistry)/$(imageRepository):$(pomversion)
 
   - stage: UAT
     displayName: UAT
@@ -396,6 +391,7 @@ stages:
                     buildType: 'current'
                     artifactName: 'manifests'
                     targetPath: '$(Pipeline.Workspace)/manifests'
+
                 - task: KubernetesManifest@0
                   displayName: 'Create Namespace'
                   inputs:
@@ -404,6 +400,7 @@ stages:
                     kubernetesServiceConnection: 'u87-aks-pci-uat-self-connection-tkm'
                     manifests: |
                       $(Pipeline.Workspace)/manifests/namespace-$(enviroment).yml
+
                 - template: 'templates/env-configurations-par-retriever.yml'
                   parameters:
                     azureSubscription: 'U87-PagoPa-PCI-uat'
@@ -412,20 +409,14 @@ stages:
                     spcClassName: 'tkm-par-retriever-spc-uat'
                     env: 'uat'
                     kubernetesServiceConnection: 'u87-aks-pci-uat-self-connection-tkm'
-                - task: KubernetesManifest@0
-                  displayName: Deploy to Kubernetes cluster
-                  inputs:
-                    namespace: tkm-uat
-                    action: deploy
+
+                - template: 'templates/deploy-par-retriever.yml'
+                  parameters:
+                    env: 'uat'
                     kubernetesServiceConnection: 'u87-aks-pci-uat-self-connection-tkm'
-                    manifests: |
-                      $(Pipeline.Workspace)/manifests/deployment-$(enviroment).yml
-                      $(Pipeline.Workspace)/manifests/service-$(enviroment).yml
-                      $(Pipeline.Workspace)/manifests/ingress-$(enviroment).yml
-                    imagePullSecrets: |
-                      $(imagePullSecret)
-                    containers: |
-                      $(containerRegistry)/$(imageRepository):$(pomversion)
+                    imagePullSecret: $(imagePullSecret)
+                    container: $(containerRegistry)/$(imageRepository):$(pomversion)
+
   # - stage: PROD
   #   displayName: PROD
   #   dependsOn: POM

@@ -19,6 +19,7 @@ steps:
       KeyVaultName: ${{ parameters.KeyVaultName }}
       SecretsFilter: '*'
       RunAsPreJob: false
+
   - task: KubernetesManifest@0
     displayName: Create secret ${{ parameters.secretName }}
     inputs:
@@ -28,6 +29,16 @@ steps:
       secretArguments: --from-literal=clientid=$(${{ parameters.env }}-clientid) --from-literal=clientsecret=$(${{ parameters.env }}-clientsecret)
       kubernetesServiceConnection: ${{ parameters.kubernetesServiceConnection }}
       namespace: tkm-${{ parameters.env }}
+
+  - task: Kubernetes@1
+    displayName: Add label to secret map
+    inputs:
+      connectionType: Kubernetes Service Connection
+      kubernetesServiceEndpoint: ${{ parameters.kubernetesServiceConnection }}
+      namespace: tkm-${{ parameters.env }}
+      command: label
+      arguments: "secret ${{ parameters.secretName }} secrets-store.csi.k8s.io/used=true"
+
   - task: Kubernetes@1
     displayName: Create spc ${{ parameters.spcClassName }}
     inputs:
@@ -143,15 +154,85 @@ steps:
                   objectName: ${{ parameters.env }}-applicationinsights-connection-string
                   objectType: secret
                   objectVersion: ""
+                - |
+                  objectName: ${{ parameters.env }}-kafka-security-protocol
+                  objectType: secret
+                  objectVersion: ""
+                - |
+                  objectName: ${{ parameters.env }}-kafka-sasl-mechanism
+                  objectType: secret
+                  objectVersion: ""
+                - |
+                  objectName: ${{ parameters.env }}-par-retriever-logging-level
+                  objectType: secret
+                  objectVersion: ""
+                - |
+                  objectName: ${{ parameters.env }}-par-retriever-logging-pattern
+                  objectType: secret
+                  objectVersion: ""
+                - |
+                  objectName: ${{ parameters.env }}-par-retriever-max-number-of-threads
+                  objectType: secret
+                  objectVersion: ""
+                - |
+                  objectName: ${{ parameters.env }}-par-retriever-amex-max-rate
+                  objectType: secret
+                  objectVersion: ""
+                - |
+                  objectName: ${{ parameters.env }}-par-retriever-mastercard-max-rate
+                  objectType: secret
+                  objectVersion: ""
+                - |
+                  objectName: ${{ parameters.env }}-par-retriever-visa-max-rate
+                  objectType: secret
+                  objectVersion: ""
+                - |
+                  objectName: ${{ parameters.env }}-par-retriever-default-max-rate
+                  objectType: secret
+                  objectVersion: ""
+                - |
+                  objectName: ${{ parameters.env }}-par-retriever-minimum-number-of-calls
+                  objectType: secret
+                  objectVersion: ""
+                - |
+                  objectName: ${{ parameters.env }}-par-retriever-sliding-window-size
+                  objectType: secret
+                  objectVersion: ""
+                - |
+                  objectName: ${{ parameters.env }}-par-retriever-ring-buffer-size-in-closed-state
+                  objectType: secret
+                  objectVersion: ""
+                - |
+                  objectName: ${{ parameters.env }}-par-retriever-ring-buffer-size-in-halfopen-state
+                  objectType: secret
+                  objectVersion: ""
+                - |
+                  objectName: ${{ parameters.env }}-par-retriever-failure-rate-threshold
+                  objectType: secret
+                  objectVersion: ""
+                - |
+                  objectName: ${{ parameters.env }}-par-retriever-wait-duration-in-openstate
+                  objectType: secret
+                  objectVersion: ""
+                - |
+                  objectName: ${{ parameters.env }}-par-retriever-is-amex-active
+                  objectType: secret
+                  objectVersion: ""
+                - |
+                  objectName: ${{ parameters.env }}-par-retriever-is-mastercard-active
+                  objectType: secret
+                  objectVersion: ""
+                - |
+                  objectName: ${{ parameters.env }}-par-retriever-is-visa-active
+                  objectType: secret
+                  objectVersion: ""
           secretObjects:
-            - secretName: jvm
+            - secretName: tkmmsparretriever
               type: Opaque
               data:
                 - key: TZ
                   objectName: ${{ parameters.env }}-tz
-            - secretName: kafka-log-configuration
-              type: Opaque
-              data:
+
                 - key: KAFKA_APPENDER_BOOTSTRAP_SERVERS
                   objectName: ${{ parameters.env }}-kafka-appender-bootstrap-servers
                 - key: ENABLE_FILE_APPENDER
@@ -162,9 +243,7 @@ steps:
                   objectName: ${{ parameters.env }}-log-file
                 - key: KAFKA_APPENDER_TOPIC
                   objectName: ${{ parameters.env }}-kafka-appender-topic
-            - secretName: keyvault-connection-informations
-              type: Opaque
-              data:
+
                 - key: AZURE_KEYVAULT_PROFILE
                   objectName: ${{ parameters.env }}-azure-keyvault-profile
                 - key: AZURE_KEYVAULT_CLIENT_ID
@@ -175,9 +254,7 @@ steps:
                   objectName: ${{ parameters.env }}-azure-keyvault-tenant-id
                 - key: AZURE_KEYVAULT_URI
                   objectName: ${{ parameters.env }}-azure-keyvault-uri
-            - secretName: tkmmsparretriever
-              type: Opaque
-              data:
+
                 - key: AMEX_URL
                   objectName: ${{ parameters.env }}-amex-url
                 - key: AZURE_STORAGE_ENDPOINT
@@ -200,8 +277,43 @@ steps:
                   objectName: ${{ parameters.env }}-visa-url-par
                 - key: PAR_RETRIEVER_GET_PAR_SCHEDULER
                   objectName: ${{ parameters.env }}-par-retriever-get-par-scheduler
-            - secretName: applicationinsights
-              type: Opaque
-              data:
+
                 - key: APPLICATIONINSIGHTS_CONNECTION_STRING
                   objectName: ${{ parameters.env }}-applicationinsights-connection-string
+
+                - key: KAFKA_SECURITY_PROTOCOL
+                  objectName: ${{ parameters.env }}-kafka-security-protocol
+                - key: KAFKA_SASL_MECHANISM
+                  objectName: ${{ parameters.env }}-kafka-sasl-mechanism
+                - key: LOGGING_LEVEL
+                  objectName: ${{ parameters.env }}-par-retriever-logging-level
+                - key: LOGGING_PATTERN
+                  objectName: ${{ parameters.env }}-par-retriever-logging-pattern
+                - key: MAX_NUMBER_OF_THREADS
+                  objectName: ${{ parameters.env }}-par-retriever-max-number-of-threads
+                - key: AMEX_MAX_RATE
+                  objectName: ${{ parameters.env }}-par-retriever-amex-max-rate
+                - key: MASTERCARD_MAX_RATE
+                  objectName: ${{ parameters.env }}-par-retriever-mastercard-max-rate
+                - key: VISA_MAX_RATE
+                  objectName: ${{ parameters.env }}-par-retriever-visa-max-rate
+                - key: DEFAULT_MAX_RATE
+                  objectName: ${{ parameters.env }}-par-retriever-default-max-rate
+                - key: MINIMUM_NUMBER_OF_CALLS
+                  objectName: ${{ parameters.env }}-par-retriever-minimum-number-of-calls
+                - key: SLIDING_WINDOW_SIZE
+                  objectName: ${{ parameters.env }}-par-retriever-sliding-window-size
+                - key: RING_BUFFER_SIZE_IN_CLOSED_SATE
+                  objectName: ${{ parameters.env }}-par-retriever-ring-buffer-size-in-closed-state
+                - key: RING_BUFFER_SIZE_IN_HALFOPEN_SATE
+                  objectName: ${{ parameters.env }}-par-retriever-ring-buffer-size-in-halfopen-state
+                - key: FAILURE_RATE_THRESHOLD
+                  objectName: ${{ parameters.env }}-par-retriever-failure-rate-threshold
+                - key: WAIT_DURATION_IN_OPENSTATE
+                  objectName: ${{ parameters.env }}-par-retriever-wait-duration-in-openstate
+                - key: IS_AMEX_ACTIVE
+                  objectName: ${{ parameters.env }}-par-retriever-is-amex-active
+                - key: IS_MASTERCARD_ACTIVE
+                  objectName: ${{ parameters.env }}-par-retriever-is-mastercard-active
+                - key: IS_VISA_ACTIVE
+                  objectName: ${{ parameters.env }}-par-retriever-is-visa-active
