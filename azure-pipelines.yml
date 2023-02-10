@@ -9,6 +9,7 @@ trigger:
       - develop
       - release/*
       - hotfix/*
+      - rollback/*
 pr: none
 
 variables:
@@ -20,29 +21,35 @@ variables:
   # Image Repository Name
   imageRepository: 'tkmmsparretriever'
 
+  dockerRegistryServiceConnection: 'tkm-cstaruatregistry-connector'
+  containerRegistry: 'cstaruatregistry.azurecr.io'
+
   isToDeploy: $[ne(variables['Build.Reason'], 'PullRequest')]
   isSIT: $[eq(variables['Build.SourceBranch'], 'refs/heads/release/sit')]
-  isUAT: $[or(eq(variables['Build.SourceBranch'], 'refs/heads/release/uat'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix'))]
-  isPROD: $[eq(variables['Build.SourceBranch'], 'refs/heads/master')]
+  isUAT: $[or(eq(variables['Build.SourceBranch'], 'refs/heads/release/uat'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix'), startsWith(variables['Build.SourceBranch'], 'refs/heads/rollback/uat'))]
+  isPROD: $[or(eq(variables['Build.SourceBranch'], 'refs/heads/master'), startsWith(variables['Build.SourceBranch'], 'refs/heads/rollback/prod'))]
+  isHOTFIX: $[startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix')]
 
   ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/release/sit') }}:
-    dockerRegistryServiceConnection: 'tkm-cstaruatregistry-connector'
-    containerRegistry: 'cstaruatregistry.azurecr.io'
     enviroment: sit
     imagePullSecret: 'tkmsitregistry-auth'
-  ${{ if or(eq(variables['Build.SourceBranch'], 'refs/heads/release/uat'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix')) }}:
-    dockerRegistryServiceConnection: 'tkm-cstaruatregistry-connector'
-    containerRegistry: 'cstaruatregistry.azurecr.io'
+    azureSubscription: 'TKM-Subscription-sit'
+    KeyVaultName: 'kmn-tkm-pagopa-test'
+  ${{ if or(eq(variables['Build.SourceBranch'], 'refs/heads/release/uat'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix'), startsWith(variables['Build.SourceBranch'], 'refs/heads/rollback/uat')) }}:
     enviroment: uat
     imagePullSecret: 'tkmuatregistry-auth'
-  ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/master') }}:
-    dockerRegistryServiceConnection: 'tkm-cstaruatregistry-connector'
-    containerRegistry: ''
-    imagePullSecret: ''
+    azureSubscription: 'U87-PagoPa-PCI-uat'
+    KeyVaultName: 'u87-kmn-tkm-pci-uat'
+  ${{ if or(eq(variables['Build.SourceBranch'], 'refs/heads/master'), startsWith(variables['Build.SourceBranch'], 'refs/heads/rollback/prod')) }}:
     enviroment: prod
-  ${{ if and(not(startsWith(variables['Build.SourceBranch'], 'refs/heads/release')), ne(variables['Build.SourceBranch'], 'refs/heads/master'), not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix'))) }}:
-    dockerRegistryServiceConnection: ''
+    imagePullSecret: ''
+    azureSubscription: ''
+    KeyVaultName: ''
+  ${{ if and(not(startsWith(variables['Build.SourceBranch'], 'refs/heads/release')), ne(variables['Build.SourceBranch'], 'refs/heads/master'), not(startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix')), not(startsWith(variables['Build.SourceBranch'], 'refs/heads/rollback'))) }}:
     enviroment: sit
+    imagePullSecret: ''
+    azureSubscription: 'TKM-Subscription-sit'
+    KeyVaultName: ''
 
   maven_cache_folder: $(Pipeline.Workspace)/.m2/repository
 
@@ -214,9 +221,9 @@ stages:
               failOnStderr: true
 
   - stage: SIT_Build
-    displayName: SIT Build
+    displayName: SIT Build & Push
     dependsOn: POM
-    condition: and(eq(variables.isToDeploy, true), eq(variables.isSIT, true))
+    condition: and(succeeded('POM'), eq(variables.isToDeploy, true), or(eq(variables.isSIT, true), eq(variables.isHOTFIX, true)))
     variables:
       pomversion: $[ stageDependencies.POM.POM.outputs['getpomversion.outputpomversion'] ]
     jobs:
@@ -311,7 +318,7 @@ stages:
     dependsOn:
       - POM
       - SIT_Build
-    condition: and(eq(variables.isToDeploy, true), eq(variables.isSIT, true))
+    condition: and(succeeded('SIT_Build'), eq(variables.isToDeploy, true), eq(variables.isSIT, true))
     variables:
       pomversion: $[ stageDependencies.POM.POM.outputs['getpomversion.outputpomversion'] ]
     jobs:
@@ -330,6 +337,7 @@ stages:
                     buildType: 'current'
                     artifactName: 'manifests'
                     targetPath: '$(Pipeline.Workspace)/manifests'
+
                 - task: KubernetesManifest@0
                   displayName: 'Create Namespace'
                   inputs:
@@ -338,33 +346,29 @@ stages:
                     kubernetesServiceConnection: 'ddsakstest-self-connection-tkm-sit'
                     manifests: |
                       $(Pipeline.Workspace)/manifests/namespace-$(enviroment).yml
+
                 - template: 'templates/env-configurations-par-retriever.yml'
                   parameters:
-                    azureSubscription: 'TKM-Subscription-sit'
-                    KeyVaultName: 'kmn-tkm-pagopa-test'
+                    azureSubscription: $(azureSubscription)
+                    KeyVaultName: $(KeyVaultName)
                     secretName: 'tkm-par-retriever-kv-store-creds-sit'
                     spcClassName: 'tkm-par-retriever-spc-sit'
                     env: 'sit'
                     kubernetesServiceConnection: 'ddsakstest-self-connection-tkm-sit'
-                - task: KubernetesManifest@0
-                  displayName: Deploy to Kubernetes cluster
-                  inputs:
-                    namespace: tkm-sit
-                    action: deploy
-                    kubernetesServiceConnection: 'ddsakstest-self-connection-tkm-sit'
-                    manifests: |
-                      $(Pipeline.Workspace)/manifests/deployment-$(enviroment).yml
-                      $(Pipeline.Workspace)/manifests/service-$(enviroment).yml
-                      $(Pipeline.Workspace)/manifests/ingress-$(enviroment).yml
-                    imagePullSecrets: |
-                      $(imagePullSecret)
-                    containers: |
-                      $(containerRegistry)/$(imageRepository):$(pomversion)
 
-  - stage: UAT
-    displayName: UAT
-    dependsOn: POM
-    condition: and(eq(variables.isToDeploy, true), eq(variables.isUAT, true))
+                - template: 'templates/deploy-par-retriever.yml'
+                  parameters:
+                    env: 'sit'
+                    kubernetesServiceConnection: 'ddsakstest-self-connection-tkm-sit'
+                    imagePullSecret: $(imagePullSecret)
+                    container: $(containerRegistry)/$(imageRepository):$(pomversion)
+
+  - stage: UAT_Build
+    displayName: UAT Build
+    dependsOn:
+      - POM
+      - SIT_Build
+    condition: and(succeeded('POM'), eq(variables.isToDeploy, true), eq(variables.isUAT, true), or(ne(variables.isHOTFIX, true), and(eq(variables.isHOTFIX, true), succeeded('SIT_Build'))))
     variables:
       pomversion: $[ stageDependencies.POM.POM.outputs['getpomversion.outputpomversion'] ]
     jobs:
@@ -375,16 +379,23 @@ stages:
         steps:
           - task: PublishPipelineArtifact@1
             displayName: 'Publish Atrifact manifests'
-            condition: eq(variables.isToDeploy, true)
+            condition: and(succeeded(), eq(variables.isToDeploy, true))
             inputs:
               targetPath: '$(Build.Repository.LocalPath)/manifests'
               artifact: 'manifests'
               publishLocation: 'pipeline'
 
+  - stage: UAT_Deploy
+    displayName: UAT Deploy
+    dependsOn:
+      - POM
+      - UAT_Build
+    condition: and(succeeded('UAT_Build'), eq(variables.isToDeploy, true), eq(variables.isUAT, true))
+    variables:
+      pomversion: $[ stageDependencies.POM.POM.outputs['getpomversion.outputpomversion'] ]
+    jobs:
       - deployment: Deploy
-        dependsOn: Build
         displayName: Deploy
-        condition: and(succeeded(), eq(variables.isToDeploy, true), eq(variables.isUAT, true))
         pool:
           name: pagopa-agent-pool-uat
         environment: 'uat'
@@ -398,6 +409,7 @@ stages:
                     buildType: 'current'
                     artifactName: 'manifests'
                     targetPath: '$(Pipeline.Workspace)/manifests'
+
                 - task: KubernetesManifest@0
                   displayName: 'Create Namespace'
                   inputs:
@@ -406,28 +418,23 @@ stages:
                     kubernetesServiceConnection: 'u87-aks-pci-uat-self-connection-tkm'
                     manifests: |
                       $(Pipeline.Workspace)/manifests/namespace-$(enviroment).yml
+
                 - template: 'templates/env-configurations-par-retriever.yml'
                   parameters:
-                    azureSubscription: 'U87-PagoPa-PCI-uat'
-                    KeyVaultName: 'u87-kmn-tkm-pci-uat'
+                    azureSubscription: $(azureSubscription)
+                    KeyVaultName: $(KeyVaultName)
                     secretName: 'tkm-par-retriever-kv-store-creds-uat'
                     spcClassName: 'tkm-par-retriever-spc-uat'
                     env: 'uat'
                     kubernetesServiceConnection: 'u87-aks-pci-uat-self-connection-tkm'
-                - task: KubernetesManifest@0
-                  displayName: Deploy to Kubernetes cluster
-                  inputs:
-                    namespace: tkm-uat
-                    action: deploy
+
+                - template: 'templates/deploy-par-retriever.yml'
+                  parameters:
+                    env: 'uat'
                     kubernetesServiceConnection: 'u87-aks-pci-uat-self-connection-tkm'
-                    manifests: |
-                      $(Pipeline.Workspace)/manifests/deployment-$(enviroment).yml
-                      $(Pipeline.Workspace)/manifests/service-$(enviroment).yml
-                      $(Pipeline.Workspace)/manifests/ingress-$(enviroment).yml
-                    imagePullSecrets: |
-                      $(imagePullSecret)
-                    containers: |
-                      $(containerRegistry)/$(imageRepository):$(pomversion)
+                    imagePullSecret: $(imagePullSecret)
+                    container: $(containerRegistry)/$(imageRepository):$(pomversion)
+
   # - stage: PROD
   #   displayName: PROD
   #   dependsOn: POM

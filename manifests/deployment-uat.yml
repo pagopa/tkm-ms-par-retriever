@@ -22,15 +22,18 @@ spec:
         - ip: "10.70.73.228"
           hostnames:
             - "tkm-pgsql-pci-uat.postgres.database.azure.com"
-        - ip: "10.70.73.37"
-          hostnames:
-            - "u87-evh-pci-uat.servicebus.windows.net"
         - ip: "10.70.73.38"
           hostnames:
             - "tkmstorageblobuatpci.blob.core.windows.net"
         - ip: "10.230.9.5"
           hostnames:
             - "api.uat.platform.pagopa.it"
+        - ip: "10.70.73.39"
+          hostnames:
+            - "u87-evhn-pci-uat.servicebus.windows.net"
+        - ip: "10.230.7.68"
+          hostnames:
+            - "cstar-u-evh-ns.servicebus.windows.net"
       volumes:
         - name: secrets-store-inline-par-retriever
           csi:
@@ -57,7 +60,7 @@ spec:
               mountPath: /mnt/secrets-store
               readOnly: true
           securityContext:
-            readOnlyRootFilesystem: false
+            readOnlyRootFilesystem: true
             allowPrivilegeEscalation: false
             capabilities:
               drop:
@@ -67,57 +70,57 @@ spec:
               valueFrom:
                 secretKeyRef:
                   key: TZ
-                  name: jvm
+                  name: tkmmsparretriever
             - name: KAFKA_APPENDER_BOOTSTRAP_SERVERS
               valueFrom:
                 secretKeyRef:
                   key: KAFKA_APPENDER_BOOTSTRAP_SERVERS
-                  name: kafka-log-configuration
+                  name: tkmmsparretriever
             - name: ENABLE_FILE_APPENDER
               valueFrom:
                 secretKeyRef:
                   key: ENABLE_FILE_APPENDER
-                  name: kafka-log-configuration
+                  name: tkmmsparretriever
             - name: ENABLE_KAFKA_APPENDER
               valueFrom:
                 secretKeyRef:
                   key: ENABLE_KAFKA_APPENDER
-                  name: kafka-log-configuration
+                  name: tkmmsparretriever
             - name: LOG_FILE
               valueFrom:
                 secretKeyRef:
                   key: LOG_FILE
-                  name: kafka-log-configuration
+                  name: tkmmsparretriever
             - name: KAFKA_APPENDER_TOPIC
               valueFrom:
                 secretKeyRef:
                   key: KAFKA_APPENDER_TOPIC
-                  name: kafka-log-configuration
+                  name: tkmmsparretriever
             - name: AZURE_KEYVAULT_PROFILE
               valueFrom:
                 secretKeyRef:
                   key: AZURE_KEYVAULT_PROFILE
-                  name: keyvault-connection-informations
+                  name: tkmmsparretriever
             - name: AZURE_KEYVAULT_CLIENT_ID
               valueFrom:
                 secretKeyRef:
                   key: AZURE_KEYVAULT_CLIENT_ID
-                  name: keyvault-connection-informations
+                  name: tkmmsparretriever
             - name: AZURE_KEYVAULT_CLIENT_KEY
               valueFrom:
                 secretKeyRef:
                   key: AZURE_KEYVAULT_CLIENT_KEY
-                  name: keyvault-connection-informations
+                  name: tkmmsparretriever
             - name: AZURE_KEYVAULT_TENANT_ID
               valueFrom:
                 secretKeyRef:
                   key: AZURE_KEYVAULT_TENANT_ID
-                  name: keyvault-connection-informations
+                  name: tkmmsparretriever
             - name: AZURE_KEYVAULT_URI
               valueFrom:
                 secretKeyRef:
                   key: AZURE_KEYVAULT_URI
-                  name: keyvault-connection-informations
+                  name: tkmmsparretriever
             - name: AMEX_URL
               valueFrom:
                 secretKeyRef:
@@ -172,6 +175,105 @@ spec:
               valueFrom:
                 secretKeyRef:
                   key: PAR_RETRIEVER_GET_PAR_SCHEDULER
+                  name: tkmmsparretriever
+            - name: APPLICATIONINSIGHTS_CONNECTION_STRING
+              valueFrom:
+                secretKeyRef:
+                  key: APPLICATIONINSIGHTS_CONNECTION_STRING
+                  name: tkmmsparretriever
+            - name: APPLICATIONINSIGHTS_ROLE_NAME
+              value: tkmmsparretrieveruat
+            - name: APPLICATIONINSIGHTS_SAMPLING_PERCENTAGE
+              value: "100"
+            - name: KAFKA_SECURITY_PROTOCOL
+              valueFrom:
+                secretKeyRef:
+                  key: KAFKA_SECURITY_PROTOCOL
+                  name: tkmmsparretriever
+            - name: KAFKA_SASL_MECHANISM
+              valueFrom:
+                secretKeyRef:
+                  key: KAFKA_SASL_MECHANISM
+                  name: tkmmsparretriever
+            - name: LOGGING_LEVEL
+              valueFrom:
+                secretKeyRef:
+                  key: LOGGING_LEVEL
+                  name: tkmmsparretriever
+            - name: LOGGING_PATTERN
+              valueFrom:
+                secretKeyRef:
+                  key: LOGGING_PATTERN
+                  name: tkmmsparretriever
+            - name: MAX_NUMBER_OF_THREADS
+              valueFrom:
+                secretKeyRef:
+                  key: MAX_NUMBER_OF_THREADS
+                  name: tkmmsparretriever
+            - name: AMEX_MAX_RATE
+              valueFrom:
+                secretKeyRef:
+                  key: AMEX_MAX_RATE
+                  name: tkmmsparretriever
+            - name: MASTERCARD_MAX_RATE
+              valueFrom:
+                secretKeyRef:
+                  key: MASTERCARD_MAX_RATE
+                  name: tkmmsparretriever
+            - name: VISA_MAX_RATE
+              valueFrom:
+                secretKeyRef:
+                  key: VISA_MAX_RATE
+                  name: tkmmsparretriever
+            - name: DEFAULT_MAX_RATE
+              valueFrom:
+                secretKeyRef:
+                  key: DEFAULT_MAX_RATE
+                  name: tkmmsparretriever
+            - name: MINIMUM_NUMBER_OF_CALLS
+              valueFrom:
+                secretKeyRef:
+                  key: MINIMUM_NUMBER_OF_CALLS
+                  name: tkmmsparretriever
+            - name: SLIDING_WINDOW_SIZE
+              valueFrom:
+                secretKeyRef:
+                  key: SLIDING_WINDOW_SIZE
+                  name: tkmmsparretriever
+            - name: RING_BUFFER_SIZE_IN_CLOSED_SATE
+              valueFrom:
+                secretKeyRef:
+                  key: RING_BUFFER_SIZE_IN_CLOSED_SATE
+                  name: tkmmsparretriever
+            - name: RING_BUFFER_SIZE_IN_HALFOPEN_SATE
+              valueFrom:
+                secretKeyRef:
+                  key: RING_BUFFER_SIZE_IN_HALFOPEN_SATE
+                  name: tkmmsparretriever
+            - name: FAILURE_RATE_THRESHOLD
+              valueFrom:
+                secretKeyRef:
+                  key: FAILURE_RATE_THRESHOLD
+                  name: tkmmsparretriever
+            - name: WAIT_DURATION_IN_OPENSTATE
+              valueFrom:
+                secretKeyRef:
+                  key: WAIT_DURATION_IN_OPENSTATE
+                  name: tkmmsparretriever
+            - name: IS_AMEX_ACTIVE
+              valueFrom:
+                secretKeyRef:
+                  key: IS_AMEX_ACTIVE
+                  name: tkmmsparretriever
+            - name: IS_MASTERCARD_ACTIVE
+              valueFrom:
+                secretKeyRef:
+                  key: IS_MASTERCARD_ACTIVE
+                  name: tkmmsparretriever
+            - name: IS_VISA_ACTIVE
+              valueFrom:
+                secretKeyRef:
+                  key: IS_VISA_ACTIVE
                   name: tkmmsparretriever
           livenessProbe:
             httpGet:
