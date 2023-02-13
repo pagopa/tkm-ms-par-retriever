@@ -1,0 +1,306 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tkmmsparretrieverprod
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      app: tkmmsparretrieverprod
+  template:
+    metadata:
+      labels:
+        app: tkmmsparretrieverprod
+      annotations:
+        prometheus.io/path: /actuator/prometheus
+        prometheus.io/port: '8080'
+        prometheus.io/scrape: 'true'
+    spec:
+      nodeSelector:
+        tkm-prod: 'true'
+      hostAliases:
+#        - ip: "10.70.73.228"
+#          hostnames:
+#            - "tkm-pgsql-pci-uat.postgres.database.azure.com"
+#        - ip: "10.70.73.38"
+#          hostnames:
+#            - "tkmstorageblobuatpci.blob.core.windows.net"
+#        - ip: "10.230.9.5"
+#          hostnames:
+#            - "api.uat.platform.pagopa.it"
+#        - ip: "10.70.73.39"
+#          hostnames:
+#            - "u87-evhn-pci-uat.servicebus.windows.net"
+#        - ip: "10.230.7.68"
+#          hostnames:
+#            - "cstar-u-evh-ns.servicebus.windows.net"
+      volumes:
+        - name: secrets-store-inline-par-retriever
+          csi:
+            driver: secrets-store.csi.k8s.io
+            readOnly: true
+            volumeAttributes:
+              secretProviderClass: tkm-par-retriever-spc-prod
+            nodePublishSecretRef:
+              name: tkm-par-retriever-kv-store-creds-prod
+      containers:
+        - name: tkmmsparretrieverprod
+#          image: cstaruatregistry.azurecr.io/tkmmsparretriever
+          ports:
+            - containerPort: 8080
+          resources:
+            requests:
+              memory: 4Gi
+              cpu: 500m
+            limits:
+              memory: 4Gi
+              cpu: 1000m
+          volumeMounts:
+            - name: secrets-store-inline-par-retriever
+              mountPath: /mnt/secrets-store
+              readOnly: true
+          securityContext:
+            readOnlyRootFilesystem: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - all
+          env:
+            - name: TZ
+              valueFrom:
+                secretKeyRef:
+                  key: TZ
+                  name: tkmmsparretriever
+            - name: KAFKA_APPENDER_BOOTSTRAP_SERVERS
+              valueFrom:
+                secretKeyRef:
+                  key: KAFKA_APPENDER_BOOTSTRAP_SERVERS
+                  name: tkmmsparretriever
+            - name: ENABLE_FILE_APPENDER
+              valueFrom:
+                secretKeyRef:
+                  key: ENABLE_FILE_APPENDER
+                  name: tkmmsparretriever
+            - name: ENABLE_KAFKA_APPENDER
+              valueFrom:
+                secretKeyRef:
+                  key: ENABLE_KAFKA_APPENDER
+                  name: tkmmsparretriever
+            - name: LOG_FILE
+              valueFrom:
+                secretKeyRef:
+                  key: LOG_FILE
+                  name: tkmmsparretriever
+            - name: KAFKA_APPENDER_TOPIC
+              valueFrom:
+                secretKeyRef:
+                  key: KAFKA_APPENDER_TOPIC
+                  name: tkmmsparretriever
+            - name: AZURE_KEYVAULT_PROFILE
+              valueFrom:
+                secretKeyRef:
+                  key: AZURE_KEYVAULT_PROFILE
+                  name: tkmmsparretriever
+            - name: AZURE_KEYVAULT_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  key: AZURE_KEYVAULT_CLIENT_ID
+                  name: tkmmsparretriever
+            - name: AZURE_KEYVAULT_CLIENT_KEY
+              valueFrom:
+                secretKeyRef:
+                  key: AZURE_KEYVAULT_CLIENT_KEY
+                  name: tkmmsparretriever
+            - name: AZURE_KEYVAULT_TENANT_ID
+              valueFrom:
+                secretKeyRef:
+                  key: AZURE_KEYVAULT_TENANT_ID
+                  name: tkmmsparretriever
+            - name: AZURE_KEYVAULT_URI
+              valueFrom:
+                secretKeyRef:
+                  key: AZURE_KEYVAULT_URI
+                  name: tkmmsparretriever
+            - name: AMEX_URL
+              valueFrom:
+                secretKeyRef:
+                  key: AMEX_URL
+                  name: tkmmsparretriever
+            - name: AZURE_STORAGE_ENDPOINT
+              valueFrom:
+                secretKeyRef:
+                  key: AZURE_STORAGE_ENDPOINT
+                  name: tkmmsparretriever
+            - name: BLOB_STORAGE_NAME
+              valueFrom:
+                secretKeyRef:
+                  key: BLOB_STORAGE_NAME
+                  name: tkmmsparretriever
+            - name: CARD_MANAGER_URL
+              valueFrom:
+                secretKeyRef:
+                  key: CARD_MANAGER_URL
+                  name: tkmmsparretriever
+            - name: KAFKA_GROUP_ID
+              valueFrom:
+                secretKeyRef:
+                  key: KAFKA_GROUP_ID
+                  name: tkmmsparretriever
+            - name: KAFKA_READ_QUEUE_TOPIC
+              valueFrom:
+                secretKeyRef:
+                  key: KAFKA_READ_QUEUE_TOPIC
+                  name: tkmmsparretriever
+            - name: KAFKA_SERVERS
+              valueFrom:
+                secretKeyRef:
+                  key: KAFKA_SERVERS
+                  name: tkmmsparretriever
+            - name: MASTERCARD_URL
+              valueFrom:
+                secretKeyRef:
+                  key: MASTERCARD_URL
+                  name: tkmmsparretriever
+            - name: MAX_NUMBER_OF_CARDS
+              valueFrom:
+                secretKeyRef:
+                  key: MAX_NUMBER_OF_CARDS
+                  name: tkmmsparretriever
+            - name: VISA_URL_PAR
+              valueFrom:
+                secretKeyRef:
+                  key: VISA_URL_PAR
+                  name: tkmmsparretriever
+            - name: PAR_RETRIEVER_GET_PAR_SCHEDULER
+              valueFrom:
+                secretKeyRef:
+                  key: PAR_RETRIEVER_GET_PAR_SCHEDULER
+                  name: tkmmsparretriever
+            - name: APPLICATIONINSIGHTS_CONNECTION_STRING
+              valueFrom:
+                secretKeyRef:
+                  key: APPLICATIONINSIGHTS_CONNECTION_STRING
+                  name: tkmmsparretriever
+            - name: APPLICATIONINSIGHTS_ROLE_NAME
+              value: tkmmsparretrieverprod
+            - name: APPLICATIONINSIGHTS_SAMPLING_PERCENTAGE
+              value: "100"
+            - name: KAFKA_SECURITY_PROTOCOL
+              valueFrom:
+                secretKeyRef:
+                  key: KAFKA_SECURITY_PROTOCOL
+                  name: tkmmsparretriever
+            - name: KAFKA_SASL_MECHANISM
+              valueFrom:
+                secretKeyRef:
+                  key: KAFKA_SASL_MECHANISM
+                  name: tkmmsparretriever
+            - name: LOGGING_LEVEL
+              valueFrom:
+                secretKeyRef:
+                  key: LOGGING_LEVEL
+                  name: tkmmsparretriever
+            - name: LOGGING_PATTERN
+              valueFrom:
+                secretKeyRef:
+                  key: LOGGING_PATTERN
+                  name: tkmmsparretriever
+            - name: MAX_NUMBER_OF_THREADS
+              valueFrom:
+                secretKeyRef:
+                  key: MAX_NUMBER_OF_THREADS
+                  name: tkmmsparretriever
+            - name: AMEX_MAX_RATE
+              valueFrom:
+                secretKeyRef:
+                  key: AMEX_MAX_RATE
+                  name: tkmmsparretriever
+            - name: MASTERCARD_MAX_RATE
+              valueFrom:
+                secretKeyRef:
+                  key: MASTERCARD_MAX_RATE
+                  name: tkmmsparretriever
+            - name: VISA_MAX_RATE
+              valueFrom:
+                secretKeyRef:
+                  key: VISA_MAX_RATE
+                  name: tkmmsparretriever
+            - name: DEFAULT_MAX_RATE
+              valueFrom:
+                secretKeyRef:
+                  key: DEFAULT_MAX_RATE
+                  name: tkmmsparretriever
+            - name: MINIMUM_NUMBER_OF_CALLS
+              valueFrom:
+                secretKeyRef:
+                  key: MINIMUM_NUMBER_OF_CALLS
+                  name: tkmmsparretriever
+            - name: SLIDING_WINDOW_SIZE
+              valueFrom:
+                secretKeyRef:
+                  key: SLIDING_WINDOW_SIZE
+                  name: tkmmsparretriever
+            - name: RING_BUFFER_SIZE_IN_CLOSED_SATE
+              valueFrom:
+                secretKeyRef:
+                  key: RING_BUFFER_SIZE_IN_CLOSED_SATE
+                  name: tkmmsparretriever
+            - name: RING_BUFFER_SIZE_IN_HALFOPEN_SATE
+              valueFrom:
+                secretKeyRef:
+                  key: RING_BUFFER_SIZE_IN_HALFOPEN_SATE
+                  name: tkmmsparretriever
+            - name: FAILURE_RATE_THRESHOLD
+              valueFrom:
+                secretKeyRef:
+                  key: FAILURE_RATE_THRESHOLD
+                  name: tkmmsparretriever
+            - name: WAIT_DURATION_IN_OPENSTATE
+              valueFrom:
+                secretKeyRef:
+                  key: WAIT_DURATION_IN_OPENSTATE
+                  name: tkmmsparretriever
+            - name: IS_AMEX_ACTIVE
+              valueFrom:
+                secretKeyRef:
+                  key: IS_AMEX_ACTIVE
+                  name: tkmmsparretriever
+            - name: IS_MASTERCARD_ACTIVE
+              valueFrom:
+                secretKeyRef:
+                  key: IS_MASTERCARD_ACTIVE
+                  name: tkmmsparretriever
+            - name: IS_VISA_ACTIVE
+              valueFrom:
+                secretKeyRef:
+                  key: IS_VISA_ACTIVE
+                  name: tkmmsparretriever
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+              scheme: HTTP
+            timeoutSeconds: 5
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 5
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+              scheme: HTTP
+            timeoutSeconds: 5
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3
+          startupProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 20
+            timeoutSeconds: 5
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 30
+          imagePullPolicy: Always
